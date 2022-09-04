@@ -6,9 +6,13 @@ module.exports = {
     extend: {
       fontFamily: {
         barlow: ['"Barlow Condensed"', "san-serif"],
+        segoeUi: ['"Segoe UI"', "san-serif"],
       },
       colors: {
-        loginButon: '#5AAC44',
+        loginButon: "#5AAC44",
+      },
+      spacing: {
+        'line': '0.0625rem',
       },
     },
   },
