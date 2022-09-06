@@ -77,16 +77,4 @@ export default NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      // console.log(user);
-
-      return true;
-    },
-    async session({ session, user, token }) {
-      console.log(token);
-
-      return session;
-    },
-  },
 });
