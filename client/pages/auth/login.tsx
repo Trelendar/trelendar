@@ -2,6 +2,7 @@ import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { getProviders, getSession, getCsrfToken } from 'next-auth/react';
 const User: React.FC = () => {
   const { data } = useSession();
   return (
@@ -9,6 +10,7 @@ const User: React.FC = () => {
       <div className="w-96 justify-center border boder-cyan-50 shadow-md p-6">
         <h1 className="text-green-700 text-xl font-medium mb-4 text-center">
           Login to Trelendar
+          <br />
           {JSON.stringify(data)}
         </h1>
         <button onClick={async () => await signOut()}>Sign OUT</button>
@@ -60,3 +62,13 @@ const User: React.FC = () => {
 };
 
 export default User;
+
+export const getServerSideProps = async (context) => {
+  return {
+    props: {
+      providers: await getProviders(context),
+      session: await getSession(context),
+      csrfToken: await getCsrfToken(context),
+    },
+  };
+};
