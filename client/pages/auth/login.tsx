@@ -40,7 +40,12 @@ const User: React.FC = () => {
           <FcGoogle size={25} />
           <span className="justify-between ml-1">Continue to Google</span>
         </button>
-        <button className="flex justify-center bg-slate-50  mb-4 w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md">
+        <button
+          className="flex justify-center bg-slate-50  mb-4 w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md"
+          onClick={() => {
+            signIn('facebook');
+          }}
+        >
           <FaFacebook size={25} color={'#17357B'} />
           <span className="justify-between ml-1">Continue to Facebook</span>
         </button>
