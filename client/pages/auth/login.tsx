@@ -66,7 +66,7 @@ export default User;
 export const getServerSideProps = async (context) => {
   return {
     props: {
-      providers: await getProviders(context),
+      providers: await getProviders(),
       session: await getSession(context),
       csrfToken: await getCsrfToken(context),
     },
