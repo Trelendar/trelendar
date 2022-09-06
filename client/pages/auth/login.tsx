@@ -61,13 +61,13 @@ const User: React.FC = () => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  return {
-    props: {
-      providers: await getProviders(),
-      session: await getSession(context),
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-};
+// export const getServerSideProps = async (context) => {
+//   return {
+//     props: {
+//       providers: await getProviders(),
+//       session: await getSession(context),
+//       csrfToken: await getCsrfToken(context),
+//     },
+//   };
+// };
 export default User;
