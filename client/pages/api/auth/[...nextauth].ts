@@ -1,29 +1,32 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import clientPromise from '../../../lib/mongodb';
 import CredentialsProvider from 'next-auth/providers/credentials';
-export default NextAuth({
+
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: 'jwt',
   },
   jwt: {
+    secret: process.env.NEXT_PUBLIC_SECRET,
     // The maximum age of the NextAuth.js issued JWT in seconds.
     // Defaults to `session.maxAge`.
     maxAge: 60 * 60 * 24 * 30,
     // You can define your own encode/decode functions for signing and encryption
-    // async encode() {},
-    // async decode() {},
+    // async encode({ secret, token, maxAge }) {},
+    // async decode({ secret, token }) {},
   },
   // pages: {
   //   signIn: 'api/auth/login',
   //   error: 'auth/login',
   // },
-  secret: process.env.NEXT_PUBLIC_SECRET,
+  // secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
@@ -85,4 +88,6 @@ export default NextAuth({
     //   },
     // }),
   ],
-});
+};
+
+export default NextAuth(authOptions);
