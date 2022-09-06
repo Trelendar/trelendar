@@ -28,7 +28,7 @@ const User: React.FC = () => {
         />
         <button
           className="bg-green-500 mb-4 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
-          onClick={() => signIn('credentials', {}, { username: 'haha', password: 'cxx' })}
+          onClick={() => signIn()}
         >
           Login
         </button>
