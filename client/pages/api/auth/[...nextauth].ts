@@ -10,18 +10,18 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: MongoDBAdapter(clientPromise),
-  session: {
-    strategy: 'jwt',
-  },
-  jwt: {
-    secret: process.env.NEXT_PUBLIC_SECRET,
-    // The maximum age of the NextAuth.js issued JWT in seconds.
-    // Defaults to `session.maxAge`.
-    maxAge: 60 * 60 * 24 * 30,
-    // You can define your own encode/decode functions for signing and encryption
-    // async encode({ secret, token, maxAge }) {},
-    // async decode({ secret, token }) {},
-  },
+  // session: {
+  //   strategy: 'jwt',
+  // },
+  // jwt: {
+  //   secret: process.env.NEXT_PUBLIC_SECRET,
+  //   // The maximum age of the NextAuth.js issued JWT in seconds.
+  //   // Defaults to `session.maxAge`.
+  //   maxAge: 60 * 60 * 24 * 30,
+  //   // You can define your own encode/decode functions for signing and encryption
+  //   // async encode({ secret, token, maxAge }) {},
+  //   // async decode({ secret, token }) {},
+  // },
   // pages: {
   //   signIn: 'api/auth/login',
   //   error: 'auth/login',
