@@ -61,8 +61,6 @@ const User: React.FC = () => {
   );
 };
 
-export default User;
-
 export const getServerSideProps = async (context) => {
   return {
     props: {
@@ -72,3 +70,4 @@ export const getServerSideProps = async (context) => {
     },
   };
 };
+export default User;

@@ -16,7 +16,7 @@ export default NextAuth({
   //   signIn: 'api/auth/login',
   //   error: 'auth/login',
   // },
-  secret: 'Vcc',
+  secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
