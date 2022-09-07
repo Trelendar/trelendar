@@ -1,5 +1,6 @@
 // This approach is taken from https://github.com/vercel/next.js/tree/canary/examples/with-mongodb
-import { MongoClient, MongoClientOptions } from "mongodb";
+import { MongoClient, MongoClientOptions } from 'mongodb';
+import mongoose from 'mongoose';
 
 const uri = process.env.MONGODB_URI;
 const options = {
@@ -7,14 +8,14 @@ const options = {
   useNewUrlParser: true,
 };
 
-let client;
+let client: MongoClient;
 let clientPromise;
 
 if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env.local");
+  throw new Error('Please add your Mongo URI to .env.local');
 }
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global._mongoClientPromise) {
@@ -30,4 +31,18 @@ if (process.env.NODE_ENV === "development") {
 
 // Export a module-scoped MongoClient promise. By doing this in a
 // separate module, the client can be shared across functions.
+
+const connectDB = () => {
+  if (mongoose.connections[0].readyState) {
+    console.log('Already connected.');
+    return;
+  }
+
+  mongoose.connect(uri, {}, (err) => {
+    if (err) throw err;
+    console.log('Connected to mongodb.');
+  });
+};
+
+export { client, connectDB };
 export default clientPromise;

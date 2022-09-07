@@ -3,35 +3,53 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { getProviders, getSession, getCsrfToken } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+type FormValues = {
+  email: string;
+  password: string;
+};
 const User: React.FC = () => {
-  const { data } = useSession();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit = (data) => {
+    signIn('credentials', { callbackUrl: '/' }, data);
+  };
   return (
     <div className="flex justify-center my-8">
       <div className="w-96 justify-center border boder-cyan-50 shadow-md p-6">
-        <h1 className="text-green-700 text-xl font-medium mb-4 text-center">
-          Login to Trelendar
-          <br />
-          {JSON.stringify(data)}
-        </h1>
-        <button onClick={async () => await signOut()}>Sign OUT</button>
-        <input
-          type="text"
-          className="bg-gray-50 border mb-4 border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          placeholder="Email"
-          required
-        />
-        <input
-          type="text"
-          className="bg-gray-50 border mb-4 border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          placeholder="Password"
-          required
-        />
-        <button
-          className="bg-green-500 mb-4 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
-          onClick={() => signIn()}
-        >
-          Login
-        </button>
+        <h1 className="text-green-700 text-xl font-medium mb-4 text-center">Login to Trelendar</h1>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input
+            {...register('email', {
+              required: true,
+              maxLength: 100,
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address',
+              },
+            })}
+            className="bg-gray-50 border my-2 border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Email"
+          />
+          {errors.email && <p>Invalid email</p>}
+          <input
+            {...register('password', { required: true })}
+            className="bg-gray-50 border my-2 border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Password"
+          />
+          {/* {errors.email && <p>Last name is required.</p>} */}
+          {/* <input type="submit" /> */}
+          <button
+            type="submit"
+            className="bg-green-500 mb-4 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
+          >
+            Login
+          </button>
+        </form>
+
         <div className="text-center mb-4">OR</div>
         <button
           className="flex justify-center bg-slate-50 mb-4  w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md"
@@ -62,6 +80,16 @@ const User: React.FC = () => {
 };
 
 export const getServerSideProps = async (context) => {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
   return {
     props: {
       providers: await getProviders(),

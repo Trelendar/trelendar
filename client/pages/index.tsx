@@ -6,6 +6,7 @@ import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 const Home: React.FC = () => {
+  const { data } = useSession();
   const router = useRouter();
   return (
     <div className={styles.container}>
@@ -20,9 +21,8 @@ const Home: React.FC = () => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
         <button onClick={() => router.push('auth/login')}>SIgin IN</button>
-        <p className={styles.description}>
-          Get started by editing <code className={styles.code}>pages/index.js</code>
-        </p>
+        <p className={styles.description}>{JSON.stringify(data)}</p>
+        <button onClick={() => signOut()}>Sign OUT</button>
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
