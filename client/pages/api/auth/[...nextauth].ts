@@ -25,10 +25,10 @@ export const authOptions: NextAuthOptions = {
     // async encode({ secret, token, maxAge }) {},
     // async decode({ secret, token }) {},
   },
-  // pages: {
-  //   signIn: 'api/auth/login',
-  //   error: 'auth/login',
-  // },
+  pages: {
+    signIn: '/auth/login',
+    error: '/auth/login',
+  },
   // secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
     GithubProvider({
@@ -38,6 +38,13 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
@@ -55,26 +62,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'text', placeholder: 'Email' },
         password: { label: 'Password', type: 'password' },
       },
-
       async authorize(credentials, req: { query: { email: string; password: string } }) {
         // console.log(email, password);
         const { email, password } = req.query;
         const user = await Users.findOne({ email });
         console.log(user);
         if (user) return loginUser({ password, user });
-        return registerUser({ email, password });
-
-        // const user = { id: 1, name: 'J Smith', email: 'jsmith@example.com' };
-        // console.log(req.query, credentials);
-        // return null;
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          // return null;
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-        }
+        throw Error('Email or password is not valid');
       },
     }),
   ],

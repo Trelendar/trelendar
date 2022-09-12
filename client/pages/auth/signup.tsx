@@ -1,17 +1,16 @@
-import React, { useEffect } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { getProviders, getSession, getCsrfToken } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { useFormik } from 'formik';
+import React from 'react';
+import Layout from '../../components/auth/Layout';
+import * as yup from 'yup';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Layout from '../../components/auth/Layout';
-import Router from 'next/router';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from 'react-icons/fa';
+import { signIn } from 'next-auth/react';
+interface LoginData {
+  email: string;
+  password: string;
+}
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -22,6 +21,7 @@ export function PropsTextField(name: string) {
     label: `${capitalizeFirstLetter(name)}`,
   };
 }
+type Props = {};
 const validationSchema = yup.object({
   email: yup.string().email('Enter a valid email').required('Email is required'),
   password: yup
@@ -29,14 +29,7 @@ const validationSchema = yup.object({
     .min(6, 'Password should be of minimum 6 characters length')
     .required('Password is required'),
 });
-interface LoginData {
-  email: string;
-  password: string;
-}
-
-const Login = () => {
-  // console.log(Router.query.error);
-
+const Signup = (props: Props) => {
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -44,27 +37,15 @@ const Login = () => {
     },
     validationSchema,
     onSubmit: async (values: LoginData) => {
-      // console.log(values);
-      const res = await signIn('credentials', { redirect: false }, { ...values });
-      console.log(res);
-
-      if (res.error) {
-        toast.error(res.error);
-        return;
-      }
-      Router.push('../');
+      console.log(values);
+      //   await signIn('credentials', { callbackUrl: '/' }, { ...values });
     },
   });
-  useEffect(() => {
-    if (Router.query.error) {
-      toast.error(Router.query.error);
-      Router.push('login');
-    }
-  }, []);
   return (
     <Layout>
-      <ToastContainer />
-      <h1 className="text-green-700 text-xl font-medium mb-4 text-center">Login to trelendar</h1>
+      <h1 className="text-green-700 text-xl font-medium mb-4 text-center">
+        Sign up for your account
+      </h1>
       <form onSubmit={formik.handleSubmit}>
         <TextField
           sx={{ marginY: '0.5rem' }}
@@ -98,7 +79,7 @@ const Login = () => {
         </Button>
       </form>
 
-      <p className="text-center mb-4">OR</p>
+      <div className="text-center mb-4">OR</div>
       <button
         className="flex justify-center bg-slate-50 mb-4  w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md"
         onClick={() => {
@@ -126,23 +107,4 @@ const Login = () => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  const session = await getSession(context);
-
-  if (session) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {
-      providers: await getProviders(),
-      session: await getSession(context),
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-};
-export default Login;
+export default Signup;
