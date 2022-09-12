@@ -8,6 +8,7 @@ import clientPromise, { connectDB } from '../../../lib/mongodb';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import Users from '../../../models/userModel';
 import bcrypt from 'bcrypt';
+import { unstable_getServerSession } from 'next-auth/next';
 // clientPromise();
 connectDB();
 export const authOptions: NextAuthOptions = {

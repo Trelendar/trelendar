@@ -17,6 +17,8 @@ import Button from '@mui/material/Button';
 import Layout from '../../components/auth/Layout';
 import Router from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
+import { authOptions } from '../api/auth/[...nextauth]';
+import { unstable_getServerSession } from 'next-auth/next';
 import 'react-toastify/dist/ReactToastify.css';
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -133,7 +135,7 @@ const Login = () => {
 };
 
 export const getServerSideProps = async (context) => {
-  const session = await getSession(context);
+  const session = await unstable_getServerSession(context.req, context.res, authOptions);
 
   if (session) {
     return {
