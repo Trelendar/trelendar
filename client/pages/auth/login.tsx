@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { getProviders, getSession, getCsrfToken } from 'next-auth/react';
+import {
+  useSession,
+  signIn,
+  signOut,
+  getProviders,
+  getSession,
+  getCsrfToken,
+} from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useFormik } from 'formik';

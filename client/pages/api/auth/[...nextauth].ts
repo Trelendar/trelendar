@@ -4,9 +4,9 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
-import clientPromise, { client, connectDB } from '../../../lib/mongodb';
+import clientPromise, { connectDB } from '../../../lib/mongodb';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import Users, { IUser } from '../../../models/userModel';
+import Users from '../../../models/userModel';
 import bcrypt from 'bcrypt';
 // clientPromise();
 connectDB();
@@ -29,12 +29,13 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/login',
     error: '/auth/login',
   },
+  debug: true,
   // secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
+    // GithubProvider({
+    //   clientId: process.env.GITHUB_ID,
+    //   clientSecret: process.env.GITHUB_SECRET,
+    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -66,7 +67,6 @@ export const authOptions: NextAuthOptions = {
         // console.log(email, password);
         const { email, password } = req.query;
         const user = await Users.findOne({ email });
-        console.log(user);
         if (user) return loginUser({ password, user });
         throw Error('Email or password is not valid');
       },
