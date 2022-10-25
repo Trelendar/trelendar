@@ -1,14 +1,16 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import NextAuth, { NextAuthOptions } from 'next-auth';
-
+import NextAuth, { Account, NextAuthOptions } from 'next-auth';
+import EmailProvider from 'next-auth/providers/email';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import clientPromise, { connectDB } from '../../../lib/mongodb';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import Users from '../../../models/userModel';
+import Accounts from '../../../models/accountModel';
 import bcrypt from 'bcrypt';
 import { unstable_getServerSession } from 'next-auth/next';
+import { sendVerificationRequest } from '../../../lib/nodemailer';
 // clientPromise();
 connectDB();
 export const authOptions: NextAuthOptions = {
@@ -26,17 +28,17 @@ export const authOptions: NextAuthOptions = {
     // async encode({ secret, token, maxAge }) {},
     // async decode({ secret, token }) {},
   },
-  pages: {
-    signIn: '/auth/login',
-    error: '/auth/login',
-  },
-  debug: true,
+  // pages: {
+  //   signIn: '/auth/login',
+  //   error: '/auth/login',
+  // },
+  // debug: true,
   // secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_ID,
-    //   clientSecret: process.env.GITHUB_SECRET,
-    // }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -48,12 +50,26 @@ export const authOptions: NextAuthOptions = {
         },
       },
     }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      async sendVerificationRequest(param) {
+        await sendVerificationRequest(param);
+      },
+      from: process.env.EMAIL_FROM,
+    }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
+      // The name to display on the sign-in form (e.g. 'Sign in with...')
       name: 'Credentials',
       // The credentials is used to generate a suitable form on the sign in page.
       // You can specify whatever fields you are expecting to be submitted.
@@ -74,10 +90,30 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      // console.log('---------------------');
+
+      console.log(user, account, profile, email, credentials);
+      // console.log('---------------------');
+      await updateUserAndAccount(user as User, account);
+      return true;
+    },
     async session({ session, user, token }) {
       session.userId = token.sub;
 
       return session;
+    },
+  },
+  events: {
+    async signIn(message) {
+      console.log('---------------------');
+      console.log(message);
+      console.log('---------------------');
+    },
+    async linkAccount(message) {
+      console.log('---------------------');
+      console.log(message);
+      console.log('---------------------');
     },
   },
 };
@@ -92,10 +128,6 @@ const loginUser = async ({ password, user }) => {
     throw new Error('Password Incorrect.');
   }
 
-  // if (!user.emailVerified) {
-  //   throw new Error('Success! Check your email.');
-  // }
-
   return user;
 };
 
@@ -104,5 +136,20 @@ const registerUser = async ({ email, password }) => {
   const newUser = new Users({ email, password: hashPass });
   await newUser.save();
   throw new Error('Success! Check your email.');
+};
+
+type User = {
+  email: string;
+  image: string;
+  id: string;
+  name: string;
+};
+const updateUserAndAccount = async (user: User, account: Account) => {
+  const res = await Users.findOneAndUpdate({ email: user.email }, user);
+  if (!res) return;
+  const foundAccount = await Accounts.findOne({ userId: res._id });
+  if (foundAccount) return;
+  const newAccount = new Accounts({ ...account, userId: res._id });
+  await newAccount.save();
 };
 export default NextAuth(authOptions);

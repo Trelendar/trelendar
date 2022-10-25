@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
+import { FaFacebook, FaGithub } from 'react-icons/fa';
 import {
   useSession,
   signIn,
@@ -20,9 +20,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import { authOptions } from '../api/auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
 import 'react-toastify/dist/ReactToastify.css';
+import BtnLogin from '../../components/auth/BtnLogin';
+
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
 export function PropsTextField(name: string) {
   return {
     id: `${name}`,
@@ -30,6 +33,7 @@ export function PropsTextField(name: string) {
     label: `${capitalizeFirstLetter(name)}`,
   };
 }
+
 const validationSchema = yup.object({
   email: yup.string().email('Enter a valid email').required('Email is required'),
   password: yup
@@ -37,30 +41,28 @@ const validationSchema = yup.object({
     .min(6, 'Password should be of minimum 6 characters length')
     .required('Password is required'),
 });
+
 interface LoginData {
   email: string;
   password: string;
 }
 
 const Login = () => {
-  // console.log(Router.query.error);
-
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
     validationSchema,
-    onSubmit: async (values: LoginData) => {
-      // console.log(values);
-      const res = await signIn('credentials', { redirect: false }, { ...values });
+    onSubmit: async ({ email, password }: LoginData) => {
+      const res = await signIn('email', { email, redirect: true });
       console.log(res);
 
       if (res.error) {
         toast.error(res.error);
         return;
       }
-      Router.push('../');
+      await Router.push('../');
     },
   });
   useEffect(() => {
@@ -107,24 +109,11 @@ const Login = () => {
       </form>
 
       <p className="text-center mb-4">OR</p>
-      <button
-        className="flex justify-center bg-slate-50 mb-4  w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md"
-        onClick={() => {
-          signIn('google');
-        }}
-      >
-        <FcGoogle size={25} />
-        <span className="justify-between ml-1">Continue to Google</span>
-      </button>
-      <button
-        className="flex justify-center bg-slate-50  mb-4 w-full hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded shadow-md"
-        onClick={() => {
-          signIn('facebook');
-        }}
-      >
-        <FaFacebook size={25} color={'#17357B'} />
-        <span className="justify-between ml-1">Continue to Facebook</span>
-      </button>
+      <BtnLogin provider={'google'} icon={<FcGoogle size={25} />} />
+      <BtnLogin provider={'facebook'} icon={<FaFacebook size={25} color={'#17357B'} />} />
+      <BtnLogin provider={'github'} icon={<FaGithub size={25} />} />
+      {/* <button onClick={() => signIn('email', { email: 'hoangkui2001@gmail.com' })}>ABC</button> */}
+
       <div className="w-full p-line bg-gray-300 my-8"></div>
       <div className="grid grid-cols-2 divide-x mb-2 ">
         <div className="cursor-pointer text-cyan-600 hover:underline">Forgot password</div>
@@ -153,4 +142,5 @@ export const getServerSideProps = async (context) => {
     },
   };
 };
+
 export default Login;

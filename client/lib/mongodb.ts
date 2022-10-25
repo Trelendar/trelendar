@@ -3,6 +3,7 @@ import { MongoClient, MongoClientOptions } from 'mongodb';
 import mongoose from 'mongoose';
 
 const uri = process.env.MONGODB_URI;
+console.log(uri)
 const options = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
@@ -12,7 +13,7 @@ let client: MongoClient;
 let clientPromise;
 
 if (!process.env.MONGODB_URI) {
-  throw new Error('Please add your Mongo URI to .env.local');
+  throw new Error('Please add your Mongo URI to .env.local.local');
 }
 
 if (process.env.NODE_ENV === 'development') {
@@ -44,5 +45,5 @@ const connectDB = () => {
   });
 };
 
-export { client, connectDB };
+export { client ,connectDB};
 export default clientPromise;
