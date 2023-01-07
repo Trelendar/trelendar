@@ -2,11 +2,9 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Header from '../../components/header';
 
-
 const Home: React.FC = () => {
-
   return (
-    <div className="scale-x-95">
+    <div className="scale-x-100">
       <Header />
       <motion.div
         className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed rounded-t-md pt-24"
