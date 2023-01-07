@@ -128,7 +128,7 @@ const Board: React.FC<Props> = (props) => {
           />
         )}
       </header>
-      <Scrollbars autoHeight autoHeightMin={0} autoHeightMax={'55vh'}>
+      <Scrollbars autoHeight autoHeightMin={0} autoHeightMax={'60vh'}>
         <Container
           groupName="col"
           orientation="vertical"

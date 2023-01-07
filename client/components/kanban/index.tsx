@@ -210,7 +210,7 @@ const Kanban: React.FC = () => {
         </div>
       )} */}
 
-      <Scrollbars style={{ height: '80vh' }}>
+      <Scrollbars style={{ height: '85vh' }}>
         <div className="flex rounded mt-5">
           <Container
             orientation="horizontal"

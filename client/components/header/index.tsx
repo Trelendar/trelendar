@@ -35,7 +35,7 @@ const Header: React.FC = () => {
         <>
           <div className="flex items-center gap-3">
             <Avatar src={data?.user.image} />
-            <span>{data?.user.name}</span>
+            <span className="text-white text-lg">{data?.user.name}</span>
           </div>
           <div className="col-start-6 w-full block flex-grow lg:flex lg:items-center lg:w-auto">
             <div onClick={() => signOut()}>
