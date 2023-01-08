@@ -7,7 +7,7 @@ const Home: React.FC = () => {
     <div className="scale-x-100">
       <Header />
       <motion.div
-        className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed rounded-t-md pt-24"
+        className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed pt-24"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}

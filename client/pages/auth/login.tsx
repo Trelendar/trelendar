@@ -80,16 +80,10 @@ const Login = () => {
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
         />
-        <Button
-          color="primary"
-          variant="contained"
-          fullWidth
-          type="submit"
-          className="bg-green-500"
-          sx={{ paddingY: '0.75rem', backgroundColor: 'rgb(34, 197, 94)' }}
-        >
-          Login
-        </Button>
+
+        <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full">
+          LOGIN
+        </button>
       </form>
 
       <p className="text-center mb-4">OR</p>

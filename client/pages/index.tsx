@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Header from '../components/header';
@@ -10,11 +10,14 @@ import { motion } from 'framer-motion';
 const Home: React.FC = () => {
   const { data } = useSession();
   const router = useRouter();
+  useEffect(() => {
+    if (data) router.push('workspace');
+  }, [data]);
   return (
     <div className="scale-x-100">
       <Header />
       <motion.div
-        className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed rounded-t-md pt-24"
+        className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed  pt-24"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -33,20 +36,20 @@ const Home: React.FC = () => {
   );
 };
 
-// export async function getServerSideProps(context) {
-//   const session = await getSession(context);
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
 
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: '/auth/login',
-//         permanent: false,
-//       },
-//     };
-//   }
+  if (session) {
+    return {
+      redirect: {
+        destination: '/workspace',
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: { session },
-//   };
-// }
+  return {
+    props: { session },
+  };
+}
 export default Home;

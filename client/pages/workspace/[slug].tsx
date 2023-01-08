@@ -9,7 +9,7 @@ const Board: React.FC = () => {
     <div className="scale-x-100">
       <Header />
       <motion.div initial={{ x: '-100px', opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-        <div className="max-h-90vh] h-[90vh] overflow-y-auto rounded-md bg-[#BCB4D8]">
+        <div className="max-h-90vh] h-[90vh] overflow-y-auto bg-[#BCB4D8]">
           <Kanban />
         </div>
       </motion.div>
