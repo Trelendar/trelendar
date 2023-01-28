@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,300;1,100&display=swap');
+@import url('http://fonts.cdnfonts.com/css/segoe-ui-4');
 
 @tailwind base;
 @tailwind components;
@@ -10,4 +11,99 @@
   .body {
     @apply font-barlow;
   }
+}
+
+@layer components {
+  .input-login {
+    @apply appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-titleLogin mb-4;
+  }
+  .button-next {
+    @apply transition bg-blue-500 hover:bg-blue-400 text-white font-bold px-4 py-6 border-b-4 border-blue-700 hover:border-blue-500 rounded-full w-48 mt-20;
+  }
+  .user-fullname {
+    @apply col-start-6 w-full block text-white text-xl font-bold rounded m-auto text-right;
+  }
+  .dropdown-fullname {
+    @apply text-colorHome text-xl font-bold absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer;
+  }
+  .add-new-column {
+    @apply border border-[#ebecf0] border-spacing-1 flex px-5 pt-2 py-3 cursor-pointer items-center bg-[rgba(188,180,216,0.95)] hover:bg-[#C9CCD9] transition-all shadow-lg hover:scale-105 rounded mt-1 h-[35px]
+  }
+  .button-add-new-clomn-form {
+    @apply bg-[#68589b] hover:bg-[#48367F] text-white font-medium py-[6px] px-3 border border-[#68589b] rounded mt-2 transition-all hover:scale-105
+  }
+  .paging-tag {
+    @apply cursor-pointer z-10 py-2 px-3 leading-tight bg-[#bcb4d8] border border-[#68589b] hover:bg-[#48367F]  transition-all
+  }
+
+}
+
+div.ReactTags__tags {
+    position: relative;
+}
+
+/* Styles for the input */
+div.ReactTags__tagInput {
+    width: 200px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-top: 10px
+}
+div.ReactTags__tagInput input.ReactTags__tagInputField,
+div.ReactTags__tagInput input.ReactTags__tagInputField:focus {
+    height: 31px;
+    margin: 0;
+    font-size: 12px;
+    width: 100%;
+    border: 1px solid #eee;
+    padding: 0 4px;
+}
+
+/* Styles for selected tags */
+div.ReactTags__selected span.ReactTags__tag {
+    border: 1px solid #ddd;
+    background: #eee;
+    font-size: 12px;
+    display: inline-block;
+    padding: 5px;
+    margin: 0 5px;
+    cursor: move;
+    border-radius: 2px;
+
+}
+.ReactTags__remove {
+    margin-left: 10px;
+    font-size: 17px;
+    color: gray
+}
+ 
+div.ReactTags__selected a.ReactTags__remove {
+    color: #aaa;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Styles for suggestions */
+div.ReactTags__suggestions {
+    position: absolute;
+}
+div.ReactTags__suggestions ul {
+    list-style-type: none;
+    box-shadow: .05em .01em .5em rgba(0,0,0,.2);
+    background: white;
+    width: 200px;
+}
+div.ReactTags__suggestions li {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 10px;
+    margin: 0;
+}
+div.ReactTags__suggestions li mark {
+    text-decoration: underline;
+    background: none;
+    font-weight: 600;
+}
+div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
+    background: #b7cfe0;
+    cursor: pointer;
 }
