@@ -12,12 +12,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  findAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return this.userModel.findById(id).exec();
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
