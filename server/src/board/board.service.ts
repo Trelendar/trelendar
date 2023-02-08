@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Board, BoardDocument } from './entities/board.entity';
 import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class BoardService {
@@ -25,10 +24,9 @@ export class BoardService {
     return await board.save();
   }
   async removeOne(id: string, idRemove: string): Promise<Board> {
-    console.log(id, idRemove);
     const board = await this.boardModel.findByIdAndUpdate(
       id,
-      { $pull: { members: idRemove } },
+      { $pull: { members: new Types.ObjectId(idRemove) } },
       { new: true },
     );
     if (!board) throw Error('id not found');

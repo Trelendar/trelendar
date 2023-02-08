@@ -36,7 +36,7 @@ export class BoardController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() idRemove: string) {
-    return this.boardService.removeOne(id, idRemove);
+  remove(@Param('id') id: string, @Body() data: { idRemove: string }) {
+    return this.boardService.removeOne(id, data.idRemove);
   }
 }
