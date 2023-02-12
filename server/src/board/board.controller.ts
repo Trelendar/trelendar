@@ -32,11 +32,15 @@ export class BoardController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardService.update(+id, updateBoardDto);
+    return this.boardService.update(id, updateBoardDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string, @Body() data: { idRemove: string }) {
+  @Delete(':id/removeMember')
+  removeOne(@Param('id') id: string, @Body() data: { idRemove: string }) {
     return this.boardService.removeOne(id, data.idRemove);
+  }
+  @Post(':id/addMember')
+  addOne(@Param('id') id: string, @Body() data: { idAdded: string }) {
+    return this.boardService.addOne(id, data.idAdded);
   }
 }

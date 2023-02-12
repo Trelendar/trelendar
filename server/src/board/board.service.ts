@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -24,9 +24,26 @@ export class BoardService {
     return await board.save();
   }
   async removeOne(id: string, idRemove: string): Promise<Board> {
+    const boardRemoved = await this.boardModel.findById(id);
+    console.log(boardRemoved?.id, idRemove);
+
+    if (String(boardRemoved?.createdBy._id) === idRemove)
+      throw new HttpException(
+        'Cannot remove because you are create board',
+        404,
+      );
     const board = await this.boardModel.findByIdAndUpdate(
       id,
       { $pull: { members: new Types.ObjectId(idRemove) } },
+      { new: true },
+    );
+    if (!board) throw Error('id not found');
+    return board;
+  }
+  async addOne(id: string, idAdded: string): Promise<Board> {
+    const board = await this.boardModel.findByIdAndUpdate(
+      id,
+      { $addToSet: { members: new Types.ObjectId(idAdded) } },
       { new: true },
     );
     if (!board) throw Error('id not found');
@@ -41,8 +58,12 @@ export class BoardService {
     return `This action returns a #${id} board`;
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  async update(id: string, updateBoardDto: UpdateBoardDto): Promise<Board> {
+    const board = await this.boardModel.findByIdAndUpdate(id, updateBoardDto, {
+      new: true,
+    });
+    if (!board) throw new HttpException('Board not found', 403);
+    return board;
   }
 
   remove(id: number) {
