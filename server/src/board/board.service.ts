@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { Board, BoardDocument } from './entities/board.entity';
 import { UserService } from '../user/user.service';
 
@@ -68,5 +68,17 @@ export class BoardService {
 
   remove(id: number) {
     return `This action removes a #${id} board`;
+  }
+
+  async addColumnOnBoard(id: string, idColumn: mongoose.Schema.Types.ObjectId) {
+    const board = await this.boardModel.findById(id);
+    if (!board) throw new HttpException('Not found', 403);
+    await this.boardModel.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { columns: idColumn },
+      },
+      { new: true },
+    );
   }
 }
