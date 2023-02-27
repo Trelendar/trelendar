@@ -23,7 +23,6 @@ const Board: React.FC<Props> = (props) => {
 
   const [newCardTitle, setNewCardTitle] = useState<string>('');
 
-
   // const onExpired = () => {
   //   navigation(`../${appRouters.LINK_TO_LOGIN_PAGE}`);
   // };
@@ -139,7 +138,7 @@ const Board: React.FC<Props> = (props) => {
             showOnTop: true,
             className: 'card-drop-preview rounded-lg bg-[#bcb4d8] mb-2',
           }}
-          dragClass="ease-[0.18s]"
+          dragclassName="ease-[0.18s]"
           getChildPayload={(index) => column.cards[index]}
         >
           {column.cards.map((card, index) => (
