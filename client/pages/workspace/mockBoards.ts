@@ -25,4 +25,46 @@ export const boardsMock: BoardType[] = [
     columnOrder: [],
     columns: [],
   },
+  {
+    id: '5',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '6',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '7',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '8',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '9',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '10',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
+  {
+    id: '11',
+    boardName: 'R',
+    columnOrder: [],
+    columns: [],
+  },
 ];
