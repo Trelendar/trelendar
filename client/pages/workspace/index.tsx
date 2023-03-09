@@ -7,11 +7,22 @@ import { boardsMock } from './mockBoards';
 import { getSession } from 'next-auth/react';
 import { BsPlusLg } from 'react-icons/bs';
 import { useRouter } from 'next/router';
-
+import axios from '../../lib/axios';
+import { useQuery } from '@tanstack/react-query';
+interface Board {
+  background: string;
+}
 const Main: React.FC = () => {
   const [boards, setBoards] = useState<BoardType[]>(boardsMock);
   const [showModal, setShowModal] = useState<Boolean>(false);
   const [title, setTitle] = useState<string>('');
+  const { data, isLoading } = useQuery<Board[]>({
+    queryKey: ['board'],
+    queryFn: async () => {
+      return await axios.get('board');
+    },
+  });
+  console.log(data);
 
   const router = useRouter();
 
@@ -20,11 +31,16 @@ const Main: React.FC = () => {
     setTitle(newTitle);
   };
 
-  const onSaveChanges = () => {
-    if(title.length === 0) return;
+  const onSaveChanges = async () => {
+    await axios.post('/board', {
+      name: 'test2',
+      members: [],
+      background: 'vcc',
+    });
+    if (title.length === 0) return;
     router.push(`/workspace/${title}`);
-  }
-
+  };
+  if (isLoading) return <></>;
   return (
     <div className="scale-x-100">
       <Header />
@@ -91,9 +107,12 @@ const Main: React.FC = () => {
           ) : null}
 
           <div className="grid grid-cols-4 gap-8 pt-3">
-            {boards.map((board) => (
+            {/* {boards.map((board) => (
               <BoardTag key={board.id} board={board} />
-            ))}
+            ))} */}
+            {data.map((item, index) => {
+              return <span key={index}>{item.background}</span>;
+            })}
           </div>
         </div>
       </motion.div>
