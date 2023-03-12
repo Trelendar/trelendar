@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Card from './Card';
 import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
 import { GrClose } from 'react-icons/gr';
-import { CardRequest, CardType, ColumnRequest, ColumnType } from '../../share/type';
+import { CardRequest, CardType, ColumnRequest, ColumnType } from '../../share/type/kanban';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import { confirmDelete } from './utils';

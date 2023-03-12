@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Column from './Column';
-import { BoardType, ColumnRequest, ColumnType, DropRequest } from '../../share/type';
+import { BoardType, ColumnRequest, ColumnType, DropRequest } from '../../share/type/kanban';
 import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import { applyDrag } from './utils';
 import { AiOutlinePlus } from 'react-icons/ai';
@@ -12,7 +12,7 @@ import { WithContext as ReactTags } from 'react-tag-input';
 
 const Kanban: React.FC = () => {
   // const router = useRouter();
-	// const { slug } = router	.query;
+  // const { slug } = router	.query;
 
   const [board, setBoard] = useState<BoardType>({
     id: '1',
@@ -177,7 +177,7 @@ const Kanban: React.FC = () => {
     );
 
     if (isDeleteColumn) {
-        newColumns.splice(indexOfColumnUpdate, 1);
+      newColumns.splice(indexOfColumnUpdate, 1);
       // const ColumnRequest: ColumnRequest = {
       //     controller: CONTROLLER_DELETE_COLUMN,
       //     boardId: coloumnUpdated.boardId,

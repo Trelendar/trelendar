@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CardRequest, CardType } from '../../share/type';
+import { CardRequest, CardType } from '../../share/type/kanban';
 import Modal from 'react-modal';
 import { GrClose } from 'react-icons/gr';
 import ContentEditable from 'react-contenteditable';
@@ -143,9 +143,7 @@ const Card: React.FC<Props> = (props) => {
                   <li>
                     <div className="items-center p-3 text-base  text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow">
                       <div className="ml-3 font-bold">Member:</div>
-                      <div className="ml-3">
-                        {/* <MemberTag cardId={card.id} /> */}
-                      </div>
+                      <div className="ml-3">{/* <MemberTag cardId={card.id} /> */}</div>
                     </div>
                   </li>
                   <li className="flex justify-around">

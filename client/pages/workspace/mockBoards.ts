@@ -1,4 +1,4 @@
-import { BoardType } from '../../share/type';
+import { BoardType } from '../../share/type/kanban';
 
 export const boardsMock: BoardType[] = [
   {
