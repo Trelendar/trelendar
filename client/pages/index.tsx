@@ -14,25 +14,33 @@ const Home: React.FC = () => {
     if (data) router.push('workspace');
   }, [data]);
   return (
-    <div className="scale-x-100">
-      <Header />
-      <motion.div
-        className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed  pt-24"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        <div className="text-white text-6xl tracking-widest font-semibold uppercase pl-6">
-          Welcome to Trelendar!
-        </div>
-        <div className="text-white text-4xl tracking-widest font-semibold uppercase pl-6 mt-7">
-          Let&apos;s work together, try hard to get the best!
-        </div>
-        <div className="text-teal-200 text-3xl tracking-widest font-semibold uppercase pl-6 mt-7">
-          getting started
-        </div>
-      </motion.div>
-    </div>
+    <>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        />
+      </head>
+      <div className="scale-x-100">
+        <Header />
+        <motion.div
+          className="bg-office-home h-[90vh] bg-cover bg-center bg-fixed  pt-24"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-white text-6xl tracking-widest font-semibold uppercase pl-6">
+            Welcome to Trelendar!
+          </div>
+          <div className="text-white text-4xl tracking-widest font-semibold uppercase pl-6 mt-7">
+            Let&apos;s work together, try hard to get the best!
+          </div>
+          <div className="text-teal-200 text-3xl tracking-widest font-semibold uppercase pl-6 mt-7">
+            getting started
+          </div>
+        </motion.div>
+      </div>
+    </>
   );
 };
 

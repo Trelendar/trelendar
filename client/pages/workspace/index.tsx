@@ -9,20 +9,27 @@ import { BsPlusLg } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import axios from '../../lib/axios';
 import { useQuery } from '@tanstack/react-query';
-interface Board {
+
+export interface Board {
   background: string;
+  columns: string[];
+  createdAt: Date;
+  createdBy: string;
+  members: string[];
+  name: string;
+  updatedAt: Date;
+  _id: string;
 }
 const Main: React.FC = () => {
   const [boards, setBoards] = useState<BoardType[]>(boardsMock);
   const [showModal, setShowModal] = useState<Boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const { data, isLoading } = useQuery<Board[]>({
+  const { data: listBoard, isLoading } = useQuery<Board[]>({
     queryKey: ['board'],
     queryFn: async () => {
       return await axios.get('board');
     },
   });
-  console.log(data);
 
   const router = useRouter();
 
@@ -32,15 +39,15 @@ const Main: React.FC = () => {
   };
 
   const onSaveChanges = async () => {
-    await axios.post('/board', {
-      name: 'test2',
-      members: [],
-      background: 'vcc',
-    });
     if (title.length === 0) return;
-    router.push(`/workspace/${title}`);
+    const res = await axios.post<{ _id: string }>('/board', {
+      name: title,
+    });
+    console.log(res);
+
+    router.push(`/workspace/${res._id}`); //error type but fix after
   };
-  if (isLoading) return <></>;
+  if (isLoading) return <span>loading</span>;
   return (
     <div className="scale-x-100">
       <Header />
@@ -110,8 +117,8 @@ const Main: React.FC = () => {
             {/* {boards.map((board) => (
               <BoardTag key={board.id} board={board} />
             ))} */}
-            {data.map((item, index) => {
-              return <span key={index}>{item.background}</span>;
+            {listBoard.map((board, index) => {
+              return <BoardTag key={board._id} board={board} />;
             })}
           </div>
         </div>

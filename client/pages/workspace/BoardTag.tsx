@@ -2,30 +2,30 @@ import React from 'react';
 import { BoardType } from '../../share/type';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Board } from '.';
 
 interface Props {
-  board: BoardType;
+  board: Board;
 }
 
-const BoardTag: React.FC<Props> = (props) => {
-  const { board } = props;
-
+const BoardTag: React.FC<Props> = ({ board }) => {
   return (
     <div className=" col-span-1 max-w-[300px] bg-white rounded-lg border border-gray-200 shadow-md ">
       <div>
-        <img
+        <Image
           className="rounded-t-lg"
-          src="https://cdn.vietnambiz.vn/2019/10/27/kanban-project-management-15721743128351256247490.png"
+          src={board.background}
+          loader={() => board.background}
           alt="kanban"
-        ></img>
+          height={300}
+          width={300}
+        />
       </div>
       <div className="p-5 pt-1">
         <div>
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-            {board.boardName}
-          </h5>
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{board.name}</h5>
         </div>
-        <Link href={`workspace/${board.id}`}>
+        <Link href={`workspace/${board._id}`}>
           <div className="cursor-pointer inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-[#68589B] rounded-lg hover:bg-[#48367F] focus:ring-4 transition-all">
             Detail
             <svg

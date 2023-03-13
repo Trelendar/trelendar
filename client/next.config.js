@@ -1,3 +1,9 @@
-const withImages = require('next-images');
-
-module.exports = withImages();
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+      },
+    ],
+  },
+};
