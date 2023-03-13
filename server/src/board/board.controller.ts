@@ -27,7 +27,7 @@ export class BoardController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.boardService.findOne(+id);
+    return this.boardService.findOne(id);
   }
 
   @Patch(':id')

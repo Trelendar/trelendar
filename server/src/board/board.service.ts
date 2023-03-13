@@ -16,10 +16,13 @@ export class BoardService {
   // hard code user-created and not check validate data in members
   async create(createBoardDto: CreateBoardDto): Promise<Board> {
     const user = await this.userService.findOne('6357e3b11e31cc69e54b24e8');
+    const defaultBackgroud =
+      'https://cdn.vietnambiz.vn/2019/10/27/kanban-project-management-15721743128351256247490.png';
     const board = new this.boardModel({
       ...createBoardDto,
       createdBy: user?.id,
-      members: [...new Set([...createBoardDto.members, user?.id])],
+      background: createBoardDto.background || defaultBackgroud,
+      members: [...new Set([...(createBoardDto.members || []), user?.id])],
     });
     return await board.save();
   }
@@ -54,8 +57,8 @@ export class BoardService {
     return this.boardModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
+  findOne(id: string) {
+    return this.boardModel.findById(id).exec();
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto): Promise<Board> {

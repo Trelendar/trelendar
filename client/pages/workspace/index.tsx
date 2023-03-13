@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import BoardTag from './BoardTag';
-import { BoardType } from '../../share/type';
+import { BoardType } from '../../share/type/kanban';
 import Header from '../../components/header';
 import { boardsMock } from './mockBoards';
 import { getSession } from 'next-auth/react';

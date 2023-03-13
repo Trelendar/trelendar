@@ -1,5 +1,5 @@
 import React from 'react';
-import { BoardType } from '../../share/type';
+import { BoardType } from '../../share/type/kanban';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Board } from '.';
