@@ -52,7 +52,7 @@ const Main: React.FC = () => {
     <div className="scale-x-100">
       <Header />
       <motion.div initial={{ x: '-100px', opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-        <div className="max-h-[90vh] h-[90vh] overflow-y-auto rounded-md bg-[#BCB4D8] px-5">
+        <div className="max-h-[90vh] h-[90vh] overflow-y-auto bg-[#BCB4D8] px-5">
           <button
             className="text-white font-bold uppercase text-sm px-4 py-4 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 mt-1"
             type="button"
