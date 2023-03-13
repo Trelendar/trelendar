@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tag, UserCard } from '../../share/type';
+import { Tag, UserCard } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
 
 interface Props {
@@ -57,13 +57,13 @@ const MemberTag: React.FC<Props> = (props) => {
     // deleteUserInCardService(userInCard);
   };
 
-//   const boardId = useMySelector((state) => state.board.id);
-//   useEffect(() => {
-//     userInBoardService(boardId).then((res) => {
-//       setUsers(res.data.users ?? []);
-//       userInCardService(cardId).then((res) => setTags(res.data.users ?? []));
-//     });
-//   }, [tags]);
+  //   const boardId = useMySelector((state) => state.board.id);
+  //   useEffect(() => {
+  //     userInBoardService(boardId).then((res) => {
+  //       setUsers(res.data.users ?? []);
+  //       userInCardService(cardId).then((res) => setTags(res.data.users ?? []));
+  //     });
+  //   }, [tags]);
 
   return (
     <div className="z-[100000]">
