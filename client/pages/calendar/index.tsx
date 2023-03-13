@@ -1,7 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Header from '../../components/header';
-import Scheduler from './Scheduler';
+import dynamic from 'next/dynamic';
+
+const Scheduler = dynamic(() => import('./Scheduler'), {
+  ssr: false,
+});
 
 const MyCalendar = () => {
   return (

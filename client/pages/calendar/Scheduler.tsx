@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
+// import moment from 'moment';
 import events from './mockEvent';
 import { EventType } from '../../share/type/calendar';
 import { useHydrationSafeDate } from '../../share/hooks/use-hydration-safe-date';
+import moment from 'moment-timezone';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -26,18 +27,19 @@ const Scheduler = () => {
   };
   return (
     <div className="App">
-      <Calendar
-        views={['day', 'week', 'month', 'agenda']}
-        selectable
-        localizer={localizer}
-        // @ts-ignore
-        // defaultDate={new Date()}
-        defaultView="agenda"
-        events={eventsData}
-        style={{ height: '90vh' }}
-        onSelectEvent={(event) => alert(event.title)}
-        onSelectSlot={handleSelect}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Calendar
+          views={['day', 'week', 'month', 'agenda']}
+          selectable
+          localizer={localizer}
+          defaultDate={new Date()}
+          defaultView="week"
+          events={eventsData}
+          style={{ height: '90vh' }}
+          onSelectEvent={(event) => alert(event.title)}
+          onSelectSlot={handleSelect}
+        />
+      </Suspense>
     </div>
   );
 };
