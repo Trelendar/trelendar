@@ -1,8 +1,8 @@
 import React from 'react';
-import AddNewEvent from '../../components/calendar/AddNewEvent';
+import DetailEvent from './DetailEvent';
 
 const NewEvent = () => {
-  return <div><AddNewEvent/></div>;
+  return <div><DetailEvent/></div>;
 };
 
 export default NewEvent;

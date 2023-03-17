@@ -129,7 +129,7 @@ const events: EventType[] = [
     id: '15',
     title: 'Point in Time Event',
     start: now,
-    end:  now,
+    end: now,
   },
   {
     id: '16',
