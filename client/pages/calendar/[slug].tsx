@@ -1,8 +1,18 @@
 import React from 'react';
-import DetailEvent from './DetailEvent';
+import Header from '../../components/header';
+import dynamic from 'next/dynamic';
+
+const DetailEvent = dynamic(() => import('./DetailEvent'), {
+  ssr: false,
+});
 
 const NewEvent = () => {
-  return <div><DetailEvent/></div>;
+  return (
+    <>
+      <Header />
+      <DetailEvent />
+    </>
+  );
 };
 
 export default NewEvent;
