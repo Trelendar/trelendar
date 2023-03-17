@@ -15,12 +15,12 @@ const Home: React.FC = () => {
   }, [data]);
   return (
     <>
-      <head>
+      <div>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
         />
-      </head>
+      </div>
       <div className="scale-x-100">
         <Header />
         <motion.div
