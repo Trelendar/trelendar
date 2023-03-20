@@ -11,7 +11,7 @@ module.exports = {
       colors: {
         loginButon: '#5AAC44',
         titleLogin: '#253858',
-        colorHome: 'rgb(54, 32, 121, 0.75)',
+        colorHome: '#362079',
       },
       spacing: {
         line: '0.0625rem',

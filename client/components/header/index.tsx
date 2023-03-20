@@ -8,7 +8,7 @@ import { Avatar } from '@mui/material';
 const Header: React.FC = () => {
   const { data } = useSession();
   return (
-    <nav className="grid grid-cols-7 gap-4 bg-colorHome p-6 max-h-17 h-[10vh]">
+    <nav className="grid grid-cols-7 gap-4 bg-colorHome py-2 max-h-17 h-[10vh]">
       <Link href="" className="col-span-1 ">
         <div className="flex items-center text-white transition hover:scale-100 cursor-pointer">
           <BsFillKanbanFill className="mr-3" size={30} />
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
         <>
           <div className="flex items-center gap-3">
             <Avatar src={data?.user.image} />
-            <span className="text-white text-lg">{data?.user.name}</span>
+            <span className="text-white text-lg flex">{data?.user.name}</span>
           </div>
           <div className="col-start-6 w-full block flex-grow lg:flex lg:items-center lg:w-auto">
             <div onClick={() => signOut()}>

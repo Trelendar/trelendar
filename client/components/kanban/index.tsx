@@ -198,7 +198,7 @@ const Kanban: React.FC = () => {
   };
 
   return (
-    <div className="h-[85vh] rounded-md bg-[#BCB4D8] px-5">
+    <div className="rounded-md bg-[#BCB4D8]">
       {/* {!loaded && (
         <div className="pt-2">
           <button
@@ -210,7 +210,7 @@ const Kanban: React.FC = () => {
         </div>
       )} */}
 
-      <Scrollbars style={{ height: '85vh' }}>
+      <Scrollbars style={{ height: '88vh' }}>
         <div className="flex rounded mt-5">
           <Container
             orientation="horizontal"
