@@ -11,6 +11,7 @@ import Accounts from '../../../models/accountModel';
 import bcrypt from 'bcrypt';
 import { unstable_getServerSession } from 'next-auth/next';
 import { sendVerificationRequest } from '../../../lib/nodemailer';
+import jwt from 'jsonwebtoken';
 // clientPromise();
 connectDB();
 export const authOptions: NextAuthOptions = {
@@ -28,10 +29,10 @@ export const authOptions: NextAuthOptions = {
     // async encode({ secret, token, maxAge }) {},
     // async decode({ secret, token }) {},
   },
-  // pages: {
-  //   signIn: '/auth/login',
-  //   error: '/auth/login',
-  // },
+  pages: {
+    signIn: '/auth/login',
+    error: '/auth/login',
+  },
   // debug: true,
   // secret: process.env.NEXT_PUBLIC_SECRET,
   providers: [
@@ -93,27 +94,42 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }) {
       // console.log('---------------------');
 
-      console.log(user, account, profile, email, credentials);
+      // console.log(user, account, profile, email, credentials);
       // console.log('---------------------');
       await updateUserAndAccount(user as User, account);
       return true;
     },
     async session({ session, user, token }) {
       session.userId = token.sub;
-
+      if (session?.user) {
+        return {
+          ...session,
+          token:token.token,
+        }
+      }
       return session;
+    },
+    async jwt({ user, token }) {
+      console.log('token', token);
+      console.log('user', user);
+      if (user) {
+        token.uid = user.id;
+      const payload={id:user.id};
+        token.token=jwt.sign(payload,process.env.SECRET_KEY);
+      }
+      return token;
     },
   },
   events: {
     async signIn(message) {
-      console.log('---------------------');
-      console.log(message);
-      console.log('---------------------');
+      // console.log('---------------------');
+      // console.log(message);
+      // console.log('---------------------');
     },
     async linkAccount(message) {
-      console.log('---------------------');
-      console.log(message);
-      console.log('---------------------');
+      // console.log('---------------------');
+      // console.log(message);
+      // console.log('---------------------');
     },
   },
 };

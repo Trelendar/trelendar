@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import BoardTag from './BoardTag';
 import { BoardType } from '../../share/type/kanban';
 import Header from '../../components/header';
 import { boardsMock } from './mockBoards';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { BsPlusLg } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import axios from '../../lib/axios';
@@ -30,7 +30,7 @@ const Main: React.FC = () => {
       return await axios.get('board');
     },
   });
-
+  const { data: user } = useSession();
   const router = useRouter();
 
   const onInputTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +47,11 @@ const Main: React.FC = () => {
 
     router.push(`/workspace/${res._id}`); //error type but fix after
   };
+  useEffect(() => {
+    user &&
+      !localStorage.getItem('accessToken') &&
+      localStorage.setItem('accessToken', user.token as string);
+  }, [user]);
   if (isLoading) return <span>loading</span>;
   return (
     <div className="scale-x-100">
@@ -126,20 +131,21 @@ const Main: React.FC = () => {
     </div>
   );
 };
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
+// export async function getServerSideProps(context) {
+//   const session = await getSession(context);
+//   console.log("session",session);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: '/auth/login',
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  return {
-    props: { session },
-  };
-}
+//   return {
+//     props: { session },
+//   };
+// }
 export default Main;

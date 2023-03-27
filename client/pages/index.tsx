@@ -11,6 +11,8 @@ const Home: React.FC = () => {
   const { data } = useSession();
   const router = useRouter();
   useEffect(() => {
+    console.log("wtf");
+    
     if (data) router.push('workspace');
   }, [data]);
   return (

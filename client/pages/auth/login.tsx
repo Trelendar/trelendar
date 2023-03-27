@@ -101,24 +101,24 @@ const Login = () => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions);
+// export const getServerSideProps = async (context) => {
+//   const session = await unstable_getServerSession(context.req, context.res, authOptions);
 
-  if (session) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {
-      providers: await getProviders(),
-      session: await getSession(context),
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-};
+//   if (session) {
+//     return {
+//       redirect: {
+//         destination: '/',
+//         permanent: false,
+//       },
+//     };
+//   }
+//   return {
+//     props: {
+//       providers: await getProviders(),
+//       session: await getSession(context),
+//       csrfToken: await getCsrfToken(context),
+//     },
+//   };
+// };
 
 export default Login;
