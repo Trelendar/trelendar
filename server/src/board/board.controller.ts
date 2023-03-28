@@ -12,25 +12,32 @@ import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/current.user';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('board')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto) {
-    return this.boardService.create(createBoardDto);
+  async create(
+    @Body() createBoardDto: CreateBoardDto,
+    @CurrentUser() user: User,
+  ) {
+    return await this.boardService.create(user._id, createBoardDto);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.boardService.findAll();
+  async findAll(@CurrentUser() user: User) {
+    return await this.boardService.getAllBoard(user._id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.boardService.getOne(user, id);
   }
 
   @Patch(':id')

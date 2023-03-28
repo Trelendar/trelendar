@@ -22,7 +22,12 @@ const Header: React.FC = () => {
             <span className="text-white text-lg flex">{data?.user.name}</span>
           </div>
           <div className="col-start-6 w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-            <div onClick={() => signOut()}>
+            <div
+              onClick={() => {
+                localStorage.removeItem('accessToken');
+                signOut();
+              }}
+            >
               <div className="bg-white transition text-colorHome font-semibold py-2 px-8 border rounded-full hover:opacity-75 cursor-pointer">
                 Log out
               </div>

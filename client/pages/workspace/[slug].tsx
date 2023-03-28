@@ -28,6 +28,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
 
@@ -102,7 +104,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Board: React.FC = () => {
   const router = useRouter();
-  const { data: board, isLoading } = useQuery<Board>({
+  const {
+    data: board,
+    isLoading,
+    error,
+  } = useQuery<Board>({
     queryKey: ['board detail'],
     queryFn: async () => {
       return await axios.get(`board/${router.query.slug}`);
@@ -119,21 +125,14 @@ const Board: React.FC = () => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    console.log(board);
+    
+    board && toast.error("??");
+  }, [error]);
   if (isLoading) return <span>Loading</span>;
 
   return (
-    // <div className="">
-    //   <Header />
-    //   <Grid container spacing={0}>
-    //     <Grid xs={2}>SIDE BAR TO CLICK AND</Grid>
-    //     <Grid xs={10}>
-    //       <div className="max-h-[90vh] h-[90vh] overflow-y-auto bg-[#BCB4D8]">
-    //         <Kanban />
-    //       </div>
-    //     </Grid>
-    //   </Grid>
-    // </div>
-
     <div className="flex flex-col">
       {/* <Header /> */}
       <Box sx={{ display: 'flex' }}>
@@ -215,11 +214,11 @@ const Board: React.FC = () => {
             ))}
           </List>
         </Drawer>
-        <Box component="main" sx={{ flexGrow: 1 }} >
+        <Box component="main" sx={{ flexGrow: 1 }}>
           <DrawerHeader />
-              <div className="overflow-y-auto bg-[#BCB4D8]">
-                <Kanban />
-              </div>
+          <div className="overflow-y-auto bg-[#BCB4D8]">
+            <Kanban />
+          </div>
         </Box>
       </Box>
     </div>

@@ -1,10 +1,13 @@
+import { CustomException } from './../error/index';
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Types } from 'mongoose';
+import mongoose, { Model, Schema, Types } from 'mongoose';
 import { Board, BoardDocument } from './entities/board.entity';
 import { UserService } from '../user/user.service';
+import { User } from 'src/user/entities/user.entity';
+import { convertToObjectId } from 'src/util';
 
 @Injectable()
 export class BoardService {
@@ -14,15 +17,17 @@ export class BoardService {
   ) {}
 
   // hard code user-created and not check validate data in members
-  async create(createBoardDto: CreateBoardDto): Promise<Board> {
-    const user = await this.userService.findOne('6357e3b11e31cc69e54b24e8');
+  async create(
+    userId: Schema.Types.ObjectId,
+    createBoardDto: CreateBoardDto,
+  ): Promise<Board> {
     const defaultBackgroud =
       'https://cdn.vietnambiz.vn/2019/10/27/kanban-project-management-15721743128351256247490.png';
     const board = new this.boardModel({
       ...createBoardDto,
-      createdBy: user?.id,
+      createdBy: userId,
       background: createBoardDto.background || defaultBackgroud,
-      members: [...new Set([...(createBoardDto.members || []), user?.id])],
+      members: [...new Set([...(createBoardDto.members || []), userId])],
     });
     return await board.save();
   }
@@ -53,12 +58,22 @@ export class BoardService {
     return board;
   }
 
-  async findAll(): Promise<Board[]> {
-    return this.boardModel.find().exec();
+  async getAllBoard(id: Schema.Types.ObjectId): Promise<Board[]> {
+    const list = await this.boardModel.find({ members: { $in: [id] } });
+    return list;
   }
 
-  findOne(id: string) {
-    return this.boardModel.findById(id).exec();
+  async getOne(user: User, id: string) {
+    try {
+      const board = await this.boardModel.findOne({
+        _id: convertToObjectId(id),
+        members: { $in: [user._id] },
+      });
+      if (!board) throw new CustomException('Board not found');
+      return board;
+    } catch (error) {
+      throw new CustomException('Board not found or not access');
+    }
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto): Promise<Board> {
