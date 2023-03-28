@@ -7,9 +7,11 @@ import { BoardModule } from './board/board.module';
 import { ColumnModule } from './column/column.module';
 import { CardModule } from './card/card.module';
 import { CommentModule } from './comment/comment.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     DbModule,
     BoardModule,
