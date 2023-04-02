@@ -8,8 +8,11 @@ export interface CardType {
 }
 
 export interface ColumnType {
+  _id?: string;
   id: string;
   boardId: string;
+  createdAt?: Date;
+  order?: string;
   title: string;
   cardOrder: string[];
   cards: CardType[];

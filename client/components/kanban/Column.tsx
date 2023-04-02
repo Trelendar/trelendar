@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Card from './Card';
-import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
-import { GrClose } from 'react-icons/gr';
-import { CardRequest, CardType, ColumnRequest, ColumnType } from '../../share/type/kanban';
+import React, { useEffect, useRef, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { AiOutlineClose, AiOutlinePlus } from 'react-icons/ai';
+import { GrClose } from 'react-icons/gr';
 import { Container, Draggable, DropResult } from 'react-smooth-dnd';
+import Swal from 'sweetalert2';
+import axios from '../../lib/axios';
+import { CardType, ColumnType } from '../../share/type/kanban';
+import Card from './Card';
 import { confirmDelete } from './utils';
-
 interface Props {
   column: ColumnType;
   onCardDrop: (columnId: string, dropResult: DropResult) => void;
@@ -32,7 +33,18 @@ const Board: React.FC<Props> = (props) => {
     if (isInputAdded) {
       inputTitleRef.current.focus();
     }
-  }, [isUpdateTitle]);
+    async function handleClickOutside(event) {
+      if (inputTitleRef.current && !inputTitleRef.current.contains(event.target)) {
+        await axios.patch(`/column/${column._id}`, { title: inputTitleRef.current.value });
+      }
+    }
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUpdateTitle, inputTitleRef]);
 
   column.cards.sort((a: CardType, b: CardType) => {
     return column.cardOrder.indexOf(a.id) - column.cardOrder.indexOf(b.id);
@@ -110,11 +122,26 @@ const Board: React.FC<Props> = (props) => {
                   alert('Just only delete when have no card in column');
                   return;
                 }
-                confirmDelete(onUpdateColumn);
+                // confirmDelete(onUpdateColumn);
+
+                Swal.fire({
+                  title: 'Are you sure?',
+                  text: "You won't be able to revert this!",
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!',
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+                  }
+                });
               }}
               className="mt-[2px] cursor-pointer hover:scale-110 transition-all"
               size={20}
             />
+            {/* <DeleteConfirmDialog onDelete={onUpdateColumn} /> */}
           </div>
         ) : (
           <input

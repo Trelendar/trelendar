@@ -99,4 +99,16 @@ export class BoardService {
       { new: true },
     );
   }
+  async findByColumn(columnId: string, user: User) {
+    try {
+      const board = await this.boardModel.findOne({
+        columns: { $in: [columnId] },
+        members: { $in: [user._id] },
+      });
+      if (!board) throw new CustomException('Column not found');
+      return board;
+    } catch (error) {
+      throw new CustomException('Column not found or not access');
+    }
+  }
 }

@@ -8,17 +8,27 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { GrClose } from 'react-icons/gr';
 import { motion } from 'framer-motion';
 import { WithContext as ReactTags } from 'react-tag-input';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../lib/axios';
+import { useRouter } from 'next/router';
 // import { useRouter } from 'next/router';
 
 const Kanban: React.FC = () => {
-  // const router = useRouter();
-  // const { slug } = router	.query;
+  const router = useRouter();
+  const { slug: boardId } = router.query;
 
   const [board, setBoard] = useState<BoardType>({
     id: '1',
     columnOrder: [],
     columns: [],
   });
+  const { data: column } = useQuery({
+    queryKey: ['column'],
+    queryFn: async ():Promise<ColumnType[]> => {
+      return await axios.get(`/column/${router.query.slug}`);
+    },
+  });
+  console.log('🚀 ~ file: index.tsx:30 ~ column:', column);
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [isAddNewColumn, setIsAddNewColumn] = useState<boolean>(false);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
@@ -63,6 +73,9 @@ const Kanban: React.FC = () => {
       inputAddRef.current.focus();
     }
   }, [isAddNewColumn]);
+  useEffect(() => {
+    column && setColumns(column);
+  }, [column]);
 
   const onColumnDrop = (dropResult: DropResult) => {
     // const dropColumn: DropRequest = {
@@ -137,7 +150,7 @@ const Kanban: React.FC = () => {
     // onDropCardMulColService(cardRequestMul).catch(() => onExpired());
   };
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       inputAddRef.current?.focus();
       return;
@@ -149,6 +162,12 @@ const Kanban: React.FC = () => {
       cards: [],
       cardOrder: [],
     };
+    const res = await axios.post('/column', {
+      title: newColumnTitle,
+      boardId,
+    });
+    console.log('🚀 ~ file: index.tsx:166 ~ addNewColumn ~ res:', res);
+
     let columnsAfterAdd = [...columns];
     columnsAfterAdd.push(newAddedColumn);
 

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import BoardTag from './BoardTag';
-import { BoardType } from '../../share/type/kanban';
-import Header from '../../components/header';
-import { boardsMock } from './mockBoards';
-import { getSession, useSession } from 'next-auth/react';
-import { BsPlusLg } from 'react-icons/bs';
-import { useRouter } from 'next/router';
-import axios from '../../lib/axios';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { BsPlusLg } from 'react-icons/bs';
+import Header from '../../components/header';
+import axios from '../../lib/axios';
+import { BoardType } from '../../share/type/kanban';
+import BoardTag from './BoardTag';
+import { boardsMock } from './mockBoards';
 
 export interface Board {
   background: string;
@@ -21,7 +21,6 @@ export interface Board {
   _id: string;
 }
 const Main: React.FC = () => {
-  const [boards, setBoards] = useState<BoardType[]>(boardsMock);
   const [showModal, setShowModal] = useState<Boolean>(false);
   const [title, setTitle] = useState<string>('');
   const { data: listBoard, isLoading } = useQuery<Board[]>({

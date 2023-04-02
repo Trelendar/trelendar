@@ -1,35 +1,32 @@
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { Board } from '.';
-import Header from '../../components/header';
-import Kanban from '../../components/kanban';
-import axios from '../../lib/axios';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import * as React from 'react';
-import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MailIcon from '@mui/icons-material/Mail';
+import MenuIcon from '@mui/icons-material/Menu';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import MuiDrawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { toast } from 'react-toastify';
+import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import * as React from 'react';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
+import Header from '../../../components/header';
+import Kanban from '../../../components/kanban';
+import axios from '../../../lib/axios';
+import { Board } from '../index';
 
 const drawerWidth = 240;
 
@@ -127,8 +124,8 @@ const Board: React.FC = () => {
 
   useEffect(() => {
     console.log(board);
-    
-    board && toast.error("??");
+
+    board && toast.error('??');
   }, [error]);
   if (isLoading) return <span>Loading</span>;
 

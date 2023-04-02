@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import {
   Controller,
   Get,
@@ -6,7 +7,10 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/current.user';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ColumnService } from './column.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
@@ -16,8 +20,12 @@ export class ColumnController {
   constructor(private readonly columnService: ColumnService) {}
 
   @Post()
-  create(@Body() createColumnDto: CreateColumnDto) {
-    return this.columnService.create(createColumnDto);
+  @UseGuards(JwtAuthGuard)
+  async create(
+    @Body() createColumnDto: CreateColumnDto,
+    @CurrentUser() user: User,
+  ) {
+    return await this.columnService.create(createColumnDto, user);
   }
 
   @Get()
@@ -25,14 +33,20 @@ export class ColumnController {
     return this.columnService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.columnService.findOne(+id);
+  @Get(':boardId')
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('boardId') boardId: string, @CurrentUser() user: User) {
+    return await this.columnService.getColumnForBoardId(boardId, user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateColumnDto: UpdateColumnDto) {
-    return this.columnService.update(+id, updateColumnDto);
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() updateColumnDto: UpdateColumnDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.columnService.update(id, updateColumnDto, user);
   }
 
   @Delete(':id')
