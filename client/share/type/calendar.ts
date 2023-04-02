@@ -7,4 +7,5 @@ export interface EventType {
   end: Date | string;
   title: string;
   desc?: string;
+  members?: String[]
 }
