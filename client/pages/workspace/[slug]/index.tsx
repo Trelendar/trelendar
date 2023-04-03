@@ -27,7 +27,9 @@ import Header from '../../../components/header';
 import Kanban from '../../../components/kanban';
 import axios from '../../../lib/axios';
 import { Board } from '../index';
+import {Lexorank} from "../../../lib/lexorank";
 
+const lexorank = new Lexorank();
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -111,6 +113,7 @@ const Board: React.FC = () => {
       return await axios.get(`board/${router.query.slug}`);
     },
   });
+  console.log("abcxyz",lexorank.insert("B","U"),board);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 

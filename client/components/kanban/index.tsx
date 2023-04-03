@@ -12,27 +12,37 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
 // import { useRouter } from 'next/router';
+import { Lexorank } from '../../lib/lexorank';
 
+const lexorank = new Lexorank();
+
+const generateOrder = (columns: ColumnType[], indexAdded: number, indexRemove: number) => {
+  let pre = '';
+  let next = '';
+  if (indexAdded > indexRemove) {
+    pre = columns[indexAdded].order;
+    next = indexAdded === columns.length - 1 ? '' : columns[indexAdded + 1].order;
+  } else {
+    next = columns[indexAdded].order;
+    pre = indexAdded === 0 ? '' : columns[indexAdded - 1].order;
+  }
+  console.log('🚀 ~ file', pre, next);
+
+  return lexorank.insert(pre, next);
+};
 const Kanban: React.FC = () => {
   const router = useRouter();
   const { slug: boardId } = router.query;
 
-  const [board, setBoard] = useState<BoardType>({
-    id: '1',
-    columnOrder: [],
-    columns: [],
-  });
   const { data: column } = useQuery({
     queryKey: ['column'],
-    queryFn: async ():Promise<ColumnType[]> => {
+    queryFn: async (): Promise<ColumnType[]> => {
       return await axios.get(`/column/${router.query.slug}`);
     },
   });
-  console.log('🚀 ~ file: index.tsx:30 ~ column:', column);
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [isAddNewColumn, setIsAddNewColumn] = useState<boolean>(false);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
-  const [loaded, setLoaded] = useState<boolean>(false);
 
   const inputAddRef = useRef<HTMLInputElement>(null);
 
@@ -78,6 +88,30 @@ const Kanban: React.FC = () => {
   }, [column]);
 
   const onColumnDrop = (dropResult: DropResult) => {
+    if (dropResult.addedIndex === dropResult.removedIndex) return;
+    console.log('🚀 ~ file: index.tsx:74 ~ onColumnDrop ~ dropResult:', dropResult);
+    const order = generateOrder(columns, dropResult.addedIndex, dropResult.removedIndex);
+    // TODO: MAI LAM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     // const dropColumn: DropRequest = {
     //   controller: CONTROLLER_DROP_COLUMN,
     //   addedIndex: dropResult.addedIndex ?? -1,
@@ -89,16 +123,7 @@ const Kanban: React.FC = () => {
     let newColumns = [...columns];
     newColumns = applyDrag(newColumns, dropResult);
 
-    let newBoard = { ...board };
-    newBoard.columnOrder = newColumns.map((column) => column.id);
-    newBoard.columns = newColumns;
-
-    setColumns(newColumns);
-    setBoard({
-      ...board,
-      columnOrder: newColumns.map((column) => column.id),
-      columns: newColumns,
-    });
+    // setColumns(newColumns);
   };
 
   const onCardDrop = (columnId: string, dropResult: DropResult) => {
@@ -155,21 +180,13 @@ const Kanban: React.FC = () => {
       inputAddRef.current?.focus();
       return;
     }
-    const newAddedColumn: ColumnType = {
-      id: Date.now().toString(),
-      boardId: board.id,
-      title: newColumnTitle,
-      cards: [],
-      cardOrder: [],
-    };
+
     const res = await axios.post('/column', {
       title: newColumnTitle,
       boardId,
     });
-    console.log('🚀 ~ file: index.tsx:166 ~ addNewColumn ~ res:', res);
 
     let columnsAfterAdd = [...columns];
-    columnsAfterAdd.push(newAddedColumn);
 
     // const ColumnRequest: ColumnRequest = {
     //   boardId: newAddedColumn.boardId,
@@ -180,16 +197,18 @@ const Kanban: React.FC = () => {
     // };
     // addNewColumnService(ColumnRequest).catch(() => onExpired());
 
-    setColumns(columnsAfterAdd);
-    setBoard({
-      ...board,
-      columnOrder: columnsAfterAdd.map((column) => column.id),
-      columns: columnsAfterAdd,
-    });
+    // setColumns(columnsAfterAdd);
+
     setNewColumnTitle('');
   };
 
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
+    console.log(
+      '🚀 ~ file: index.tsx:167 ~ updateColumn ~ coloumnUpdated:',
+      coloumnUpdated,
+      isDeleteColumn
+    );
+
     let newColumns = [...columns];
     const indexOfColumnUpdate = newColumns.findIndex(
       (columnId) => columnId.id === coloumnUpdated.id
@@ -208,12 +227,7 @@ const Kanban: React.FC = () => {
       newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
     }
 
-    setColumns(newColumns);
-    setBoard({
-      ...board,
-      columnOrder: newColumns.map((column) => column.id),
-      columns: newColumns,
-    });
+    // setColumns(newColumns);
   };
 
   return (

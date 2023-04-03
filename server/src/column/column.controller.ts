@@ -35,7 +35,10 @@ export class ColumnController {
 
   @Get(':boardId')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('boardId') boardId: string, @CurrentUser() user: User) {
+  async getAllColumnByBoard(
+    @Param('boardId') boardId: string,
+    @CurrentUser() user: User,
+  ) {
     return await this.columnService.getColumnForBoardId(boardId, user);
   }
 

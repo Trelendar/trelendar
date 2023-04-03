@@ -47,9 +47,7 @@ export class ColumnService {
   }
   // private;
   async getColumnForBoardId(boardId: string, user: User) {
-    const board = await (
-      await this.boardService.getOne(user, boardId)
-    ).populate('columns');
+    const board = await await this.boardService.getOne(user, boardId);
     // return board.columns;
     return board.columns;
   }

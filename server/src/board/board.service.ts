@@ -65,10 +65,17 @@ export class BoardService {
 
   async getOne(user: User, id: string) {
     try {
-      const board = await this.boardModel.findOne({
-        _id: convertToObjectId(id),
-        members: { $in: [user._id] },
-      });
+      const board = await this.boardModel
+        .findOne({
+          _id: convertToObjectId(id),
+          members: { $in: [user._id] },
+        })
+        .populate({
+          path: 'columns',
+          options: {
+            sort: { order: 1 },
+          },
+        });
       if (!board) throw new CustomException('Board not found');
       return board;
     } catch (error) {
