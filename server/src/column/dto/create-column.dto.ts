@@ -6,5 +6,8 @@ export class CreateColumnDto {
   title: string;
   @IsString()
   @IsNotEmpty()
+  order: string;
+  @IsString()
+  @IsNotEmpty()
   boardId: string;
 }

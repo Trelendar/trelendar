@@ -44,16 +44,17 @@ export class ColumnController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateColumnDto: UpdateColumnDto,
     @CurrentUser() user: User,
   ) {
-    return this.columnService.update(id, updateColumnDto, user);
+    return await this.columnService.update(id, updateColumnDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.columnService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.columnService.remove(id, user);
   }
 }

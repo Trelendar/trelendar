@@ -28,14 +28,22 @@ const generateOrder = (columns: ColumnType[], indexAdded: number, indexRemove: n
   }
   console.log('🚀 ~ file', pre, next);
 
-  return lexorank.insert(pre, next);
+  return lexorank.insert(pre, next)[0];
+};
+const generateNextOrder = (columns: ColumnType[]) => {
+  const pre = columns.length === 0 ? '0' : columns[columns.length - 1].order;
+  return lexorank.insert(pre, '')[0];
 };
 const Kanban: React.FC = () => {
   const router = useRouter();
   const { slug: boardId } = router.query;
 
-  const { data: column } = useQuery({
-    queryKey: ['column'],
+  const {
+    data: column,
+    refetch,
+    status,
+  } = useQuery({
+    queryKey: ['column???'],
     queryFn: async (): Promise<ColumnType[]> => {
       return await axios.get(`/column/${router.query.slug}`);
     },
@@ -83,35 +91,24 @@ const Kanban: React.FC = () => {
       inputAddRef.current.focus();
     }
   }, [isAddNewColumn]);
-  useEffect(() => {
-    column && setColumns(column);
-  }, [column]);
 
-  const onColumnDrop = (dropResult: DropResult) => {
+  const onColumnDrop = async (dropResult: DropResult) => {
+    const { addedIndex, removedIndex, payload } = dropResult;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
-    console.log('🚀 ~ file: index.tsx:74 ~ onColumnDrop ~ dropResult:', dropResult);
     const order = generateOrder(columns, dropResult.addedIndex, dropResult.removedIndex);
     // TODO: MAI LAM
 
+    await axios.patch(`/column/${payload._id}`, {
+      order,
+    });
+    await refetch();
+    console.log(column);
+    console.log(
+      '🚀 ~ file: index.tsx:113 ~ onColumnDrop ~ (await refetch()).data:',
+      (await refetch()).data
+    );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+    // setColumns([...(await refetch()).data]);
     // const dropColumn: DropRequest = {
     //   controller: CONTROLLER_DROP_COLUMN,
     //   addedIndex: dropResult.addedIndex ?? -1,
@@ -120,8 +117,8 @@ const Kanban: React.FC = () => {
     // };
     // onDropColumnService(dropColumn).catch(() => onExpired());
 
-    let newColumns = [...columns];
-    newColumns = applyDrag(newColumns, dropResult);
+    // let newColumns = [...columns];
+    // newColumns = applyDrag(newColumns, dropResult);
 
     // setColumns(newColumns);
   };
@@ -130,7 +127,7 @@ const Kanban: React.FC = () => {
     const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
     if (noDropCard) return;
 
-    const indexOfOldCol = columns.findIndex((col) => col.id === dropResult.payload.columnId);
+    const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
     const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
       (card) => card.id === dropResult.payload.id
     );
@@ -145,7 +142,7 @@ const Kanban: React.FC = () => {
 
     currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
     currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
-    setColumns(newColumns);
+    // setColumns(newColumns);
 
     const dropCardOneColumn = dropResult.removedIndex !== null && dropResult.addedIndex !== null;
     if (dropCardOneColumn) {
@@ -183,6 +180,7 @@ const Kanban: React.FC = () => {
 
     const res = await axios.post('/column', {
       title: newColumnTitle,
+      order: generateNextOrder(columns),
       boardId,
     });
 
@@ -229,7 +227,15 @@ const Kanban: React.FC = () => {
 
     // setColumns(newColumns);
   };
-
+  const handleDeleteColumn = async (id) => {
+    await axios.delete(`/column/${id}`);
+    refetch();
+  };
+  useEffect(() => {
+    if (status == 'success') {
+      setColumns([...column]);
+    }
+  }, [column, status]);
   return (
     <div className="rounded-md bg-[#BCB4D8]">
       {/* {!loaded && (
@@ -259,12 +265,13 @@ const Kanban: React.FC = () => {
           >
             {columns.map((column: ColumnType) => (
               // @ts-ignore
-              <Draggable key={column.id}>
+              <Draggable key={column._id}>
                 <Column
                   column={column}
-                  key={column.id}
+                  key={column._id}
                   onCardDrop={onCardDrop}
                   updateColumn={updateColumn}
+                  onDelete={handleDeleteColumn}
                 />
               </Draggable>
             ))}

@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { BoardService } from 'src/board/board.service';
 import { User } from 'src/user/entities/user.entity';
+import { CustomException } from 'src/error';
 
 @Injectable()
 export class ColumnService {
@@ -18,7 +19,6 @@ export class ColumnService {
     await this.boardService.getOne(user, boardId);
     const column = await new this.columnModel({
       ...createColumnDto,
-      order: 'random string',
     }).save();
 
     await this.boardService.addColumnOnBoard(
@@ -37,12 +37,17 @@ export class ColumnService {
   }
 
   async update(id: string, updateColumnDto: UpdateColumnDto, user: User) {
-    this.boardService.findByColumn(id, user);
+    await this.boardService.findByColumn(id, user);
     await this.columnModel.findByIdAndUpdate(id, { ...updateColumnDto });
     return `This action updates a #${id} column`;
   }
 
-  remove(id: number) {
+  async remove(id: string, user: User) {
+    await this.boardService.findByColumn(id, user);
+    const column = await this.columnModel.findById(id);
+    if (column?.cards.length)
+      throw new CustomException('Card in column in availale');
+    await this.columnModel.deleteOne({ _id: id });
     return `This action removes a #${id} column`;
   }
   // private;

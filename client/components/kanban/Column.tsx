@@ -12,10 +12,11 @@ interface Props {
   column: ColumnType;
   onCardDrop: (columnId: string, dropResult: DropResult) => void;
   updateColumn: (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => void;
+  onDelete: (id: string) => void;
 }
 
 const Board: React.FC<Props> = (props) => {
-  const { onCardDrop, column, updateColumn } = props;
+  const { onCardDrop, column, updateColumn, onDelete: handleDelete } = props;
 
   const [isUpdateTitle, setIsUpdateTitle] = useState<boolean>(false);
   const [isAddNewCard, setIsAddNewCard] = useState<boolean>(false);
@@ -132,8 +133,9 @@ const Board: React.FC<Props> = (props) => {
                   confirmButtonColor: '#3085d6',
                   cancelButtonColor: '#d33',
                   confirmButtonText: 'Yes, delete it!',
-                }).then((result) => {
+                }).then(async (result) => {
                   if (result.isConfirmed) {
+                    await handleDelete(column._id);
                     Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
                   }
                 });
