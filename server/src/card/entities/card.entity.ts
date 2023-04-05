@@ -9,6 +9,8 @@ export class Card {
   @Prop()
   title: string;
   @Prop()
+  order: string;
+  @Prop()
   description: string;
   @Prop()
   priority: string;

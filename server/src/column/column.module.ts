@@ -12,5 +12,6 @@ import { Column, ColumnSchema } from './entities/column.entity';
   ],
   controllers: [ColumnController],
   providers: [ColumnService],
+  exports: [ColumnService],
 })
 export class ColumnModule {}

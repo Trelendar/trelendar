@@ -75,6 +75,12 @@ export class BoardService {
           options: {
             sort: { order: 1 },
           },
+          populate: {
+            path: 'cards',
+            options: {
+              sort: { order: 1 },
+            },
+          },
         });
       if (!board) throw new CustomException('Board not found');
       return board;

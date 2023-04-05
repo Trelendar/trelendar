@@ -1,15 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/current.user';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('card')
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
   @Post()
-  create(@Body() createCardDto: CreateCardDto) {
-    return this.cardService.create(createCardDto);
+  @UseGuards(JwtAuthGuard)
+  async create(
+    @Body() createCardDto: CreateCardDto,
+    @CurrentUser() user: User,
+  ) {
+    return await this.cardService.create(createCardDto, user);
   }
 
   @Get()
@@ -23,8 +39,13 @@ export class CardController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardService.update(+id, updateCardDto);
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id') id: string,
+    @Body() updateCardDto: UpdateCardDto,
+    @CurrentUser() user: User,
+  ) {
+    return await this.cardService.update(id, updateCardDto, user);
   }
 
   @Delete(':id')

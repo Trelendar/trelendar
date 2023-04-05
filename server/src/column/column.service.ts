@@ -56,4 +56,9 @@ export class ColumnService {
     // return board.columns;
     return board.columns;
   }
+  async addCardToColumn(columnId: string, cardId: string) {
+    await this.columnModel.findByIdAndUpdate(columnId, {
+      $addToSet: { cards: cardId },
+    });
+  }
 }
