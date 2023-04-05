@@ -8,9 +8,30 @@ import axios from '../../lib/axios';
 import { CardType, ColumnType } from '../../share/type/kanban';
 import Card from './Card';
 import { confirmDelete } from './utils';
+import { Lexorank } from '../../lib/lexorank';
+
+const lexorank = new Lexorank();
+
+const generateOrder = (cards: { order: string }[], indexAdded: number, indexRemove: number) => {
+  let pre = '';
+  let next = '';
+  if (indexAdded > indexRemove) {
+    pre = cards[indexAdded].order;
+    next = indexAdded === cards.length - 1 ? '' : cards[indexAdded + 1].order;
+  } else {
+    next = cards[indexAdded].order;
+    pre = indexAdded === 0 ? '' : cards[indexAdded - 1].order;
+  }
+
+  return lexorank.insert(pre, next)[0];
+};
+const generateNextOrder = (cards: CardType[]) => {
+  const pre = cards.length === 0 ? '0' : cards[cards.length - 1].order;
+  return lexorank.insert(pre, '')[0];
+};
 interface Props {
   column: ColumnType;
-  onCardDrop: (columnId: string, dropResult: DropResult) => void;
+  onCardDrop: (column: ColumnType, dropResult: DropResult) => void;
   updateColumn: (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => void;
   onDelete: (id: string) => void;
 }
@@ -47,9 +68,9 @@ const Board: React.FC<Props> = (props) => {
     };
   }, [isUpdateTitle, inputTitleRef]);
 
-  column.cards.sort((a: CardType, b: CardType) => {
-    return column.cardOrder.indexOf(a.id) - column.cardOrder.indexOf(b.id);
-  });
+  // column.cards.sort((a: CardType, b: CardType) => {
+  //   return column.cardOrder.indexOf(a.id) - column.cardOrder.indexOf(b.id);
+  // });
 
   const onUpdateColumn = (isDeleteColumn: boolean) => {
     setIsUpdateTitle(false);
@@ -77,22 +98,27 @@ const Board: React.FC<Props> = (props) => {
     updateColumn(newColumn, false);
   };
 
-  const addNewCard = () => {
-    setIsAddNewCard(false);
+  const addNewCard = async () => {
     if (newCardTitle === '') return;
+    await axios.post('/card', {
+      title: newCardTitle,
+      order: generateNextOrder(column.cards),
+      columnId: column._id,
+    });
+    setIsAddNewCard(false);
 
-    const newCardToAdd: CardType = {
-      id: Date.now().toString(),
-      boardId: column.boardId,
-      title: newCardTitle.trim(),
-      columnId: column.id,
-      description: '',
-      priority: '',
-    };
+    // const newCardToAdd: CardType = {
+    //   id: Date.now().toString(),
+    //   boardId: column.boardId,
+    //   title: newCardTitle.trim(),
+    //   columnId: column.id,
+    //   description: '',
+    //   priority: '',
+    // };
 
-    let newColumn = { ...column };
-    newColumn.cards.push(newCardToAdd);
-    newColumn.cardOrder.push(newCardToAdd.id);
+    // let newColumn = { ...column };
+    // newColumn.cards.push(newCardToAdd);
+    // newColumn.cardOrder.push(newCardToAdd.id);
 
     // const cardRequest: CardRequest = {
     //   controller: CONTROLLER_ADD_NEW_CARD,
@@ -106,15 +132,15 @@ const Board: React.FC<Props> = (props) => {
     // };
     // addNewCardService(cardRequest).catch(() => onExpired);
 
-    updateColumn(newColumn, false);
-    setNewCardTitle('');
+    // updateColumn(newColumn, false);
+    // setNewCardTitle('');
   };
   return (
     <div className="w-[272px] bg-[#ebecf0] rounded p-2 mr-4 shadow-lg">
       <header className="column-drag-handle font-semibold p-2 cursor-pointer underline">
         {!isUpdateTitle ? (
           <div className="grid grid-cols-10">
-            <div className="col-span-9" onClick={() => setIsUpdateTitle(true)}>
+            <div className="col-span-9 !no-underline" onClick={() => setIsUpdateTitle(true)}>
               {updateTitle}
             </div>
             <GrClose
@@ -160,7 +186,7 @@ const Board: React.FC<Props> = (props) => {
         <Container
           groupName="col"
           orientation="vertical"
-          onDrop={(dropResult) => onCardDrop(column.id, dropResult)}
+          onDrop={(dropResult) => onCardDrop(column, dropResult)}
           dropPlaceholder={{
             // @ts-ignore
             animationDuration: 150,

@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Column from './Column';
-import { BoardType, ColumnRequest, ColumnType, DropRequest } from '../../share/type/kanban';
+import {
+  BoardType,
+  CardType,
+  ColumnRequest,
+  ColumnType,
+  DropRequest,
+} from '../../share/type/kanban';
 import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import { applyDrag } from './utils';
 import { AiOutlinePlus } from 'react-icons/ai';
@@ -16,7 +22,11 @@ import { Lexorank } from '../../lib/lexorank';
 
 const lexorank = new Lexorank();
 
-const generateOrder = (columns: ColumnType[], indexAdded: number, indexRemove: number) => {
+const generateOrder = (
+  columns: ColumnType[] | CardType[],
+  indexAdded: number,
+  indexRemove: number
+) => {
   let pre = '';
   let next = '';
   if (indexAdded > indexRemove) {
@@ -26,11 +36,10 @@ const generateOrder = (columns: ColumnType[], indexAdded: number, indexRemove: n
     next = columns[indexAdded].order;
     pre = indexAdded === 0 ? '' : columns[indexAdded - 1].order;
   }
-  console.log('🚀 ~ file', pre, next);
 
   return lexorank.insert(pre, next)[0];
 };
-const generateNextOrder = (columns: ColumnType[]) => {
+const generateNextOrder = (columns: ColumnType[] | CardType[]) => {
   const pre = columns.length === 0 ? '0' : columns[columns.length - 1].order;
   return lexorank.insert(pre, '')[0];
 };
@@ -95,8 +104,7 @@ const Kanban: React.FC = () => {
   const onColumnDrop = async (dropResult: DropResult) => {
     const { addedIndex, removedIndex, payload } = dropResult;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
-    const order = generateOrder(columns, dropResult.addedIndex, dropResult.removedIndex);
-    // TODO: MAI LAM
+    const order = generateOrder(columns, addedIndex, removedIndex);
 
     await axios.patch(`/column/${payload._id}`, {
       order,
@@ -123,39 +131,47 @@ const Kanban: React.FC = () => {
     // setColumns(newColumns);
   };
 
-  const onCardDrop = (columnId: string, dropResult: DropResult) => {
-    const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
-    if (noDropCard) return;
+  const onCardDrop = async (column: ColumnType, dropResult: DropResult) => {
+    const { addedIndex, removedIndex, payload } = dropResult;
+    if (dropResult.addedIndex === dropResult.removedIndex) return;
+    const order = generateOrder(column.cards, addedIndex, removedIndex);
+    await axios.patch(`/card/${payload._id}`, {
+      order,
+      columnId: column._id,
+    });
+    await refetch();
+    // const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
+    // if (noDropCard) return;
 
-    const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
-    const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
-      (card) => card.id === dropResult.payload.id
-    );
+    // const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
+    // const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
+    //   (card) => card.id === dropResult.payload.id
+    // );
 
-    let newColumns = [...columns];
+    // let newColumns = [...columns];
 
-    let currentColumn = newColumns.find((c) => c.id === columnId) ?? {
-      cards: [],
-      cardOrder: '',
-    };
-    const lastIndexInNewCol = currentColumn.cards.length;
+    // let currentColumn = newColumns.find((c) => c.id === columnId) ?? {
+    //   cards: [],
+    //   cardOrder: '',
+    // };
+    // const lastIndexInNewCol = currentColumn.cards.length;
 
-    currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
-    currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
-    // setColumns(newColumns);
+    // currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
+    // currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
+    // // setColumns(newColumns);
 
-    const dropCardOneColumn = dropResult.removedIndex !== null && dropResult.addedIndex !== null;
-    if (dropCardOneColumn) {
-      //   const cardRequest: DropRequest = {
-      //     controller: CONTROLLER_DROP_CARD_ONE_COLUMN,
-      //     removedIndex: dropResult.removedIndex ?? -1,
-      //     addedIndex: dropResult.addedIndex ?? -1,
-      //     cardId: dropResult.payload.id,
-      //     columnId: dropResult.payload.columnId,
-      //   };
-      //   onDropCardOneColumnService(cardRequest).catch(() => onExpired());
-      return;
-    }
+    // const dropCardOneColumn = dropResult.removedIndex !== null && dropResult.addedIndex !== null;
+    // if (dropCardOneColumn) {
+    //   //   const cardRequest: DropRequest = {
+    //   //     controller: CONTROLLER_DROP_CARD_ONE_COLUMN,
+    //   //     removedIndex: dropResult.removedIndex ?? -1,
+    //   //     addedIndex: dropResult.addedIndex ?? -1,
+    //   //     cardId: dropResult.payload.id,
+    //   //     columnId: dropResult.payload.columnId,
+    //   //   };
+    //   //   onDropCardOneColumnService(cardRequest).catch(() => onExpired());
+    //   return;
+    // }
 
     if (dropResult.removedIndex !== null) return;
 
@@ -183,6 +199,7 @@ const Kanban: React.FC = () => {
       order: generateNextOrder(columns),
       boardId,
     });
+    await refetch();
 
     let columnsAfterAdd = [...columns];
 

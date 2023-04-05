@@ -5,6 +5,7 @@ export interface CardType {
   title: string;
   description: string;
   priority?: string;
+  order: string;
 }
 
 export interface ColumnType {
