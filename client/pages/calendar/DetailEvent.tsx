@@ -25,7 +25,13 @@ const DetailEvent: React.FC = () => {
   const endEvent = new Date(detailEvent.end);
 
   const [isEdit, setIsEdit] = useState<Boolean>(false);
+  const changeFormat = (stringInput: string) => {
 
+  }
+
+  const handleSave = () => {
+    setIsEdit(!isEdit);
+  }
   return (
     <div className="p-6">
       <button
@@ -33,10 +39,21 @@ const DetailEvent: React.FC = () => {
           'bg-white text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all  ' +
           (isEdit ? 'bg-green-400 hover:bg-green-500' : 'bg-[#4B358D] hover:bg-[#6752A3]')
         }
-        onClick={() => setIsEdit(!isEdit)}
+        onClick={() => handleSave()}
       >
         {isEdit ? 'Save' : 'Edit'}
       </button>
+
+      {isEdit && (
+        <button
+          className={
+            'text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all bg-red-700 hover:bg-red-800 ml-[300px]'
+          }
+          onClick={() => setIsEdit(!isEdit)}
+        >
+          Cancel
+        </button>
+      )}
       <TableContainer component={Paper} sx={{ border: 1, borderColor: 'secondary.main' }}>
         <Table aria-label="simple table">
           <TableHead>
@@ -76,7 +93,7 @@ const DetailEvent: React.FC = () => {
             </TableRow>
 
             <TableRow key={detailEvent.id}>
-              <TableCell align="left" component="th" className="max-w-[20vw] w-[20vw] break-words">
+              <TableCell align="left" component="th" className="max-w-[30vw] w-[30vw] break-words">
                 Members:
               </TableCell>
               <TableCell align="left">
@@ -88,9 +105,7 @@ const DetailEvent: React.FC = () => {
               <TableCell align="left" component="th" className="max-w-[20vw] w-[20vw] break-words">
                 Description:
               </TableCell>
-              <TableCell align="left">
-                {detailEvent.desc ?? 'None'}
-              </TableCell>
+              <TableCell align="left">{detailEvent.desc ?? 'None'}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
