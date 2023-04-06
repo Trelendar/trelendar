@@ -36,9 +36,20 @@ export class CardService {
   }
 
   async update(id: string, updateCardDto: UpdateCardDto, user: User) {
-    if (!updateCardDto.columnId) return;
-    await this.boardService.findByColumn(updateCardDto.columnId, user);
-    await this.cardModel.findByIdAndUpdate(id, { ...updateCardDto });
+    const { oldColumnId, columnId } = updateCardDto;
+    if (!oldColumnId || !columnId) return;
+    await this.boardService.findByColumn(oldColumnId, user);
+    const card = await this.cardModel.findByIdAndUpdate(id, {
+      ...updateCardDto,
+    });
+    if (!card) return;
+    if (oldColumnId !== columnId) {
+      await this.columnService.addCardToColumn(columnId, String(card._id));
+      await this.columnService.removeCardToColumn(
+        oldColumnId,
+        String(card._id),
+      );
+    }
     return `This action updates a #${id} card`;
   }
 

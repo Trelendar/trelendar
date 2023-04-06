@@ -52,13 +52,44 @@ export class ColumnService {
   }
   // private;
   async getColumnForBoardId(boardId: string, user: User) {
-    const board = await await this.boardService.getOne(user, boardId);
+    const board = await this.boardService.getOne(user, boardId);
     // return board.columns;
-    return board.columns;
+    // return board.columns;
+    return board.columns.map((column) => {
+      return {
+        _id: column._id,
+        title: column.title,
+        order: column.order,
+        createdAt: column.createdAt,
+        updatedAt: column.updatedAt,
+        cards: column.cards.map((card) => {
+          return {
+            _id: card._id,
+            title: card.title,
+            order: card.order,
+            description: card.description,
+            priority: card.priority,
+            members: card.members,
+            start: card.start,
+            end: card.end,
+            attachment: card.attachment,
+            comments: card.comments,
+            updatedAt: card.updatedAt,
+            createdAt: card.createdAt,
+            columnId: column._id,
+          };
+        }),
+      };
+    });
   }
   async addCardToColumn(columnId: string, cardId: string) {
     await this.columnModel.findByIdAndUpdate(columnId, {
       $addToSet: { cards: cardId },
+    });
+  }
+  async removeCardToColumn(columnId: string, cardId: string) {
+    await this.columnModel.findByIdAndUpdate(columnId, {
+      $pull: { cards: cardId },
     });
   }
 }

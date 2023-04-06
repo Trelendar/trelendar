@@ -29,7 +29,11 @@ const generateOrder = (
 ) => {
   let pre = '';
   let next = '';
-  if (indexAdded > indexRemove) {
+  if (indexRemove === null) {
+    // move between column
+    pre = indexAdded === 0 ? '' : columns[indexAdded - 1].order;
+    next = indexAdded === columns.length ? '' : columns[indexAdded].order;
+  } else if (indexAdded > indexRemove) {
     pre = columns[indexAdded].order;
     next = indexAdded === columns.length - 1 ? '' : columns[indexAdded + 1].order;
   } else {
@@ -51,13 +55,13 @@ const Kanban: React.FC = () => {
     data: column,
     refetch,
     status,
+    isLoading,
   } = useQuery({
     queryKey: ['column???'],
     queryFn: async (): Promise<ColumnType[]> => {
       return await axios.get(`/column/${router.query.slug}`);
     },
   });
-  const [columns, setColumns] = useState<ColumnType[]>([]);
   const [isAddNewColumn, setIsAddNewColumn] = useState<boolean>(false);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
 
@@ -104,17 +108,12 @@ const Kanban: React.FC = () => {
   const onColumnDrop = async (dropResult: DropResult) => {
     const { addedIndex, removedIndex, payload } = dropResult;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
-    const order = generateOrder(columns, addedIndex, removedIndex);
+    // const order = generateOrder(column, addedIndex, removedIndex);
 
-    await axios.patch(`/column/${payload._id}`, {
-      order,
-    });
+    // await axios.patch(`/column/${payload._id}`, {
+    //   order,
+    // });
     await refetch();
-    console.log(column);
-    console.log(
-      '🚀 ~ file: index.tsx:113 ~ onColumnDrop ~ (await refetch()).data:',
-      (await refetch()).data
-    );
 
     // setColumns([...(await refetch()).data]);
     // const dropColumn: DropRequest = {
@@ -131,13 +130,16 @@ const Kanban: React.FC = () => {
     // setColumns(newColumns);
   };
 
-  const onCardDrop = async (column: ColumnType, dropResult: DropResult) => {
+  const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
+    console.log('🚀 ~ file: index.tsx:139 ~ handleCardDrop ~ column:', column, dropResult);
     const { addedIndex, removedIndex, payload } = dropResult;
+    if (addedIndex === null) return;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
     const order = generateOrder(column.cards, addedIndex, removedIndex);
     await axios.patch(`/card/${payload._id}`, {
       order,
       columnId: column._id,
+      oldColumnId: payload.columnId,
     });
     await refetch();
     // const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
@@ -196,12 +198,12 @@ const Kanban: React.FC = () => {
 
     const res = await axios.post('/column', {
       title: newColumnTitle,
-      order: generateNextOrder(columns),
+      order: generateNextOrder(column),
       boardId,
     });
     await refetch();
 
-    let columnsAfterAdd = [...columns];
+    // let columnsAfterAdd = [...columns];
 
     // const ColumnRequest: ColumnRequest = {
     //   boardId: newAddedColumn.boardId,
@@ -218,41 +220,38 @@ const Kanban: React.FC = () => {
   };
 
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
-    console.log(
-      '🚀 ~ file: index.tsx:167 ~ updateColumn ~ coloumnUpdated:',
-      coloumnUpdated,
-      isDeleteColumn
-    );
-
-    let newColumns = [...columns];
-    const indexOfColumnUpdate = newColumns.findIndex(
-      (columnId) => columnId.id === coloumnUpdated.id
-    );
-
-    if (isDeleteColumn) {
-      newColumns.splice(indexOfColumnUpdate, 1);
-      // const ColumnRequest: ColumnRequest = {
-      //     controller: CONTROLLER_DELETE_COLUMN,
-      //     boardId: coloumnUpdated.boardId,
-      //     columnId: coloumnUpdated.id,
-      //     order: indexOfColumnUpdate,
-      //   };
-      //   deleteColumnService(ColumnRequest).catch(() => onExpired());
-    } else {
-      newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
-    }
-
+    // let newColumns = [...columns];
+    // const indexOfColumnUpdate = newColumns.findIndex(
+    //   (columnId) => columnId.id === coloumnUpdated.id
+    // );
+    // if (isDeleteColumn) {
+    //   newColumns.splice(indexOfColumnUpdate, 1);
+    //   // const ColumnRequest: ColumnRequest = {
+    //   //     controller: CONTROLLER_DELETE_COLUMN,
+    //   //     boardId: coloumnUpdated.boardId,
+    //   //     columnId: coloumnUpdated.id,
+    //   //     order: indexOfColumnUpdate,
+    //   //   };
+    //   //   deleteColumnService(ColumnRequest).catch(() => onExpired());
+    // } else {
+    //   newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
+    // }
     // setColumns(newColumns);
   };
   const handleDeleteColumn = async (id) => {
     await axios.delete(`/column/${id}`);
     refetch();
   };
-  useEffect(() => {
-    if (status == 'success') {
-      setColumns([...column]);
-    }
-  }, [column, status]);
+  const handleAddNewCard = async (title: string, column: ColumnType) => {
+    if (title === '') return;
+    await axios.post('/card', {
+      title: title,
+      order: generateNextOrder(column.cards),
+      columnId: column._id,
+    });
+    await refetch();
+  };
+  if (isLoading) return <h1>loading</h1>;
   return (
     <div className="rounded-md bg-[#BCB4D8]">
       {/* {!loaded && (
@@ -278,17 +277,18 @@ const Kanban: React.FC = () => {
               showOnTop: true,
               className: 'column bg-[#C9CCD9] rounded p-2 mr-6 ml-10',
             }}
-            getChildPayload={(index) => columns[index]}
+            getChildPayload={(index) => column[index]}
           >
-            {columns.map((column: ColumnType) => (
+            {column?.map((column: ColumnType) => (
               // @ts-ignore
               <Draggable key={column._id}>
                 <Column
                   column={column}
                   key={column._id}
-                  onCardDrop={onCardDrop}
+                  onCardDrop={handleCardDrop}
                   updateColumn={updateColumn}
                   onDelete={handleDeleteColumn}
+                  onAddNewCard={handleAddNewCard}
                 />
               </Draggable>
             ))}

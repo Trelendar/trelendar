@@ -8,36 +8,17 @@ import axios from '../../lib/axios';
 import { CardType, ColumnType } from '../../share/type/kanban';
 import Card from './Card';
 import { confirmDelete } from './utils';
-import { Lexorank } from '../../lib/lexorank';
 
-const lexorank = new Lexorank();
-
-const generateOrder = (cards: { order: string }[], indexAdded: number, indexRemove: number) => {
-  let pre = '';
-  let next = '';
-  if (indexAdded > indexRemove) {
-    pre = cards[indexAdded].order;
-    next = indexAdded === cards.length - 1 ? '' : cards[indexAdded + 1].order;
-  } else {
-    next = cards[indexAdded].order;
-    pre = indexAdded === 0 ? '' : cards[indexAdded - 1].order;
-  }
-
-  return lexorank.insert(pre, next)[0];
-};
-const generateNextOrder = (cards: CardType[]) => {
-  const pre = cards.length === 0 ? '0' : cards[cards.length - 1].order;
-  return lexorank.insert(pre, '')[0];
-};
 interface Props {
   column: ColumnType;
   onCardDrop: (column: ColumnType, dropResult: DropResult) => void;
   updateColumn: (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => void;
   onDelete: (id: string) => void;
+  onAddNewCard: (title: string, column: ColumnType) => Promise<void>;
 }
 
 const Board: React.FC<Props> = (props) => {
-  const { onCardDrop, column, updateColumn, onDelete: handleDelete } = props;
+  const { onCardDrop, column, updateColumn, onDelete: handleDelete, onAddNewCard } = props;
 
   const [isUpdateTitle, setIsUpdateTitle] = useState<boolean>(false);
   const [isAddNewCard, setIsAddNewCard] = useState<boolean>(false);
@@ -99,12 +80,7 @@ const Board: React.FC<Props> = (props) => {
   };
 
   const addNewCard = async () => {
-    if (newCardTitle === '') return;
-    await axios.post('/card', {
-      title: newCardTitle,
-      order: generateNextOrder(column.cards),
-      columnId: column._id,
-    });
+    await onAddNewCard(newCardTitle, column);
     setIsAddNewCard(false);
 
     // const newCardToAdd: CardType = {
@@ -186,7 +162,7 @@ const Board: React.FC<Props> = (props) => {
         <Container
           groupName="col"
           orientation="vertical"
-          onDrop={(dropResult) => onCardDrop(column, dropResult)}
+          onDrop={async (dropResult) => await onCardDrop(column, dropResult)}
           dropPlaceholder={{
             // @ts-ignore
             animationDuration: 150,
@@ -198,8 +174,8 @@ const Board: React.FC<Props> = (props) => {
         >
           {column.cards.map((card, index) => (
             // @ts-ignore
-            <Draggable key={card.id}>
-              <Card card={card} key={card.id} deleteCard={deleteCard} order={index} />
+            <Draggable key={card._id}>
+              <Card card={card} key={card._id} deleteCard={deleteCard} order={index} />
             </Draggable>
           ))}
         </Container>

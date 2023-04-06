@@ -25,5 +25,7 @@ export class Card {
   attachment: string[];
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 export const CardSchema = SchemaFactory.createForClass(Card);

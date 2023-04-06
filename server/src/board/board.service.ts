@@ -112,6 +112,7 @@ export class BoardService {
       { new: true },
     );
   }
+  
   async findByColumn(columnId: string, user: User) {
     try {
       const board = await this.boardModel.findOne({

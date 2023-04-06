@@ -11,5 +11,7 @@ export class Column {
   order: string;
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }] })
   cards: Card[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 export const ColumnSchema = SchemaFactory.createForClass(Column);

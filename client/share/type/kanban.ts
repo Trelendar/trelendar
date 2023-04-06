@@ -1,4 +1,5 @@
 export interface CardType {
+  _id: string;
   id: string;
   boardId: string;
   columnId: string;
