@@ -108,11 +108,11 @@ const Kanban: React.FC = () => {
   const onColumnDrop = async (dropResult: DropResult) => {
     const { addedIndex, removedIndex, payload } = dropResult;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
-    // const order = generateOrder(column, addedIndex, removedIndex);
+    const order = generateOrder(column, addedIndex, removedIndex);
 
-    // await axios.patch(`/column/${payload._id}`, {
-    //   order,
-    // });
+    await axios.patch(`/column/${payload._id}`, {
+      order,
+    });
     await refetch();
 
     // setColumns([...(await refetch()).data]);
