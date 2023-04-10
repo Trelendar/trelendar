@@ -23,11 +23,14 @@ import Toolbar from '@mui/material/Toolbar';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { Card, CardBody, Col, Row } from 'reactstrap';
+import BoardX from '../../../components/dnd/board/Board';
+import { generateQuoteMap } from '../../../components/dnd/mockData';
 import Header from '../../../components/header';
-import Kanban from '../../../components/kanban';
 import axios from '../../../lib/axios';
+import { Lexorank } from '../../../lib/lexorank';
 import { Board } from '../index';
-import {Lexorank} from "../../../lib/lexorank";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 const lexorank = new Lexorank();
 const drawerWidth = 240;
@@ -102,6 +105,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Board: React.FC = () => {
+  const data = {
+    medium: generateQuoteMap(50),
+    large: generateQuoteMap(500),
+  };
   const router = useRouter();
   const {
     data: board,
@@ -113,7 +120,7 @@ const Board: React.FC = () => {
       return await axios.get(`board/${router.query.slug}`);
     },
   });
-  console.log("abcxyz",lexorank.insert("B","U"),board);
+  console.log('abcxyz', lexorank.insert('B', 'U'), board);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -217,7 +224,20 @@ const Board: React.FC = () => {
         <Box component="main" sx={{ flexGrow: 1 }}>
           <DrawerHeader />
           <div className="overflow-y-auto bg-[#BCB4D8]">
-            <Kanban />
+            {/* <Kanban /> */}
+            <>
+              {/* <Row className="justify-content-center text-center">
+                <Col xs={12}>
+                  <Card>
+                    <CardBody>
+                      <h2>React DnD Testing</h2>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row> */}
+
+              <BoardX initial={data.medium} withScrollableColumns containerHeight="900" />
+            </>
           </div>
         </Box>
       </Box>

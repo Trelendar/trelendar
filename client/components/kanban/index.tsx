@@ -19,6 +19,9 @@ import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
 // import { useRouter } from 'next/router';
 import { Lexorank } from '../../lib/lexorank';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 
 const lexorank = new Lexorank();
 
@@ -267,32 +270,34 @@ const Kanban: React.FC = () => {
 
       <Scrollbars style={{ height: '88vh' }}>
         <div className="flex rounded mt-5">
-          <Container
-            orientation="horizontal"
-            onDrop={onColumnDrop}
-            dragHandleSelector=".column-drag-handle"
-            dropPlaceholder={{
-              // @ts-ignore
-              animationDuration: 150,
-              showOnTop: true,
-              className: 'column bg-[#C9CCD9] rounded p-2 mr-6 ml-10',
-            }}
-            getChildPayload={(index) => column[index]}
-          >
-            {column?.map((column: ColumnType) => (
-              // @ts-ignore
-              <Draggable key={column._id}>
-                <Column
-                  column={column}
-                  key={column._id}
-                  onCardDrop={handleCardDrop}
-                  updateColumn={updateColumn}
-                  onDelete={handleDeleteColumn}
-                  onAddNewCard={handleAddNewCard}
-                />
-              </Draggable>
-            ))}
-          </Container>
+          <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
+            <Container
+              orientation="horizontal"
+              onDrop={onColumnDrop}
+              dragHandleSelector=".column-drag-handle"
+              dropPlaceholder={{
+                // @ts-ignore
+                animationDuration: 150,
+                showOnTop: true,
+                className: 'column bg-[#C9CCD9] rounded p-2 mr-6 ml-10',
+              }}
+              getChildPayload={(index) => column[index]}
+            >
+              {column.map((column: ColumnType) => (
+                // @ts-ignore
+                <Draggable key={column._id}>
+                  <Column
+                    column={column}
+                    key={column._id}
+                    onCardDrop={handleCardDrop}
+                    updateColumn={updateColumn}
+                    onDelete={handleDeleteColumn}
+                    onAddNewCard={handleAddNewCard}
+                  />
+                </Draggable>
+              ))}
+            </Container>
+          </DndProvider>
           {!isAddNewColumn && (
             <motion.div
               initial={{ y: '-100px', opacity: 0 }}

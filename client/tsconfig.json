@@ -20,7 +20,9 @@
     "**/*.ts",
     "**/*.tsx",
     "pages/index.tsx",
-    "pages/api/auth/[...nextauth].js"
+    "pages/api/auth/[...nextauth].js",
+    "components/dnd/styles/item.js",
+    "pages/workspace/[slug]/index.jsx"
   ],
   "exclude": ["node_modules"]
 }
