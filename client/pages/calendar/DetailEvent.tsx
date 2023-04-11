@@ -18,9 +18,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import MemberTag from '../../components/kanban/MemberTag';
 import { Tag, UserCard } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 const DetailEvent: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([
@@ -84,7 +85,7 @@ const DetailEvent: React.FC = () => {
     end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
     allDay: false,
     title: 'New Event',
-    desc: 'This is new Event',
+    desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
     members: ['Nguyen Thanh Long', 'Nguyen Tran Hoang'],
   };
   //@ts-ignore
@@ -93,11 +94,13 @@ const DetailEvent: React.FC = () => {
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [timePicker, setTimePicker] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
+  const [desEvent, setDesEvent] = useState<string>(detailEvent.desc ?? 'None');
   const changeFormat = (stringInput: string) => {};
 
   const handleSave = () => {
     setIsEdit(!isEdit);
   };
+
   return (
     <div className="p-6">
       <button
@@ -226,9 +229,13 @@ const DetailEvent: React.FC = () => {
               </TableCell>
               <TableCell align="left" sx={{ fontSize: 20 }}>
                 <div className="flex">
-                  <IoIosPeople className={"text-2xl text-colorHome mt-3" + (!isEdit? "mt-2": ' ')} />
+                  {!isEdit && (
+                    <IoIosPeople
+                      className={'text-2xl text-colorHome mt-3' + (!isEdit ? 'mt-2' : ' ')}
+                    />
+                  )}
                   <div className="text-[1.2rem] inline-block">
-                    <div className="ml-1">
+                    <div className="">
                       <div className="z-[100000]">
                         <ReactTags
                           tags={tags}
@@ -262,10 +269,23 @@ const DetailEvent: React.FC = () => {
                 Description:
               </TableCell>
               <TableCell align="left" sx={{ fontSize: 20 }}>
-                <div className="flex">
-                  <HiOutlineDocumentText className="text-2xl text-colorHome mt-1 mr-3" />
-                  <div className="text-[1.4rem] inline-block">{detailEvent.desc ?? 'None'}</div>
-                </div>
+                {!isEdit && (
+                  <div className="flex">
+                    <HiOutlineDocumentText
+                      className={'text-2xl text-colorHome mt-3' + (!isEdit ? 'mt-2' : ' ')}
+                    />
+                    <div className="text-[1.4rem] inline-block">{detailEvent.desc ?? 'None'}</div>
+                  </div>
+                )}
+                {isEdit && (
+                  <textarea
+                    value={desEvent}
+                    className="block w-[80%] p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md "
+                    onChange={(e) => setDesEvent(e.target.value)}
+                    rows={5}
+                    cols={33}
+                  />
+                )}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -273,6 +293,6 @@ const DetailEvent: React.FC = () => {
       </TableContainer>
     </div>
   );
-};;
+};
 
 export default DetailEvent;
