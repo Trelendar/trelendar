@@ -18,8 +18,66 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import MemberTag from '../../components/kanban/MemberTag';
+import { Tag, UserCard } from '../../share/type/kanban';
+import { WithContext as ReactTags } from 'react-tag-input';
 
 const DetailEvent: React.FC = () => {
+  const [tags, setTags] = useState<Tag[]>([
+    {
+      id: '1',
+      text: 'Long',
+    },
+    {
+      id: '2',
+      text: 'Hoang',
+    },
+  ]);
+  const [users, setUsers] = useState<Tag[]>([
+    {
+      id: '1',
+      text: 'Long',
+    },
+    {
+      id: '2',
+      text: 'Hoang',
+    },
+    {
+      id: '3',
+      text: 'Hai',
+    },
+    {
+      id: '4',
+      text: 'Ngoc',
+    },
+  ]);
+  const addUserInCard = (tag: Tag) => {
+    // const userInCard: UserCard = {
+    //   controller: CONTROLLER_ADD_USER_IN_CARD,
+    //   userId: Number(tag.id),
+    //   cardId: cardId,
+    // };
+    // addUserInCardService(userInCard);
+    setTags([...tags, tag]);
+  };
+
+  const deleteUserInCard = (tag: Tag) => {
+    // const userInCard: UserCard = {
+    //   controller: CONTROLLER_DEL_USER_IN_CARD,
+    //   userId: Number(tag.id),
+    //   cardId: cardId,
+    // };
+    // deleteUserInCardService(userInCard);
+  };
+
+  //   const boardId = useMySelector((state) => state.board.id);
+  //   useEffect(() => {
+  //     userInBoardService(boardId).then((res) => {
+  //       setUsers(res.data.users ?? []);
+  //       userInCardService(cardId).then((res) => setTags(res.data.users ?? []));
+  //     });
+  //   }, [tags]);
+
   const detailEvent: EventType = {
     id: '1',
     start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
@@ -33,7 +91,7 @@ const DetailEvent: React.FC = () => {
   const startEvent = new Date(detailEvent.start);
   const endEvent = new Date(detailEvent.end);
 
-  const [isEdit, setIsEdit] = useState<Boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [timePicker, setTimePicker] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
   const changeFormat = (stringInput: string) => {};
 
@@ -125,7 +183,7 @@ const DetailEvent: React.FC = () => {
               </TableCell>
             </TableRow>
 
-            <TableRow key={detailEvent.id}>
+            <TableRow>
               <TableCell
                 align="left"
                 component="th"
@@ -157,7 +215,7 @@ const DetailEvent: React.FC = () => {
               </TableCell>
             </TableRow>
 
-            <TableRow key={detailEvent.id}>
+            <TableRow>
               <TableCell
                 align="left"
                 component="th"
@@ -168,15 +226,33 @@ const DetailEvent: React.FC = () => {
               </TableCell>
               <TableCell align="left" sx={{ fontSize: 20 }}>
                 <div className="flex">
-                  <IoIosPeople className="text-2xl text-colorHome mt-1 mr-3" />
-                  <div className="text-[1.4rem] inline-block">
-                    {detailEvent.members?.map(member => member + ', ')}
+                  <IoIosPeople className={"text-2xl text-colorHome mt-3" + (!isEdit? "mt-2": ' ')} />
+                  <div className="text-[1.2rem] inline-block">
+                    <div className="ml-1">
+                      <div className="z-[100000]">
+                        <ReactTags
+                          tags={tags}
+                          suggestions={users}
+                          delimiters={[]}
+                          handleDelete={(i) => {
+                            deleteUserInCard(tags[i]);
+                            setTags(tags.filter((tag, index) => index !== i));
+                          }}
+                          handleAddition={(tag) => addUserInCard(tag)}
+                          inputFieldPosition="inline"
+                          autocomplete
+                          placeholder="Search to add new member..."
+                          allowDragDrop={false}
+                          readOnly={!isEdit}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </TableCell>
             </TableRow>
 
-            <TableRow key={detailEvent.id}>
+            <TableRow>
               <TableCell
                 align="left"
                 component="th"
@@ -197,6 +273,6 @@ const DetailEvent: React.FC = () => {
       </TableContainer>
     </div>
   );
-};
+};;
 
 export default DetailEvent;
