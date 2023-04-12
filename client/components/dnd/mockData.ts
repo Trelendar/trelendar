@@ -1,5 +1,5 @@
 import { colors } from '@atlaskit/theme';
-import { QuoteMap } from './type';
+import { BoardMap } from './type';
 const jakeImg =
   'https://uploads.codesandbox.io/uploads/user/cf4b346c-70d1-4313-acb0-36ea4634ca74/GR8R-finn-min.png';
 const princessImg =
@@ -147,7 +147,7 @@ export const getAuthors = (count) =>
 
 const getByAuthor = (author, items) => items.filter((quote) => quote.author === author);
 
-export const authorQuoteMap: QuoteMap = authors.reduce(
+export const authorQuoteMap: BoardMap = authors.reduce(
   (previous, author) => ({
     ...previous,
     [author.name]: getByAuthor(author, quotes),

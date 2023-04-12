@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@xstyled/styled-components';
 import { borderRadius, grid } from './constants';
+import { colors } from '@atlaskit/theme';
 
 const getBackgroundColor = (isDragging, isGroupedOver, authorColors) => {
   if (isDragging) {
@@ -143,34 +144,39 @@ function getStyle(provided, style) {
 // Need to be super sure we are not relying on PureComponent here for
 // things we should be doing in the selector as we do not know if consumers
 // will be using PureComponent
-function QuoteItem(props) {
-  const { quote, isDragging, isGroupedOver, provided, style, isClone, index } = props;
+function Card(props) {
+  const { card, isDragging, isGroupedOver, provided, style, isClone, index } = props;
+  console.log("🚀 ~ file: item.js:147 ~ Card ~ props:", props.card)
 
   return (
     <Container
-      href={quote.author.url}
+      href={"card.author.url"}
       isDragging={isDragging}
       isGroupedOver={isGroupedOver}
       isClone={isClone}
-      colors={quote.author.colors}
+      colors={{
+        soft: colors.B50,
+        hard: colors.N400A,
+      }}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       style={getStyle(provided, style)}
       data-is-dragging={isDragging}
-      data-testid={quote.id}
+      data-testid={card._id}
       data-index={index}
-      aria-label={`${quote.author.name} quote ${quote.content}`}
+      // aria-label={`${card.author.name} quote ${card.content}`}
     >
-      <Avatar src={quote.author.avatarUrl} alt={quote.author.name} />
+      {/* <Avatar src={card.author.avatarUrl} alt={card.author.name} /> */}
+      <Avatar src={"https://lh3.googleusercontent.com/a/AEdFTp4xcJXFJr_3ykE_K-FBgvMuBmLYkTS6WKIf8K_h=s96-c"} alt={"..."} />
       {isClone ? <CloneBadge>Clone</CloneBadge> : null}
       <Content>
-        <BlockQuote>{quote.content}</BlockQuote>
+        <span>{card.title.toString()}</span>
         <Footer>
-          <Author colors={quote.author.colors}>{quote.author.name}</Author>
+          {/* <Author colors={card.author.colors}>{card.author.name}</Author> */}
           <QuoteId>
             id:
-            {quote.id}
+            {card._id}
           </QuoteId>
         </Footer>
       </Content>
@@ -178,4 +184,4 @@ function QuoteItem(props) {
   );
 }
 
-export default React.memo(QuoteItem);
+export default React.memo(Card);

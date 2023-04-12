@@ -7,7 +7,11 @@ import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styledComponents from 'styled-components';
-import { QuoteMap } from '../type';
+import { BoardMap } from '../type';
+import { ColumnType } from '../../../share/type/kanban';
+import { Lexorank } from '../../../lib/lexorank';
+import axios from '../../../lib/axios';
+const lexorank = new Lexorank();
 const Container = styled.div`
   background-color: ${colors.B100};
   min-height: 100vh;
@@ -16,11 +20,12 @@ const Container = styled.div`
   display: inline-flex;
 `;
 interface BoardProps {
-  initial: QuoteMap;
+  initial: BoardMap;
   withScrollableColumns?: boolean;
   isCombineEnabled?: boolean;
   containerHeight?: string;
   useClone?: boolean;
+  initColumns: ColumnType[];
 }
 const ParentContainer = styled.div`
   height: ${({ height }) => height};
@@ -33,12 +38,15 @@ const Board = ({
   useClone,
   containerHeight,
   withScrollableColumns,
+  initColumns,
 }: BoardProps) => {
   const [columns, setColumns] = useState(initial);
 
   const [ordered, setOrdered] = useState(Object.keys(initial));
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
+    console.log('🚀 ~ file: Board.tsx:42 ~ onDragEnd ~ result:', result);
+
     if (result.combine) {
       if (result.type === 'COLUMN') {
         const shallow = [...ordered];
@@ -76,7 +84,23 @@ const Board = ({
     // reordering column
     if (result.type === 'COLUMN') {
       const reorderedorder = reorder(ordered, source.index, destination.index);
-
+      const pre =
+        destination.index == 0
+          ? ''
+          : initColumns.find((column) => column._id === reorderedorder[destination.index - 1])
+              .order;
+      const next =
+        destination.index == reorderedorder.length - 1
+          ? ''
+          : initColumns.find((column) => column._id === reorderedorder[destination.index + 1])
+              .order;
+      const order=lexorank.insert(pre, next)[0];
+      console.log("🚀 ~ file: Board.tsx:98 ~ onDragEnd ~ order:", order)
+      
+      await axios.patch(`/column/${result.draggableId}`, {
+        order,
+      });
+ 
       setOrdered(reorderedorder);
 
       return;
@@ -106,9 +130,10 @@ const Board = ({
               <Container ref={provided.innerRef} {...provided.droppableProps}>
                 {ordered.map((key, index) => (
                   <Column
+                    id={key}
                     key={key}
                     index={index}
-                    title={key}
+                    title={initColumns.find((column) => column._id === key).title}
                     quotes={columns[key]}
                     isScrollable={withScrollableColumns}
                     isCombineEnabled={isCombineEnabled}

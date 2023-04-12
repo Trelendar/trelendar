@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { BsPlusLg } from 'react-icons/bs';
 import Header from '../../components/header';
 import axios from '../../lib/axios';
-import { BoardType } from '../../share/type/kanban';
+import { BoardType, ColumnType } from '../../share/type/kanban';
 import BoardTag from './BoardTag';
 import { boardsMock } from './mockBoards';
 import {Lexorank} from "../../lib/lexorank";
@@ -14,7 +14,7 @@ import {Lexorank} from "../../lib/lexorank";
 const lexorank = new Lexorank();
 export interface Board {
   background: string;
-  columns: string[];
+  columns: ColumnType[];
   createdAt: Date;
   createdBy: string;
   members: string[];

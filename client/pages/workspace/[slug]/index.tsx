@@ -109,6 +109,7 @@ const Board: React.FC = () => {
     medium: generateQuoteMap(50),
     large: generateQuoteMap(500),
   };
+  
   const router = useRouter();
   const {
     data: board,
@@ -120,7 +121,8 @@ const Board: React.FC = () => {
       return await axios.get(`board/${router.query.slug}`);
     },
   });
-  console.log('abcxyz', lexorank.insert('B', 'U'), board);
+  console.log("🚀 ~ file: index.tsx:112 ~ data:", board)
+  console.log("🚀 ~ file: index.tsx:112 ~ board:", board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards}), {}))
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -223,7 +225,7 @@ const Board: React.FC = () => {
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1 }}>
           <DrawerHeader />
-          <div className="overflow-y-auto bg-[#BCB4D8]">
+          <div className="overflow-y-auto bg-[#BCB4D8] pt-7">
             {/* <Kanban /> */}
             <>
               {/* <Row className="justify-content-center text-center">
@@ -236,7 +238,10 @@ const Board: React.FC = () => {
                 </Col>
               </Row> */}
 
-              <BoardX initial={data.medium} withScrollableColumns containerHeight="900" />
+              {board  && (
+
+              <BoardX initial={board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards}),{})} withScrollableColumns containerHeight="900" initColumns={board?.columns}/>
+              )}
             </>
           </div>
         </Box>

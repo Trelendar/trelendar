@@ -18,11 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
 // import { useRouter } from 'next/router';
-import { Lexorank } from '../../lib/lexorank';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
+import { Lexorank } from '../../lib/lexorank';
 const lexorank = new Lexorank();
 
 const generateOrder = (
@@ -134,7 +134,6 @@ const Kanban: React.FC = () => {
   };
 
   const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
-    console.log('🚀 ~ file: index.tsx:139 ~ handleCardDrop ~ column:', column, dropResult);
     const { addedIndex, removedIndex, payload } = dropResult;
     if (addedIndex === null) return;
     if (dropResult.addedIndex === dropResult.removedIndex) return;

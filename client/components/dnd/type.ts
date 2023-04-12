@@ -15,8 +15,14 @@ export type Author = {
   colors: AuthorColors;
 };
 
-export type Quote = {
+export type Card = {
   id: Id;
+  _id:string;
+  order:string;
+  title:string;
+  attachment:string[];
+  comments:string[];
+  members:string[];
   content: string;
   author: Author;
 };
@@ -26,8 +32,8 @@ export type Dragging = {
   location: DraggableLocation;
 };
 
-export type QuoteMap = {
-  [key: string]: Quote[];
+export type BoardMap = {
+  [key: string]: Card[];
 };
 
 export type Task = {

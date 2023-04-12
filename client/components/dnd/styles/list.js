@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from '@xstyled/styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import QuoteItem from './item';
+import Card from './item';
 import { grid } from './constants';
 import Title from './title';
 
@@ -30,7 +30,7 @@ const Wrapper = styled.div`
   width: 250px;
 `;
 
-const scrollContainerHeight = 250;
+const scrollContainerHeight = 600;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
@@ -52,13 +52,13 @@ const ScrollContainer = styled.div`
 const Container = styled.div``;
 /* stylelint-enable */
 
-const InnerQuoteList = React.memo(function InnerQuoteList(props) {
-  return props.quotes.map((quote, index) => (
-    <Draggable key={quote.id} draggableId={quote.id} index={index}>
+const InnerCardList = React.memo(function InnerCardList(props) {
+  return props.quotes.map((card, index) => (
+    <Draggable key={card._id} draggableId={card._id} index={index}>
       {(dragProvided, dragSnapshot) => (
-        <QuoteItem
-          key={quote.id}
-          quote={quote}
+        <Card
+          key={card.id}
+          card={card}
           isDragging={dragSnapshot.isDragging}
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
           provided={dragProvided}
@@ -76,14 +76,15 @@ function InnerList(props) {
     <Container>
       {title}
       <DropZone ref={dropProvided.innerRef}>
-        <InnerQuoteList quotes={quotes} />
+        <InnerCardList quotes={quotes} />
         {dropProvided.placeholder}
       </DropZone>
     </Container>
   );
 }
 
-export default function QuoteList(props) {
+export default function CardList(props) {
+  console.log("🚀 ~ file: list.js:87 ~ CardList ~ props:", props)
   const {
     ignoreContainerClipping,
     internalScroll,
@@ -108,8 +109,9 @@ export default function QuoteList(props) {
       renderClone={
         useClone
           ? (provided, snapshot, descriptor) => (
-              <QuoteItem
-                quote={quotes[descriptor.source.index]}
+              <Card
+                card={quotes[descriptor.source.index]}
+                index={listId}
                 provided={provided}
                 isDragging={snapshot.isDragging}
                 isClone

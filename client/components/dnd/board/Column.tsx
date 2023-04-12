@@ -3,7 +3,7 @@ import styled from '@xstyled/styled-components';
 import { colors } from '@atlaskit/theme';
 import { grid, borderRadius } from '../styles/constants';
 import { Draggable } from 'react-beautiful-dnd';
-import QuoteList from '../styles/list';
+import CardList from '../styles/list';
 import Title from '../styles/title';
 
 const Container = styled.div`
@@ -26,11 +26,14 @@ const Header = styled.div`
 `;
 
 const Column = (props) => {
+  console.log("🚀 ~ file: Column.tsx:29 ~ Column ~ props:", props)
+  console.log(props);
+  
   const title = props.title;
   const quotes = props.quotes;
   const index = props.index;
   return (
-    <Draggable draggableId={title} index={index}>
+    <Draggable draggableId={props.id} index={index}>
       {(provided, snapshot) => (
         <Container ref={provided.innerRef} {...provided.draggableProps}>
           <Header isDragging={snapshot.isDragging}>
@@ -42,8 +45,8 @@ const Column = (props) => {
               {title}
             </Title>
           </Header>
-          <QuoteList
-            listId={title}
+          <CardList
+            listId={props.id}
             listType="QUOTE"
             style={{
               backgroundColor: snapshot.isDragging ? colors.G50 : null,
