@@ -26,8 +26,6 @@ const Header = styled.div`
 `;
 
 const Column = (props) => {
-  console.log("🚀 ~ file: Column.tsx:29 ~ Column ~ props:", props)
-  console.log(props);
   
   const title = props.title;
   const quotes = props.quotes;

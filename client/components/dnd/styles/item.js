@@ -146,7 +146,6 @@ function getStyle(provided, style) {
 // will be using PureComponent
 function Card(props) {
   const { card, isDragging, isGroupedOver, provided, style, isClone, index } = props;
-  console.log("🚀 ~ file: item.js:147 ~ Card ~ props:", props.card)
 
   return (
     <Container

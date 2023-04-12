@@ -84,7 +84,6 @@ function InnerList(props) {
 }
 
 export default function CardList(props) {
-  console.log("🚀 ~ file: list.js:87 ~ CardList ~ props:", props)
   const {
     ignoreContainerClipping,
     internalScroll,

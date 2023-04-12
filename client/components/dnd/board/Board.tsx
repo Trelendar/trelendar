@@ -45,8 +45,6 @@ const Board = ({
   const [ordered, setOrdered] = useState(Object.keys(initial));
 
   const onDragEnd = async (result) => {
-    console.log('🚀 ~ file: Board.tsx:42 ~ onDragEnd ~ result:', result);
-
     if (result.combine) {
       if (result.type === 'COLUMN') {
         const shallow = [...ordered];
@@ -95,7 +93,6 @@ const Board = ({
           : initColumns.find((column) => column._id === reorderedorder[destination.index + 1])
               .order;
       const order=lexorank.insert(pre, next)[0];
-      console.log("🚀 ~ file: Board.tsx:98 ~ onDragEnd ~ order:", order)
       
       await axios.patch(`/column/${result.draggableId}`, {
         order,
