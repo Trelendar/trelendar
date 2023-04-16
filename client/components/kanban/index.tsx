@@ -94,20 +94,21 @@ const Kanban: React.FC = () => {
   }, [isAddNewColumn]);
 
   const onColumnDrop = async (dropResult: DropResult) => {
+    
     const { addedIndex, removedIndex, payload } = dropResult;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
-    const order = generateOrder(column, addedIndex, removedIndex);
+    const order = generateOrder(columns, addedIndex, removedIndex);
 
     let newColumns = [...columns];
     newColumns = applyDrag(newColumns, dropResult);
 
     setColumns(newColumns);
 
-    await axios.patch(`/column/${payload._id}`, {
+    axios.patch(`/column/${payload._id}`, {
       order,
     });
     
-    await refetch();
+    // await refetch();
 
     // setColumns([...(await refetch()).data]);
     // const dropColumn: DropRequest = {
@@ -121,6 +122,9 @@ const Kanban: React.FC = () => {
   };
 
   const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
+    const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
+    if (noDropCard) return;
+
     const { addedIndex, removedIndex, payload } = dropResult;
     if (addedIndex === null) return;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
@@ -128,7 +132,7 @@ const Kanban: React.FC = () => {
 
     let newColumns = [...columns];
 
-    let currentColumn = newColumns.find((c) => c.id === payload._id) ?? {
+    let currentColumn = newColumns.find((c) => c.id === column._id) ?? {
       cards: [],
       cardOrder: '',
     };
@@ -136,6 +140,8 @@ const Kanban: React.FC = () => {
 
     currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
     currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
+    console.log("run herre", currentColumn);
+    
     setColumns(newColumns);
 
     axios.patch(`/card/${payload._id}`, {
@@ -144,8 +150,6 @@ const Kanban: React.FC = () => {
       oldColumnId: payload.columnId,
     });
     // await refetch();
-    const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
-    if (noDropCard) return;
 
     // const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
     // const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
@@ -229,6 +233,7 @@ const Kanban: React.FC = () => {
     }
     setColumns(newColumns);
   };
+
   const handleDeleteColumn = async (id) => {
     await axios.delete(`/column/${id}`);
     refetch();
