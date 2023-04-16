@@ -65,11 +65,15 @@ const Kanban: React.FC = () => {
       return await axios.get(`/column/${router.query.slug}`);
     },
   });
+  console.log("adasdas", column);
+  
+  const [columns, setColumns] = useState<ColumnType[]>(column ?? []);
+  
   const [isAddNewColumn, setIsAddNewColumn] = useState<boolean>(false);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
 
   const inputAddRef = useRef<HTMLInputElement>(null);
-
+  
   //   const onExpired = () => {
   //     dispatch(logoutLocal());
   //     navigation(`../${appRouters.LINK_TO_LOGIN_PAGE}`);
@@ -77,28 +81,9 @@ const Kanban: React.FC = () => {
 
   //   dispatch(setBoardId(slug ?? ''));
 
-  //   useEffect(() => {
-  //     // if (!isLogin) navigation(`..${appRouters.LINK_TO_HOME_PAGE}`);
-  //     const getColumnsData = async () => {
-  //       try {
-  //         const res = await getColumns(slug ?? '');
-  //         if (res.data.status !== 'Success') return;
-
-  //         let newColumns = res.data.columns ?? [];
-  //         newColumns = getCardToColumn(newColumns);
-
-  //         setColumns(newColumns);
-
-  //         setBoard({
-  //           ...board,
-  //           columns: newColumns,
-  //         });
-  //       } catch {
-  //         onExpired();
-  //       }
-  //     };
-  //     getColumnsData();
-  //   }, []);
+    useEffect(() => {
+      setColumns(column ?? [])
+    }, [column]);
 
   useEffect(() => {
     const isInputAdded = inputAddRef && inputAddRef.current;
@@ -113,9 +98,15 @@ const Kanban: React.FC = () => {
     if (dropResult.addedIndex === dropResult.removedIndex) return;
     const order = generateOrder(column, addedIndex, removedIndex);
 
+    let newColumns = [...columns];
+    newColumns = applyDrag(newColumns, dropResult);
+
+    setColumns(newColumns);
+
     await axios.patch(`/column/${payload._id}`, {
       order,
     });
+    
     await refetch();
 
     // setColumns([...(await refetch()).data]);
@@ -127,10 +118,6 @@ const Kanban: React.FC = () => {
     // };
     // onDropColumnService(dropColumn).catch(() => onExpired());
 
-    // let newColumns = [...columns];
-    // newColumns = applyDrag(newColumns, dropResult);
-
-    // setColumns(newColumns);
   };
 
   const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
@@ -138,31 +125,33 @@ const Kanban: React.FC = () => {
     if (addedIndex === null) return;
     if (dropResult.addedIndex === dropResult.removedIndex) return;
     const order = generateOrder(column.cards, addedIndex, removedIndex);
-    await axios.patch(`/card/${payload._id}`, {
+
+    let newColumns = [...columns];
+
+    let currentColumn = newColumns.find((c) => c.id === payload._id) ?? {
+      cards: [],
+      cardOrder: '',
+    };
+    // const lastIndexInNewCol = currentColumn.cards.length;
+
+    currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
+    currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
+    setColumns(newColumns);
+
+    axios.patch(`/card/${payload._id}`, {
       order,
       columnId: column._id,
       oldColumnId: payload.columnId,
     });
-    await refetch();
-    // const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
-    // if (noDropCard) return;
+    // await refetch();
+    const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
+    if (noDropCard) return;
 
     // const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
     // const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
     //   (card) => card.id === dropResult.payload.id
     // );
 
-    // let newColumns = [...columns];
-
-    // let currentColumn = newColumns.find((c) => c.id === columnId) ?? {
-    //   cards: [],
-    //   cardOrder: '',
-    // };
-    // const lastIndexInNewCol = currentColumn.cards.length;
-
-    // currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
-    // currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
-    // // setColumns(newColumns);
 
     // const dropCardOneColumn = dropResult.removedIndex !== null && dropResult.addedIndex !== null;
     // if (dropCardOneColumn) {
@@ -222,23 +211,23 @@ const Kanban: React.FC = () => {
   };
 
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
-    // let newColumns = [...columns];
-    // const indexOfColumnUpdate = newColumns.findIndex(
-    //   (columnId) => columnId.id === coloumnUpdated.id
-    // );
-    // if (isDeleteColumn) {
-    //   newColumns.splice(indexOfColumnUpdate, 1);
-    //   // const ColumnRequest: ColumnRequest = {
-    //   //     controller: CONTROLLER_DELETE_COLUMN,
-    //   //     boardId: coloumnUpdated.boardId,
-    //   //     columnId: coloumnUpdated.id,
-    //   //     order: indexOfColumnUpdate,
-    //   //   };
-    //   //   deleteColumnService(ColumnRequest).catch(() => onExpired());
-    // } else {
-    //   newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
-    // }
-    // setColumns(newColumns);
+    let newColumns = [...columns];
+    const indexOfColumnUpdate = newColumns.findIndex(
+      (columnId) => columnId.id === coloumnUpdated.id
+    );
+    if (isDeleteColumn) {
+      newColumns.splice(indexOfColumnUpdate, 1);
+      // const ColumnRequest: ColumnRequest = {
+      //     controller: CONTROLLER_DELETE_COLUMN,
+      //     boardId: coloumnUpdated.boardId,
+      //     columnId: coloumnUpdated.id,
+      //     order: indexOfColumnUpdate,
+      //   };
+      //   deleteColumnService(ColumnRequest).catch(() => onExpired());
+    } else {
+      newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
+    }
+    setColumns(newColumns);
   };
   const handleDeleteColumn = async (id) => {
     await axios.delete(`/column/${id}`);
@@ -280,9 +269,9 @@ const Kanban: React.FC = () => {
                 showOnTop: true,
                 className: 'column bg-[#C9CCD9] rounded p-2 mr-6 ml-10',
               }}
-              getChildPayload={(index) => column[index]}
+              getChildPayload={(index) => columns[index]}
             >
-              {column.map((column: ColumnType) => (
+              {(columns).map((column: ColumnType) => (
                 // @ts-ignore
                 <Draggable key={column._id}>
                   <Column

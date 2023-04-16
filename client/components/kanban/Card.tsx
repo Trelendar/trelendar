@@ -17,9 +17,9 @@ const Card: React.FC<Props> = (props) => {
 
   const [card, setCard] = useState<CardType>(props.card);
   const [isModal, setIsModal] = useState<boolean>(false);
-  const titleUpdateRef = useRef(card.title);
+  const titleUpdateRef = useRef(card.title ?? '');
   const priorityUpdateRef = useRef(card.priority ?? '');
-  const descriptionUpdateRef = useRef(card.description);
+  const descriptionUpdateRef = useRef(card.description ?? '');
 
   //   const onExpired = () => {
   //     dispatch(logoutLocal());

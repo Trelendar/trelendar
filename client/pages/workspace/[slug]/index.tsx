@@ -30,6 +30,7 @@ import Header from '../../../components/header';
 import axios from '../../../lib/axios';
 import { Lexorank } from '../../../lib/lexorank';
 import { Board } from '../index';
+import Kanban from '../../../components/kanban/';
 // import "bootstrap/dist/css/bootstrap.min.css";
 
 const lexorank = new Lexorank();
@@ -226,7 +227,7 @@ const Board: React.FC = () => {
         <Box component="main" sx={{ flexGrow: 1 }}>
           <DrawerHeader />
           <div className="overflow-y-auto bg-[#BCB4D8] pt-7">
-            {/* <Kanban /> */}
+            <Kanban />
             <>
               {/* <Row className="justify-content-center text-center">
                 <Col xs={12}>
@@ -238,10 +239,10 @@ const Board: React.FC = () => {
                 </Col>
               </Row> */}
 
-              {board  && (
+              {/* {board  && (
 
               <BoardX initial={board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards}),{})} withScrollableColumns containerHeight="900" initColumns={board?.columns}/>
-              )}
+              )} */}
             </>
           </div>
         </Box>
