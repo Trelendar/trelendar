@@ -217,7 +217,7 @@ const Kanban: React.FC = () => {
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
     let newColumns = [...columns];
     const indexOfColumnUpdate = newColumns.findIndex(
-      (columnId) => columnId.id === coloumnUpdated.id
+      (columnId) => columnId._id === coloumnUpdated._id
     );
     if (isDeleteColumn) {
       newColumns.splice(indexOfColumnUpdate, 1);
