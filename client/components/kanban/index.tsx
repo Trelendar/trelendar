@@ -132,14 +132,14 @@ const Kanban: React.FC = () => {
 
     let newColumns = [...columns];
 
-    let currentColumn = newColumns.find((c) => c.id === column._id) ?? {
+    let currentColumn = newColumns.find((c) => c._id === column._id) ?? {
       cards: [],
       cardOrder: '',
     };
     // const lastIndexInNewCol = currentColumn.cards.length;
 
     currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
-    currentColumn.cardOrder = currentColumn.cards.map((card) => card.id);
+    currentColumn.cardOrder = currentColumn.cards.map((card) => card._id);
     console.log("run herre", currentColumn);
     
     setColumns(newColumns);
