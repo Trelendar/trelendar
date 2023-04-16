@@ -94,11 +94,11 @@ const Board = ({
               .order;
       const order=lexorank.insert(pre, next)[0];
       
-      await axios.patch(`/column/${result.draggableId}`, {
+      axios.patch(`/column/${result.draggableId}`, {
         order,
       });
- 
       setOrdered(reorderedorder);
+ 
 
       return;
     }

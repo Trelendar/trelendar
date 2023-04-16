@@ -20,8 +20,6 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Tag, UserCard } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 
 const DetailEvent: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([
@@ -86,7 +84,7 @@ const DetailEvent: React.FC = () => {
     allDay: false,
     title: 'New Event',
     desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
-    members: ['Nguyen Thanh Long', 'Nguyen Tran Hoang'],
+    members: ['update to react-tag-input'],
   };
   //@ts-ignore
   const startEvent = new Date(detailEvent.start);
@@ -211,7 +209,7 @@ const DetailEvent: React.FC = () => {
                 {isEdit && (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DatePicker']}>
-                      <DatePicker label="Basic date picker" />
+                      <DatePicker label="Select Date" value={dayjs(detailEvent.start)} format="DD/MM/YYYY"/>
                     </DemoContainer>
                   </LocalizationProvider>
                 )}

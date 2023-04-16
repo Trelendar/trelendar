@@ -137,7 +137,7 @@ const Board: React.FC<Props> = (props) => {
                   confirmButtonText: 'Yes, delete it!',
                 }).then(async (result) => {
                   if (result.isConfirmed) {
-                    await handleDelete(column._id);
+                    await handleDelete(column._id ?? '');
                     Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
                   }
                 });
@@ -162,7 +162,7 @@ const Board: React.FC<Props> = (props) => {
         <Container
           groupName="col"
           orientation="vertical"
-          onDrop={async (dropResult) => await onCardDrop(column, dropResult)}
+          onDrop={(dropResult) => onCardDrop(column, dropResult)}
           dropPlaceholder={{
             // @ts-ignore
             animationDuration: 150,
