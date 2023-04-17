@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { ColumnService } from 'src/column/column.service';
 import { InjectModel } from '@nestjs/mongoose';
+import { CustomException } from 'src/error';
 
 @Injectable()
 export class CardService {
@@ -24,7 +25,7 @@ export class CardService {
     }).save();
     await this.columnService.addCardToColumn(columnId, card.id);
 
-    return 'This action adds a new card';
+    return new CustomException('This action adds a new card');
   }
 
   findAll() {

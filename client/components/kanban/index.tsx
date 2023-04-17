@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { LexoRank } from 'lexorank';
 import Column from './Column';
 import {
   BoardType,
@@ -22,8 +23,8 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
-import { Lexorank } from '../../lib/lexorank';
-const lexorank = new Lexorank();
+// import { Lexorank } from '../../lib/lexorank';
+// const lexorank = new Lexorank();
 
 const generateOrder = (
   columns: ColumnType[] | CardType[],
@@ -34,22 +35,27 @@ const generateOrder = (
   let next = '';
   if (indexRemove === null) {
     // move between column
-    pre = indexAdded === 0 ? '' : columns[indexAdded - 1].order;
-    next = indexAdded === columns.length ? '' : columns[indexAdded].order;
-  } else if (indexAdded > indexRemove) {
-    pre = columns[indexAdded].order;
-    next = indexAdded === columns.length - 1 ? '' : columns[indexAdded + 1].order;
-  } else {
+    if (columns.length === 0) return LexoRank.middle().toString();
+    if (indexAdded === 0) return LexoRank.parse(columns[0].order).genPrev().toString();
+    if (indexAdded === columns.length)
+      return LexoRank.parse(columns.slice(-1)[0].order).genNext().toString();
+    pre = columns[indexAdded - 1].order;
     next = columns[indexAdded].order;
-    pre = indexAdded === 0 ? '' : columns[indexAdded - 1].order;
-  }
+  } else {
+    if (indexAdded === 0) return LexoRank.parse(columns[0].order).genPrev().toString();
+    if (indexAdded === columns.length - 1)
+      return LexoRank.parse(columns.slice(-1)[0].order).genNext().toString();
 
-  return lexorank.insert(pre, next)[0];
+    pre = columns[indexAdded - 1].order;
+    next = columns[indexAdded].order;
+  }
+  console.log('🚀 ~ file: index.tsx:46 ~ pre:', pre, next, columns, indexAdded);
+  return LexoRank.parse(pre).between(LexoRank.parse(next)).toString();
 };
-const generateNextOrder = (columns: ColumnType[] | CardType[]) => {
-  const pre = columns.length === 0 ? '0' : columns[columns.length - 1].order;
-  return lexorank.insert(pre, '')[0];
-};
+// const generateNextOrder = (columns: ColumnType[] | CardType[]) => {
+//   const pre = columns.length === 0 ? '0' : columns[columns.length - 1].order;
+//   return lexorank.insert(pre, '')[0];
+// };
 const Kanban: React.FC = () => {
   const router = useRouter();
   const { slug: boardId } = router.query;
@@ -65,15 +71,15 @@ const Kanban: React.FC = () => {
       return await axios.get(`/column/${router.query.slug}`);
     },
   });
-  console.log("adasdas", column);
-  
+
   const [columns, setColumns] = useState<ColumnType[]>(column ?? []);
-  
+  console.log('adasdas', columns);
+
   const [isAddNewColumn, setIsAddNewColumn] = useState<boolean>(false);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
 
   const inputAddRef = useRef<HTMLInputElement>(null);
-  
+
   //   const onExpired = () => {
   //     dispatch(logoutLocal());
   //     navigation(`../${appRouters.LINK_TO_LOGIN_PAGE}`);
@@ -81,9 +87,9 @@ const Kanban: React.FC = () => {
 
   //   dispatch(setBoardId(slug ?? ''));
 
-    useEffect(() => {
-      setColumns(column ?? [])
-    }, [column]);
+  useEffect(() => {
+    setColumns(column ?? []);
+  }, [column]);
 
   useEffect(() => {
     const isInputAdded = inputAddRef && inputAddRef.current;
@@ -96,10 +102,28 @@ const Kanban: React.FC = () => {
   const onColumnDrop = async (dropResult: DropResult) => {
     
     const { addedIndex, removedIndex, payload } = dropResult;
+    console.log(
+      '🚀 ~ file: index.tsx:98 ~ onColumnDrop ~ addedIndex, removedIndex:',
+      addedIndex,
+      removedIndex,
+      LexoRank.middle().toString(),
+      LexoRank.min().genPrev().toString()
+    );
+
     if (dropResult.addedIndex === dropResult.removedIndex) return;
     const order = generateOrder(columns, addedIndex, removedIndex);
 
+
     let newColumns = [...columns];
+    newColumns = newColumns.map((item) => {
+      if (item._id === payload._id) {
+        return {
+          ...item,
+          order,
+        };
+      }
+      return item;
+    });
     newColumns = applyDrag(newColumns, dropResult);
 
     setColumns(newColumns);
@@ -107,7 +131,7 @@ const Kanban: React.FC = () => {
     axios.patch(`/column/${payload._id}`, {
       order,
     });
-    
+
     // await refetch();
 
     // setColumns([...(await refetch()).data]);
@@ -118,7 +142,6 @@ const Kanban: React.FC = () => {
     //   columnId: dropResult.payload.id,
     // };
     // onDropColumnService(dropColumn).catch(() => onExpired());
-
   };
 
   const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
@@ -136,7 +159,6 @@ const Kanban: React.FC = () => {
       cards: [],
       cardOrder: '',
     };
-    // const lastIndexInNewCol = currentColumn.cards.length;
 
     currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
     currentColumn.cardOrder = currentColumn.cards.map((card) => card._id);
@@ -149,13 +171,12 @@ const Kanban: React.FC = () => {
       columnId: column._id,
       oldColumnId: payload.columnId,
     });
-    // await refetch();
+
 
     // const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
     // const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
     //   (card) => card.id === dropResult.payload.id
     // );
-
 
     // const dropCardOneColumn = dropResult.removedIndex !== null && dropResult.addedIndex !== null;
     // if (dropCardOneColumn) {
@@ -191,12 +212,19 @@ const Kanban: React.FC = () => {
       return;
     }
 
-    const res = await axios.post('/column', {
+    // if no column -> min else last order column
+    const order =
+      columns.length === 0
+        ? LexoRank.middle().toString()
+        : LexoRank.parse(columns.slice(-1)[0].order).genNext().toString();
+
+    const res: ColumnType = await axios.post('/column', {
       title: newColumnTitle,
-      order: generateNextOrder(column),
+      order,
       boardId,
     });
-    await refetch();
+    setColumns([...columns, res]);
+    // await refetch();
 
     // let columnsAfterAdd = [...columns];
 
@@ -215,6 +243,11 @@ const Kanban: React.FC = () => {
   };
 
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
+    console.log(
+      '🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumnUpdated:',
+      LexoRank.min(),
+      LexoRank.min().genPrev().toString()
+    );
     let newColumns = [...columns];
     const indexOfColumnUpdate = newColumns.findIndex(
       (columnId) => columnId._id === coloumnUpdated._id
@@ -240,12 +273,19 @@ const Kanban: React.FC = () => {
   };
   const handleAddNewCard = async (title: string, column: ColumnType) => {
     if (title === '') return;
+
+    const { cards } = column;
+    // if no column -> min else last order column
+    const order =
+      cards.length === 0
+        ? LexoRank.middle().toString()
+        : LexoRank.parse(cards.slice(-1)[0].order).genNext().toString();
     await axios.post('/card', {
       title: title,
-      order: generateNextOrder(column.cards),
+      order,
       columnId: column._id,
     });
-    await refetch();
+    // await refetch();
   };
   if (isLoading) return <h1>loading</h1>;
   return (
@@ -276,7 +316,7 @@ const Kanban: React.FC = () => {
               }}
               getChildPayload={(index) => columns[index]}
             >
-              {(columns).map((column: ColumnType) => (
+              {columns.map((column: ColumnType) => (
                 // @ts-ignore
                 <Draggable key={column._id}>
                   <Column
