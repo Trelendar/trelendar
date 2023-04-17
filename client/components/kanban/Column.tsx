@@ -17,7 +17,7 @@ interface Props {
   onAddNewCard: (title: string, column: ColumnType) => Promise<void>;
 }
 
-const Board: React.FC<Props> = (props) => {
+const Column: React.FC<Props> = (props) => {
   const { onCardDrop, column, updateColumn, onDelete: handleDelete, onAddNewCard } = props;
 
   const [isUpdateTitle, setIsUpdateTitle] = useState<boolean>(false);
@@ -220,4 +220,4 @@ const Board: React.FC<Props> = (props) => {
   );
 };
 
-export default Board;
+export default Column;

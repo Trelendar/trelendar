@@ -32,6 +32,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^8.0.2",
     "jsonwebtoken": "^9.0.0",
+    "lexorank": "^1.0.5",
     "mongodb": "^4.9.1",
     "mongoose": "^6.5.4",
     "next": "12.2.5",

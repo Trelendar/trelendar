@@ -14,7 +14,7 @@ export interface ColumnType {
   id: string;
   boardId: string;
   createdAt?: Date;
-  order?: string;
+  order: string;
   title: string;
   cardOrder: string[];
   cards: CardType[];

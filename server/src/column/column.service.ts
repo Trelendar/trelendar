@@ -38,8 +38,14 @@ export class ColumnService {
 
   async update(id: string, updateColumnDto: UpdateColumnDto, user: User) {
     await this.boardService.findByColumn(id, user);
-    await this.columnModel.findByIdAndUpdate(id, { ...updateColumnDto });
-    return `This action updates a #${id} column`;
+    const column = await this.columnModel.findByIdAndUpdate(
+      id,
+      {
+        ...updateColumnDto,
+      },
+      { new: true },
+    );
+    return column;
   }
 
   async remove(id: string, user: User) {
