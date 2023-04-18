@@ -6,7 +6,7 @@ import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import Swal from 'sweetalert2';
 import axios from '../../lib/axios';
 import { CardType, ColumnType } from '../../share/type/kanban';
-import Card from './Card';
+import Card from './card';
 import { confirmDelete } from './utils';
 
 interface Props {
@@ -183,7 +183,7 @@ const Column: React.FC<Props> = (props) => {
 
       {!isAddNewCard && (
         <div
-          className="flex px-2 py-1 cursor-pointer hover:bg-[#C9CCD9] transition-all mt-1 border-t-[1.2px] border-[#68589b]"
+          className="flex px-2 py-1 cursor-pointer hover:bg-[#C9CCD9] transition-all mt-1"
           onClick={() => setIsAddNewCard(true)}
         >
           <AiOutlinePlus size={25} color="gray" className="pt-1" />
@@ -204,7 +204,7 @@ const Column: React.FC<Props> = (props) => {
           <div className="grid grid-cols-10">
             <div className="flex col-span-9">
               <button
-                className="bg-[#68589b] text-white rounded px-4 py-1.5 justify-start"
+                className="bg-[#0C66E4] text-white rounded px-4 py-1 justify-start text-sm"
                 onClick={addNewCard}
               >
                 Add

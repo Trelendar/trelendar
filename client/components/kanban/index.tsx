@@ -1,26 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { LexoRank } from 'lexorank';
-import Column from './Column';
-import {
-  BoardType,
-  CardType,
-  ColumnRequest,
-  ColumnType,
-  DropRequest,
-} from '../../share/type/kanban';
-import { Container, Draggable, DropResult } from 'react-smooth-dnd';
-import { applyDrag } from './utils';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { GrClose } from 'react-icons/gr';
-import { motion } from 'framer-motion';
-import { WithContext as ReactTags } from 'react-tag-input';
-import { useQuery } from '@tanstack/react-query';
+import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import axios from '../../lib/axios';
-import { useRouter } from 'next/router';
+import {
+  CardType,
+  ColumnType
+} from '../../share/type/kanban';
+import Column from './Column';
+import { applyDrag } from './utils';
 // import { useRouter } from 'next/router';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
 // import { Lexorank } from '../../lib/lexorank';
@@ -100,7 +95,6 @@ const Kanban: React.FC = () => {
   }, [isAddNewColumn]);
 
   const onColumnDrop = async (dropResult: DropResult) => {
-    
     const { addedIndex, removedIndex, payload } = dropResult;
     console.log(
       '🚀 ~ file: index.tsx:98 ~ onColumnDrop ~ addedIndex, removedIndex:',
@@ -112,7 +106,6 @@ const Kanban: React.FC = () => {
 
     if (dropResult.addedIndex === dropResult.removedIndex) return;
     const order = generateOrder(columns, addedIndex, removedIndex);
-
 
     let newColumns = [...columns];
     newColumns = newColumns.map((item) => {
@@ -144,7 +137,8 @@ const Kanban: React.FC = () => {
     // onDropColumnService(dropColumn).catch(() => onExpired());
   };
 
-  const handleCardDrop = async (column: ColumnType, dropResult: DropResult) => {
+  const handleCardDrop = (column: ColumnType, dropResult: DropResult) => {
+    console.log('🚀 ~ file: index.tsx:155 ~ handleCardDrop ~ columns:', columns);
     const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
     if (noDropCard) return;
 
@@ -159,11 +153,23 @@ const Kanban: React.FC = () => {
       cards: [],
       cardOrder: '',
     };
+    if (dropResult.removedIndex === null) {
+      let oldColumn = newColumns.find((c) => c._id === payload.columnId);
+      oldColumn.cards = oldColumn.cards.filter((card) => card._id !== payload._id);
+    }
 
     currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
+    currentColumn.cards = currentColumn.cards.map((item) => {
+      if (item._id !== payload._id) return item;
+      return {
+        ...item,
+        order: order,
+        columnId: column._id,
+      };
+    });
     currentColumn.cardOrder = currentColumn.cards.map((card) => card._id);
-    console.log("run herre", currentColumn);
-    
+    console.log('run herre', currentColumn);
+
     setColumns(newColumns);
 
     axios.patch(`/card/${payload._id}`, {
@@ -171,7 +177,6 @@ const Kanban: React.FC = () => {
       columnId: column._id,
       oldColumnId: payload.columnId,
     });
-
 
     // const indexOfOldCol = columns.findIndex((col) => col._id === dropResult.payload._id);
     // const indexOfCardInOldCol = columns[indexOfOldCol].cards.findIndex(
@@ -223,6 +228,7 @@ const Kanban: React.FC = () => {
       order,
       boardId,
     });
+    console.log('🚀 ~ file: index.tsx:226 ~ addNewColumn ~ boardId:', boardId);
     setColumns([...columns, res]);
     // await refetch();
 
@@ -241,7 +247,7 @@ const Kanban: React.FC = () => {
 
     setNewColumnTitle('');
   };
-
+  console.log('🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumn', columns);
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
     console.log(
       '🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumnUpdated:',

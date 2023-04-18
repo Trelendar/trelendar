@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CardRequest, CardType } from '../../share/type/kanban';
+import { CardRequest, CardType } from '../../../share/type/kanban';
 import Modal from 'react-modal';
 import { GrClose } from 'react-icons/gr';
 import ContentEditable from 'react-contenteditable';
-import MemberTag from './MemberTag';
-import { confirmDeleteCard } from './utils';
+import { InputUnstyled } from '@mui/base';
+import Title from './Title';
+import { confirmDeleteCard } from '../utils';
 // import purify from 'dompurify';
 interface Props {
   card: CardType;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const Card: React.FC<Props> = (props) => {
+  console.log('🚀 ~ file: index.tsx:15 ~ card:', props.card);
   const { deleteCard, order } = props;
 
   const [card, setCard] = useState<CardType>(props.card);
@@ -33,7 +35,7 @@ const Card: React.FC<Props> = (props) => {
       right: 'auto',
       bottom: 'auto',
       transform: 'translate(-50%, -50%)',
-      backgroundColor: '#68589b',
+      backgroundColor: 'white',
     },
   };
 
@@ -85,12 +87,12 @@ const Card: React.FC<Props> = (props) => {
     <>
       <article
         onClick={() => setIsModal(true)}
-        className="bg-white shadow shadow-slate-400 mb-2 rounded-md p-2 w-64 break-all cursor-pointer"
+        className="bg-white shadow shadow-slate-400 mb-2 rounded-md p-2 w-64 break-all cursor-pointer hover:opacity-70"
       >
         {card.title}
       </article>
       <Modal isOpen={isModal} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>
-        <div className="w-full shadow">
+        <div className="w-full">
           <div className="w-[800px] h-full">
             <div className="relative bg-white rounded-md ">
               <button
@@ -100,18 +102,7 @@ const Card: React.FC<Props> = (props) => {
               >
                 <GrClose />
               </button>
-              <div className="py-4 px-6 rounded-t border-b">
-                {
-                  <ContentEditable
-                    className="text-base font-semibold text-gray-900 lg:text-xl"
-                    html={titleUpdateRef.current}
-                    onChange={(e) => {
-                      if (e.target.value === '') return;
-                      titleUpdateRef.current = e.target.value;
-                    }}
-                  />
-                }
-              </div>
+              <Title card={card} />
               <div className="px-6 py-2">
                 <ul className="my-4 space-y-3">
                   <li className="w-[300px]">
@@ -128,16 +119,17 @@ const Card: React.FC<Props> = (props) => {
                     </div>
                   </li>
                   <li>
-                    <div className="p-3 text-base  text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow">
+                    <div className="p-3 text-base  text-gray-900  rounded-lg  group">
                       <div className="flex-1 ml-3 break-words font-bold">Description:</div>
-                      <ContentEditable
+                      <InputUnstyled type="" />
+                      {/* <ContentEditable
                         className="flex-2 ml-3 break-words text-sm py-2"
                         html={descriptionUpdateRef.current}
                         onChange={(e) => {
                           if (e.target.value === '') return;
                           descriptionUpdateRef.current = e.target.value;
                         }}
-                      />
+                      /> */}
                     </div>
                   </li>
                   <li>
