@@ -113,7 +113,7 @@ const Column: React.FC<Props> = (props) => {
   };
   return (
     <div className="w-[272px] bg-[#ebecf0] rounded p-2 mr-4 shadow-lg">
-      <header className="column-drag-handle font-semibold p-2 cursor-pointer underline">
+      <header className="column-drag-handle font-semibold p-2 cursor-pointer">
         {!isUpdateTitle ? (
           <div className="grid grid-cols-10">
             <div className="col-span-9 !no-underline" onClick={() => setIsUpdateTitle(true)}>
