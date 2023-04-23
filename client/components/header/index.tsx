@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         </>
       ) : (
         <div className="col-start-6 w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-          <Link href="/auth/login">
+          <Link href="/authentication/sign-in">
             <div className="bg-transparent transition text-white font-semibold py-2 px-10 border border-white-500 rounded-full hover:bg-white hover:text-colorHome cursor-pointer">
               Login
             </div>

@@ -139,7 +139,7 @@ const Main: React.FC = () => {
 //   if (!session) {
 //     return {
 //       redirect: {
-//         destination: '/auth/login',
+//         destination: '/authentication/sign-in',
 //         permanent: false,
 //       },
 //     };

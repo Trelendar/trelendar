@@ -30,8 +30,8 @@ export const authOptions: NextAuthOptions = {
     // async decode({ secret, token }) {},
   },
   pages: {
-    signIn: '/auth/login',
-    error: '/auth/login',
+    signIn: '/authentication/sign-in',
+    error: '/authentication/sign-in',
   },
   // debug: true,
   // secret: process.env.NEXT_PUBLIC_SECRET,

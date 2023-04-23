@@ -13,7 +13,7 @@ export class ColumnService {
   constructor(
     @InjectModel(Column.name) private columnModel: Model<ColumnDocument>,
     private readonly boardService: BoardService,
-  ) {}
+  ) { }
   async create(createColumnDto: CreateColumnDto, user: User): Promise<Column> {
     const { boardId, title } = createColumnDto;
     await this.boardService.getOne(user, boardId);
@@ -83,6 +83,7 @@ export class ColumnService {
             updatedAt: card.updatedAt,
             createdAt: card.createdAt,
             columnId: column._id,
+            columnTitle: column.title,
           };
         }),
       };

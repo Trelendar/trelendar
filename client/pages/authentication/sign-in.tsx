@@ -15,7 +15,7 @@ import { useFormik } from 'formik';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Layout from '../../components/auth/Layout';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import { authOptions } from '../api/auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
@@ -36,19 +36,23 @@ export function PropsTextField(name: string) {
 
 const validationSchema = yup.object({
   email: yup.string().email('Enter a valid email').required('Email is required'),
+  password: yup.string(),
 });
 
 interface LoginData {
   email: string;
+  password?: string;
 }
 
 const Login = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
+      password: '',
     },
     validationSchema,
     onSubmit: async ({ email }: LoginData) => {
+      console.log('🚀 ~ file: sign-in.tsx:55 ~ onSubmit: ~ email:', email);
       const res = await signIn('email', { email, redirect: true });
       console.log(res);
 
@@ -80,8 +84,21 @@ const Login = () => {
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
         />
+        {/* <TextField
+          sx={{ marginY: '0.5rem' }}
+          fullWidth
+          {...PropsTextField('password')}
+          type="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
+        /> */}
 
-        <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full">
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
+        >
           LOGIN
         </button>
       </form>
@@ -101,24 +118,24 @@ const Login = () => {
   );
 };
 
-// export const getServerSideProps = async (context) => {
-//   const session = await unstable_getServerSession(context.req, context.res, authOptions);
+export const getServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions);
 
-//   if (session) {
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
-//   return {
-//     props: {
-//       providers: await getProviders(),
-//       session: await getSession(context),
-//       csrfToken: await getCsrfToken(context),
-//     },
-//   };
-// };
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      providers: await getProviders(),
+      session: await getSession(context),
+      csrfToken: await getCsrfToken(context),
+    },
+  };
+};
 
 export default Login;

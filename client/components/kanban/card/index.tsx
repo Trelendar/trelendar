@@ -6,6 +6,10 @@ import ContentEditable from 'react-contenteditable';
 import { InputUnstyled } from '@mui/base';
 import Title from './Title';
 import { confirmDeleteCard } from '../utils';
+import DescriptionIcon from '@mui/icons-material/Description';
+import Button from '@mui/material/Button';
+import Description from './Description';
+import { MemberAction } from './MemberAction';
 // import purify from 'dompurify';
 interface Props {
   card: CardType;
@@ -92,18 +96,18 @@ const Card: React.FC<Props> = (props) => {
         {card.title}
       </article>
       <Modal isOpen={isModal} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>
-        <div className="w-full">
-          <div className="w-[800px] h-full">
-            <div className="relative bg-white rounded-md ">
-              <button
+        <div className="w-[800px] h-full grid grid-cols-5 gap-4">
+          <div className="relative bg-white rounded-md col-span-4 py-4 px-6 flex flex-col gap-8">
+            {/* <button
                 type="button"
                 onClick={closeModal}
                 className="transition-all absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
               >
                 <GrClose />
-              </button>
-              <Title card={card} />
-              <div className="px-6 py-2">
+              </button> */}
+            <Title card={card} />
+            <Description card={card} />
+            {/* <div className="px-6 py-2">
                 <ul className="my-4 space-y-3">
                   <li className="w-[300px]">
                     <div className="flex items-center text-base font-bold text-gray-900">
@@ -122,20 +126,20 @@ const Card: React.FC<Props> = (props) => {
                     <div className="p-3 text-base  text-gray-900  rounded-lg  group">
                       <div className="flex-1 ml-3 break-words font-bold">Description:</div>
                       <InputUnstyled type="" />
-                      {/* <ContentEditable
+                      <ContentEditable
                         className="flex-2 ml-3 break-words text-sm py-2"
                         html={descriptionUpdateRef.current}
                         onChange={(e) => {
                           if (e.target.value === '') return;
                           descriptionUpdateRef.current = e.target.value;
                         }}
-                      /> */}
+                      />
                     </div>
                   </li>
                   <li>
                     <div className="items-center p-3 text-base  text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow">
                       <div className="ml-3 font-bold">Member:</div>
-                      <div className="ml-3">{/* <MemberTag cardId={card.id} /> */}</div>
+                      <div className="ml-3"><MemberTag cardId={card.id} /></div>
                     </div>
                   </li>
                   <li className="flex justify-around">
@@ -150,9 +154,9 @@ const Card: React.FC<Props> = (props) => {
                     </button>
                   </li>
                 </ul>
-              </div>
-            </div>
+              </div> */}
           </div>
+          <MemberAction/>
         </div>
       </Modal>
     </>

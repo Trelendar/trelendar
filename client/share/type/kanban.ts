@@ -7,6 +7,7 @@ export interface CardType {
   description: string;
   priority?: string;
   order: string;
+  columnTitle: string;
 }
 
 export interface ColumnType {
