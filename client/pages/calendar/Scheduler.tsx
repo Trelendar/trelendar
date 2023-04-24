@@ -4,6 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import events from './mockEvent';
 import { EventType } from '../../share/type/calendar';
 import moment from 'moment-timezone';
+import { useRouter } from 'next/router';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -16,6 +17,8 @@ const Scheduler = () => {
   const [endTime, setEndTime] = useState<string>('');
   const inputTitleRef = useRef<HTMLInputElement>(null);
 
+  const router = useRouter();
+
   const onInputTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = evt.target.value;
     setTitleNewEvent(newTitle);
@@ -25,7 +28,7 @@ const Scheduler = () => {
     if (!titleNewEvent) return;
     setIsShowNewEvent(true);
     const newEvent: EventType = {
-      id: 'not yet update',
+      id: 'not_yet_update',
       start: startTime,
       end: endTime,
       title: titleNewEvent,
@@ -41,6 +44,10 @@ const Scheduler = () => {
     setStartTime(start);
     setIsShowNewEvent(true);
   };
+
+  const onClickEvent = (event: EventType) => {
+    router.push(`calendar/${event.id}`);
+  }
 
     useEffect(() => {
       const isInputAdded = inputTitleRef && inputTitleRef.current;
@@ -59,7 +66,7 @@ const Scheduler = () => {
           defaultView="week"
           events={eventsData}
           style={{ height: '88vh' }}
-          onSelectEvent={(event) => alert(event.title)}
+          onSelectEvent={(event) => onClickEvent(event)}
           onSelectSlot={handleSelect}
         />
         {isShowNewEvent ? (

@@ -20,6 +20,8 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Tag, UserCard } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
+import TextField from '@mui/material/TextField';
+import Link from 'next/link';
 
 const DetailEvent: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([
@@ -93,6 +95,7 @@ const DetailEvent: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [timePicker, setTimePicker] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
   const [desEvent, setDesEvent] = useState<string>(detailEvent.desc ?? 'None');
+  const [titleEdit, setTitleEdit] = useState<string>(detailEvent.title);
   const changeFormat = (stringInput: string) => {};
 
   const handleSave = () => {
@@ -110,6 +113,17 @@ const DetailEvent: React.FC = () => {
       >
         {isEdit ? 'Save' : 'Edit'}
       </button>
+
+    {!isEdit &&<Link href="/calendar">
+     <button
+      className={
+        'text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all bg-red-500 hover:bg-red-600 ml-[300px]'
+      }
+      onClick={() => handleSave()}
+    >
+      Back to Canlendar
+    </button>
+    </Link>}
 
       {isEdit && (
         <button
@@ -129,8 +143,15 @@ const DetailEvent: React.FC = () => {
               <TableCell>
                 {' '}
                 <div className="flex">
-                  <MdEventNote className="text-2xl text-colorHome mr-3" />
-                  <div className="text-[1.4rem] font-medium inline-block">{detailEvent.title}</div>
+                  {!isEdit && (
+                    <>
+                      <MdEventNote className="text-2xl text-colorHome mr-3" />
+                      <div className="text-[1.4rem] font-medium inline-block">
+                        {detailEvent.title}
+                      </div>
+                    </>
+                  )}
+                  {isEdit && <TextField value={titleEdit} fullWidth />}
                 </div>
               </TableCell>
             </TableRow>
@@ -209,7 +230,11 @@ const DetailEvent: React.FC = () => {
                 {isEdit && (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DatePicker']}>
-                      <DatePicker label="Select Date" value={dayjs(detailEvent.start)} format="DD/MM/YYYY"/>
+                      <DatePicker
+                        label="Select Date"
+                        value={dayjs(detailEvent.start)}
+                        format="DD/MM/YYYY"
+                      />
                     </DemoContainer>
                   </LocalizationProvider>
                 )}
