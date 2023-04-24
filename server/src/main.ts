@@ -10,6 +10,6 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalFilters(new CustomExceptionFilter());
-  await app.listen(3001);
+  await app.listen(process.env.PORT || 3001);
 }
 bootstrap();
