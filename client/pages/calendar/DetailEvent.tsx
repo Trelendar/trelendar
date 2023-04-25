@@ -5,6 +5,8 @@ import { BiTime } from 'react-icons/bi';
 import { BsCalendarDate } from 'react-icons/bs';
 import { IoIosPeople } from 'react-icons/io';
 import { HiOutlineDocumentText } from 'react-icons/hi';
+import { MdAllInclusive } from 'react-icons/md';
+import { MdSettingsBackupRestore } from 'react-icons/md';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -22,6 +24,7 @@ import { Tag, UserCard } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
+import Checkbox from '@mui/material/Checkbox';
 
 const DetailEvent: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([
@@ -114,16 +117,18 @@ const DetailEvent: React.FC = () => {
         {isEdit ? 'Save' : 'Edit'}
       </button>
 
-    {!isEdit &&<Link href="/calendar">
-     <button
-      className={
-        'text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all bg-red-500 hover:bg-red-600 ml-[300px]'
-      }
-      onClick={() => handleSave()}
-    >
-      Back to Canlendar
-    </button>
-    </Link>}
+      {!isEdit && (
+        <Link href="/calendar">
+          <button
+            className={
+              'font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all ml-[300px] border'
+            }
+          >
+            <MdSettingsBackupRestore className='inline-block mr-3' size={30}/>
+            Back to Canlendar
+          </button>
+        </Link>
+      )}
 
       {isEdit && (
         <button
@@ -200,6 +205,39 @@ const DetailEvent: React.FC = () => {
                         />
                       </DemoContainer>
                     </LocalizationProvider>
+                  </div>
+                )}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell
+                align="left"
+                component="th"
+                className="max-w-[20vw] w-[20vw] break-words"
+                sx={{ fontSize: 20 }}
+              >
+                Type:
+              </TableCell>
+              <TableCell align="left" sx={{ fontSize: 20 }}>
+                {!isEdit && (
+                  <div className="flex">
+                    <MdAllInclusive className="text-2xl text-colorHome mt-1 mr-3" />
+                    <div className="text-[1.4rem] inline-block">
+                      {detailEvent.allDay ? 'All Day' : 'Regular'}
+                    </div>
+                  </div>
+                )}
+                {isEdit && (
+                  <div>
+                    {' '}
+                    All Day{' '}
+                    <Checkbox
+                      color="secondary"
+                      size="medium"
+                      // checked={isAllday}
+                      // onChange={() => setIsAllday(true)}
+                    />
                   </div>
                 )}
               </TableCell>
@@ -314,6 +352,14 @@ const DetailEvent: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <button
+        className={
+          'mt-8 text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all bg-red-500 hover:bg-red-600 '
+        }
+      >
+        Delete
+      </button>
     </div>
   );
 };
