@@ -14,10 +14,13 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/current.user';
 import { User } from 'src/user/entities/user.entity';
-
+import { JwtService } from '@nestjs/jwt';
 @Controller('board')
 export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
+  constructor(
+    private readonly boardService: BoardService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -52,5 +55,16 @@ export class BoardController {
   @Post(':id/addMember')
   addOne(@Param('id') id: string, @Body() data: { idAdded: string }) {
     return this.boardService.addOne(id, data.idAdded);
+  }
+
+  @Get(':id/invite')
+  @UseGuards(JwtAuthGuard)
+  createInviteLink(@Param('id') id: string, @CurrentUser() user: User) {
+    const token = this.jwtService.sign({
+      invite: true,
+      boardId: id,
+      name: user.name,
+    });
+    return `https://example.com/invite?token=${token}`;
   }
 }

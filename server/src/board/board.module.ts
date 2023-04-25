@@ -4,11 +4,17 @@ import { BoardController } from './board.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Board, BoardSchema } from './entities/board.entity';
 import { UserModule } from '../user/user.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 
 @Module({
   imports: [
     UserModule,
     MongooseModule.forFeature([{ name: Board.name, schema: BoardSchema }]),
+    JwtModule.register({
+      secret: process.env.JWT_KEY_INVITE || 'my_key',
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
   controllers: [BoardController],
   providers: [BoardService],

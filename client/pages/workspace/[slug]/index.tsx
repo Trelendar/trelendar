@@ -23,17 +23,12 @@ import Toolbar from '@mui/material/Toolbar';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Card, CardBody, Col, Row } from 'reactstrap';
-import BoardX from '../../../components/dnd/board/Board';
-import { generateQuoteMap } from '../../../components/dnd/mockData';
 import Header from '../../../components/header';
-import axios from '../../../lib/axios';
-import { Lexorank } from '../../../lib/lexorank';
-import { Board } from '../index';
 import Kanban from '../../../components/kanban/';
+import axios from '../../../lib/axios';
+import { Board } from '../index';
 // import "bootstrap/dist/css/bootstrap.min.css";
 
-const lexorank = new Lexorank();
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -106,11 +101,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Board: React.FC = () => {
-  const data = {
-    medium: generateQuoteMap(50),
-    large: generateQuoteMap(500),
-  };
-  
   const router = useRouter();
   const {
     data: board,
@@ -122,8 +112,11 @@ const Board: React.FC = () => {
       return await axios.get(`board/${router.query.slug}`);
     },
   });
-  console.log("🚀 ~ file: index.tsx:112 ~ data:", board)
-  console.log("🚀 ~ file: index.tsx:112 ~ board:", board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards}), {}))
+  console.log('🚀 ~ file: index.tsx:112 ~ data:', board);
+  console.log(
+    '🚀 ~ file: index.tsx:112 ~ board:',
+    board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards }), {})
+  );
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -228,22 +221,6 @@ const Board: React.FC = () => {
           <DrawerHeader />
           <div className="overflow-y-auto bg-[#BCB4D8] pt-7">
             <Kanban />
-            <>
-              {/* <Row className="justify-content-center text-center">
-                <Col xs={12}>
-                  <Card>
-                    <CardBody>
-                      <h2>React DnD Testing</h2>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row> */}
-
-              {/* {board  && (
-
-              <BoardX initial={board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards}),{})} withScrollableColumns containerHeight="900" initColumns={board?.columns}/>
-              )} */}
-            </>
           </div>
         </Box>
       </Box>
