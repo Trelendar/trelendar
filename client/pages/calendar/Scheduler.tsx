@@ -5,6 +5,11 @@ import events from './mockEvent';
 import { EventType } from '../../share/type/calendar';
 import moment from 'moment-timezone';
 import { useRouter } from 'next/router';
+import Checkbox from '@mui/material/Checkbox';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -12,6 +17,7 @@ const localizer = momentLocalizer(moment);
 const Scheduler = () => {
   const [eventsData, setEventsData] = useState<EventType[]>(events);
   const [isShowNewEvent, setIsShowNewEvent] = useState<Boolean>(false);
+  const [isAllday, setIsAllday] = useState<boolean>(false);
   const [titleNewEvent, setTitleNewEvent] = useState<string>('');
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
@@ -32,10 +38,12 @@ const Scheduler = () => {
       start: startTime,
       end: endTime,
       title: titleNewEvent,
+      allDay: isAllday,
     };
     setEventsData([...eventsData, newEvent]);
+    setIsAllday(false);
     setIsShowNewEvent(false);
-  }
+  };
 
   const handleSelect = ({ start, end }) => {
     console.log(start);
@@ -47,17 +55,40 @@ const Scheduler = () => {
 
   const onClickEvent = (event: EventType) => {
     router.push(`calendar/${event.id}`);
-  }
+  };
 
-    useEffect(() => {
-      const isInputAdded = inputTitleRef && inputTitleRef.current;
-      if (isInputAdded) {
-        inputTitleRef.current.focus();
-      }
-    }, [isShowNewEvent]);
+  useEffect(() => {
+    const isInputAdded = inputTitleRef && inputTitleRef.current;
+    if (isInputAdded) {
+      inputTitleRef.current.focus();
+    }
+  }, [isShowNewEvent]);
   return (
     <>
       <div className="p-3">
+        <div className="mb-9 border p-2 border-[#5B5393] rounded shadow">
+          <Box sx={{ minWidth: 50}}>
+            <FormControl fullWidth>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Select member
+              </InputLabel>
+              <NativeSelect
+                defaultValue={0}
+                inputProps={{
+                  name: 'member',
+                  id: 'uncontrolled-native',
+                }}
+              >
+                <option value={0}>Chính mình</option>
+                <option value={10}>Nguyen Thanh Long</option>
+                <option value={20}>Nguyen Tran Hoang</option>
+                <option value={30}>Nguyen Van A</option>
+                <option value={40}>Code cứng</option>
+              </NativeSelect>
+            </FormControl>
+          </Box>
+        </div>
+
         <Calendar
           views={['day', 'week', 'month', 'agenda']}
           selectable
@@ -65,7 +96,7 @@ const Scheduler = () => {
           defaultDate={new Date()}
           defaultView="week"
           events={eventsData}
-          style={{ height: '88vh' }}
+          style={{ height: '75vh' }}
           onSelectEvent={(event) => onClickEvent(event)}
           onSelectSlot={handleSelect}
         />
@@ -74,6 +105,7 @@ const Scheduler = () => {
             <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
               <div className="relative w-[550px] my-6 mx-auto">
                 {/*content*/}
+
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                   {/*header*/}
                   <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
@@ -84,6 +116,15 @@ const Scheduler = () => {
                     ></button>
                   </div>
                   {/*body*/}
+                  <div className="ml-6">
+                    All Day:
+                    <Checkbox
+                      color="secondary"
+                      size="medium"
+                      checked={isAllday}
+                      onChange={() => setIsAllday(true)}
+                    />
+                  </div>
                   <div className="relative p-6 flex-auto">
                     <span className="my-4 text-slate-500 text-lg leading-relaxed">
                       <div className="mb-6">
