@@ -62,7 +62,30 @@ export class BoardService {
     const list = await this.boardModel.find({ members: { $in: [id] } });
     return list;
   }
-
+  async getById(id: string) {
+    try {
+      const board = await this.boardModel
+        .findOne({
+          _id: convertToObjectId(id),
+        })
+        .populate({
+          path: 'columns',
+          options: {
+            sort: { order: 1 },
+          },
+          populate: {
+            path: 'cards',
+            options: {
+              sort: { order: 1 },
+            },
+          },
+        });
+      if (!board) throw new CustomException('Board not found');
+      return board;
+    } catch (error) {
+      throw new CustomException('Board not found or not access');
+    }
+  }
   async getOne(user: User, id: string) {
     try {
       const board = await this.boardModel
@@ -112,7 +135,7 @@ export class BoardService {
       { new: true },
     );
   }
-  
+
   async findByColumn(columnId: string, user: User) {
     try {
       const board = await this.boardModel.findOne({

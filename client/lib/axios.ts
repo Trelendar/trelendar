@@ -9,7 +9,7 @@ const instance: AxiosInstance = axios.create({
   // withCredentials: true,
 });
 instance.interceptors.response.use((response: AxiosResponse<any, any>) => {
-  return response.data;
+  return response;
 });
 instance.interceptors.request.use(
   (config) => {

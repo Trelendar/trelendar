@@ -9,7 +9,7 @@ import axios from '../../lib/axios';
 import { BoardType, ColumnType } from '../../share/type/kanban';
 import BoardTag from './BoardTag';
 import { boardsMock } from './mockBoards';
-import {Lexorank} from "../../lib/lexorank";
+import { Lexorank } from '../../lib/lexorank';
 
 const lexorank = new Lexorank();
 export interface Board {
@@ -28,7 +28,7 @@ const Main: React.FC = () => {
   const { data: listBoard, isLoading } = useQuery<Board[]>({
     queryKey: ['board'],
     queryFn: async () => {
-      return await axios.get('board');
+      return (await axios.get('board')).data;
     },
   });
   const { data: user } = useSession();
@@ -41,12 +41,14 @@ const Main: React.FC = () => {
 
   const onSaveChanges = async () => {
     if (title.length === 0) return;
-    const res = await axios.post<{ _id: string }>('/board', {
-      name: title,
-    });
+    const res = (
+      await axios.post<{ _id: string }>('/board', {
+        name: title,
+      })
+    ).data;
     console.log(res);
 
-    router.push(`/workspace/${res._id}`); //error type but fix after
+    router.push(`/workspace/${res._id}`);
   };
   useEffect(() => {
     user &&

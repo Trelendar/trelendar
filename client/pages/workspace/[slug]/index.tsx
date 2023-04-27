@@ -109,14 +109,9 @@ const Board: React.FC = () => {
   } = useQuery<Board>({
     queryKey: ['board detail'],
     queryFn: async () => {
-      return await axios.get(`board/${router.query.slug}`);
+      return (await axios.get(`board/${router.query.slug}`)).data;
     },
   });
-  console.log('🚀 ~ file: index.tsx:112 ~ data:', board);
-  console.log(
-    '🚀 ~ file: index.tsx:112 ~ board:',
-    board?.columns.reduce((a, b) => ({ ...a, [b._id]: b.cards }), {})
-  );
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 

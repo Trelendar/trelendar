@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -15,12 +16,28 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/current.user';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { InviteBoardDto } from './dto/invite-board.dto';
 @Controller('board')
 export class BoardController {
   constructor(
     private readonly boardService: BoardService,
     private readonly jwtService: JwtService,
   ) {}
+
+  @Get('invite')
+  async validateLinkInvite(
+    @Param('id') id: string,
+    @Query() { token }: { token: string },
+  ) {
+    const { boardId, name: inviterName } = this.jwtService.verify(token);
+
+    const board = await this.boardService.getById(boardId);
+    return {
+      member: board.members.length,
+      inviteBy: inviterName,
+      name: board.name,
+    };
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -57,14 +74,16 @@ export class BoardController {
     return this.boardService.addOne(id, data.idAdded);
   }
 
-  @Get(':id/invite')
+  @Get(':id/create-link-invite')
   @UseGuards(JwtAuthGuard)
-  createInviteLink(@Param('id') id: string, @CurrentUser() user: User) {
+  async createInviteLink(@Param('id') id: string, @CurrentUser() user: User) {
+    await this.boardService.getOne(user, id);
     const token = this.jwtService.sign({
       invite: true,
       boardId: id,
+      inviterId: user._id,
       name: user.name,
     });
-    return `https://example.com/invite?token=${token}`;
+    return `${process.env.URL_FE}/invite?token=${token}`;
   }
 }

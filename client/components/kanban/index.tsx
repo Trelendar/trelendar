@@ -63,7 +63,7 @@ const Kanban: React.FC = () => {
   } = useQuery({
     queryKey: ['column???'],
     queryFn: async (): Promise<ColumnType[]> => {
-      return await axios.get(`/column/${router.query.slug}`);
+      return (await axios.get(`/column/${router.query.slug}`)).data;
     },
   });
 
@@ -223,11 +223,11 @@ const Kanban: React.FC = () => {
         ? LexoRank.middle().toString()
         : LexoRank.parse(columns.slice(-1)[0].order).genNext().toString();
 
-    const res: ColumnType = await axios.post('/column', {
+    const res: ColumnType = (await axios.post('/column', {
       title: newColumnTitle,
       order,
       boardId,
-    });
+    })).data;
     console.log('🚀 ~ file: index.tsx:226 ~ addNewColumn ~ boardId:', boardId);
     setColumns([...columns, res]);
     // await refetch();
