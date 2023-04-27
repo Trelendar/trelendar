@@ -10,6 +10,12 @@ import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import React from 'react';
 const queryClient = new QueryClient();
+queryClient.setDefaultOptions({
+  queries: {
+    retry: false,
+    cacheTime: 300000,
+  },
+});
 const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
     <QueryClientProvider client={queryClient}>
