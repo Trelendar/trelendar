@@ -95,4 +95,9 @@ export class BoardController {
     });
     return `${process.env.URL_FE}/invite?token=${token}`;
   }
+  @Get(':id/members')
+  @UseGuards(JwtAuthGuard)
+  async getMemberForBoard(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.boardService.getMember(id, user);
+  }
 }

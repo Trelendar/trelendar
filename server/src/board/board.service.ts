@@ -86,6 +86,23 @@ export class BoardService {
       throw new CustomException('Board not found or not access');
     }
   }
+  async getMember(id: string, user: User) {
+    if (!(await this.checkExitUserForBoard(user._id, id)))
+      throw new CustomException('You not in board');
+    try {
+      const board = await this.boardModel
+        .findOne({
+          _id: convertToObjectId(id),
+        })
+        .populate({
+          path: 'members',
+        });
+      if (!board) throw new CustomException('Board not found');
+      return board.members;
+    } catch (error) {
+      throw new CustomException('Board not found or not access');
+    }
+  }
   async getOne(user: User, id: string) {
     try {
       const board = await this.boardModel

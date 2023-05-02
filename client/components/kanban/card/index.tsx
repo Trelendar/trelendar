@@ -96,7 +96,7 @@ const Card: React.FC<Props> = (props) => {
         {card.title}
       </article>
       <Modal isOpen={isModal} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>
-        <div className="w-[800px] h-full grid grid-cols-5 gap-4">
+        <div className="w-[900px] h-full grid grid-cols-5 gap-4 px-3">
           <div className="relative bg-white rounded-md col-span-4 py-4 px-6 flex flex-col gap-8">
             {/* <button
                 type="button"
