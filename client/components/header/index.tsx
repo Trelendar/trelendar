@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsFillKanbanFill } from 'react-icons/bs';
 import Link from 'next/link';
 import { FiSettings } from 'react-icons/fi';
@@ -12,6 +12,11 @@ const Header: React.FC = () => {
 
   const [isDropdonw, setIsDropdonw] = useState<boolean>(false);
   const router = useRouter();
+  useEffect(() => {
+    data &&
+      !localStorage.getItem('accessToken') &&
+      localStorage.setItem('accessToken', data.token as string);
+  }, [data]);
 
   return (
     <nav className="grid grid-cols-7 gap-4 bg-colorHome py-2 max-h-17 h-[10vh]">
@@ -75,7 +80,7 @@ const Header: React.FC = () => {
                 My calendar
               </div>
             </div>
-          
+
             <div className="py-1">
               <div className="text-gray-700 block px-4 py-2 text-sm hover:bg-slate-100 rounded-md">
                 Logout

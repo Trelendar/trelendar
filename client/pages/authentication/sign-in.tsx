@@ -45,6 +45,7 @@ interface LoginData {
 }
 
 const Login = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -53,14 +54,23 @@ const Login = () => {
     validationSchema,
     onSubmit: async ({ email }: LoginData) => {
       console.log('🚀 ~ file: sign-in.tsx:55 ~ onSubmit: ~ email:', email);
-      const res = await signIn('email', { email, redirect: true });
+      const res = await signIn('email', { email, redirect: false });
       console.log(res);
 
       if (res.error) {
         toast.error(res.error);
         return;
       }
-      await Router.push('../');
+
+      try {
+        const from = router.query.from;
+        const decodedFrom = decodeURIComponent(from as string);
+        router.push(decodedFrom);
+      } catch (error) {
+        console.error('Invalid "from" parameter:', error);
+        router.push('/');
+      }
+      // await Router.push('../');
     },
   });
   useEffect(() => {

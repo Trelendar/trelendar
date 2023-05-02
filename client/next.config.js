@@ -6,4 +6,7 @@ module.exports = {
       },
     ],
   },
+  env: {
+    FE_URL: process.env.FE_URL,
+  },
 };

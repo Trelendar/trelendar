@@ -111,6 +111,30 @@ export class BoardService {
       throw new CustomException('Board not found or not access');
     }
   }
+  async checkExitUserForBoard(
+    idUser: mongoose.Schema.Types.ObjectId,
+    id: string,
+  ): Promise<boolean> {
+    const board = await this.boardModel
+      .findOne({
+        _id: convertToObjectId(id),
+        members: { $in: [idUser] },
+      })
+      .populate({
+        path: 'columns',
+        options: {
+          sort: { order: 1 },
+        },
+        populate: {
+          path: 'cards',
+          options: {
+            sort: { order: 1 },
+          },
+        },
+      });
+    if (!board) return false;
+    return true;
+  }
 
   async update(id: string, updateBoardDto: UpdateBoardDto): Promise<Board> {
     const board = await this.boardModel.findByIdAndUpdate(id, updateBoardDto, {
@@ -131,6 +155,23 @@ export class BoardService {
       id,
       {
         $addToSet: { columns: idColumn },
+      },
+      { new: true },
+    );
+  }
+  async addMemberToBoard(id: string, userId: mongoose.Schema.Types.ObjectId) {
+    const isExistedUser = await this.checkExitUserForBoard(userId, id);
+    console.log(
+      '🚀 ~ file: board.service.ts:164 ~ BoardService ~ addMemberToBoard ~ existedUser:',
+      isExistedUser,
+    );
+    if (isExistedUser) return;
+    const board = await this.boardModel.findById(id);
+    if (!board) throw new HttpException('Not found', 403);
+    return await this.boardModel.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { members: userId },
       },
       { new: true },
     );

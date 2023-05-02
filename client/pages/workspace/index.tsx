@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { BsPlusLg } from 'react-icons/bs';
@@ -134,21 +134,21 @@ const Main: React.FC = () => {
     </div>
   );
 };
-// export async function getServerSideProps(context) {
-//   const session = await getSession(context);
-//   console.log("session",session);
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  console.log('session', session);
 
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: '/authentication/sign-in',
-//         permanent: false,
-//       },
-//     };
-//   }
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/authentication/sign-in',
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: { session },
-//   };
-// }
+  return {
+    props: { session },
+  };
+}
 export default Main;

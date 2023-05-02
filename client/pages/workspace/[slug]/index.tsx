@@ -28,9 +28,20 @@ import Kanban from '../../../components/kanban/';
 import axios from '../../../lib/axios';
 import { Board } from '../index';
 // import "bootstrap/dist/css/bootstrap.min.css";
-
+import Modal from 'react-modal';
+import CopyLink from '../../../components/copylink';
+import { BoardType } from '../../../share/type/kanban';
 const drawerWidth = 240;
-
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -100,20 +111,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   })
 );
 
+const fetchBoard = async (id: string): Promise<Board> => {
+  const res = await axios.get(`board/${id}`);
+  return res.data as Board;
+};
 const Board: React.FC = () => {
   const router = useRouter();
   const {
     data: board,
     isLoading,
     error,
-  } = useQuery<Board>({
-    queryKey: ['board detail'],
-    queryFn: async () => {
-      return (await axios.get(`board/${router.query.slug}`)).data;
-    },
-  });
+  } = useQuery<Board>(['board detail', router.query.slug], () =>
+    fetchBoard(router.query.slug as string)
+  );
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [link, setLink] = React.useState('');
+
+  const handleOpenModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalIsOpen(false);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -129,6 +151,11 @@ const Board: React.FC = () => {
     board && toast.error('??');
   }, [error]);
   if (isLoading) return <span>Loading</span>;
+  const handleAddMember = async () => {
+    const res = await axios.get(`/board/${router.query.slug}/create-link-invite`);
+    handleOpenModal();
+    setLink(res.data as string);
+  };
 
   return (
     <div className="flex flex-col">
@@ -163,7 +190,36 @@ const Board: React.FC = () => {
           </DrawerHeader>
           <Divider />
           <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem
+              key={'Add member'}
+              disablePadding
+              sx={{ display: 'block' }}
+              onClick={handleAddMember}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <MailIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Add member'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+            <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} style={customStyles}>
+              {/* Content of the modal goes here */}
+              <CopyLink link={link} />
+            </Modal>
+            {['Inbox', 'Add member', 'Send email', 'Drafts'].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{

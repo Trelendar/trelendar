@@ -23,6 +23,11 @@ export class BoardController {
     private readonly boardService: BoardService,
     private readonly jwtService: JwtService,
   ) {}
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findAll(@CurrentUser() user: User) {
+    return await this.boardService.getAllBoard(user._id);
+  }
 
   @Get('invite')
   async validateLinkInvite(
@@ -38,6 +43,16 @@ export class BoardController {
       name: board.name,
     };
   }
+  @Post('join')
+  @UseGuards(JwtAuthGuard)
+  async joinBoard(
+    @Param('id') id: string,
+    @Query() { token }: { token: string },
+    @CurrentUser() user: User,
+  ) {
+    const { boardId, name: inviterName } = this.jwtService.verify(token);
+    return await this.boardService.addMemberToBoard(boardId, user._id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -46,12 +61,6 @@ export class BoardController {
     @CurrentUser() user: User,
   ) {
     return await this.boardService.create(user._id, createBoardDto);
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAll(@CurrentUser() user: User) {
-    return await this.boardService.getAllBoard(user._id);
   }
 
   @Get(':id')
