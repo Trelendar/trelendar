@@ -55,7 +55,7 @@ const DetailEvent: React.FC = () => {
       text: 'Ngoc',
     },
   ]);
-  const addUserInCard = (tag: Tag) => {
+  const addUserInEvent = (tag: Tag) => {
     // const userInCard: UserCard = {
     //   controller: CONTROLLER_ADD_USER_IN_CARD,
     //   userId: Number(tag.id),
@@ -65,7 +65,7 @@ const DetailEvent: React.FC = () => {
     setTags([...tags, tag]);
   };
 
-  const deleteUserInCard = (tag: Tag) => {
+  const deleteUserInEvent = (tag: Tag) => {
     // const userInCard: UserCard = {
     //   controller: CONTROLLER_DEL_USER_IN_CARD,
     //   userId: Number(tag.id),
@@ -87,7 +87,7 @@ const DetailEvent: React.FC = () => {
     start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
     end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
     allDay: false,
-    title: 'New Event',
+    title: 'New Event (mock)',
     desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
     members: ['update to react-tag-input'],
   };
@@ -109,7 +109,7 @@ const DetailEvent: React.FC = () => {
     <div className="p-6">
       <button
         className={
-          'bg-white text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all  ' +
+          'bg-white text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-10 transition-all  ' +
           (isEdit ? 'bg-green-400 hover:bg-green-500' : 'bg-[#4B358D] hover:bg-[#6752A3]')
         }
         onClick={() => handleSave()}
@@ -121,10 +121,10 @@ const DetailEvent: React.FC = () => {
         <Link href="/calendar">
           <button
             className={
-              'font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all ml-[300px] border'
+              'font-semibold py-2 px-6 border-gray-400 rounded shadow-lg mb-2 transition-all ml-[300px] border'
             }
           >
-            <MdSettingsBackupRestore className='inline-block mr-3' size={30}/>
+            <MdSettingsBackupRestore className='inline-block mr-3' size={25}/>
             Back to Canlendar
           </button>
         </Link>
@@ -303,10 +303,10 @@ const DetailEvent: React.FC = () => {
                           suggestions={users}
                           delimiters={[]}
                           handleDelete={(i) => {
-                            deleteUserInCard(tags[i]);
+                            deleteUserInEvent(tags[i]);
                             setTags(tags.filter((tag, index) => index !== i));
                           }}
-                          handleAddition={(tag) => addUserInCard(tag)}
+                          handleAddition={(tag) => addUserInEvent(tag)}
                           inputFieldPosition="inline"
                           autocomplete
                           placeholder="Search to add new member..."

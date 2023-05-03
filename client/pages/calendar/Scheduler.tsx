@@ -11,7 +11,8 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
-moment.locale('en-GB');
+// moment.locale('en-GB');
+moment.tz.setDefault('Asia/Vietnam');
 const localizer = momentLocalizer(moment);
 
 const Scheduler = () => {
@@ -19,8 +20,8 @@ const Scheduler = () => {
   const [isShowNewEvent, setIsShowNewEvent] = useState<Boolean>(false);
   const [isAllday, setIsAllday] = useState<boolean>(false);
   const [titleNewEvent, setTitleNewEvent] = useState<string>('');
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [endTime, setEndTime] = useState<Date>(new Date());
   const inputTitleRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -45,7 +46,7 @@ const Scheduler = () => {
     setIsShowNewEvent(false);
   };
 
-  const handleSelect = ({ start, end }) => {
+  const handleSelect = (start: Date, end: Date) => {
     console.log(start);
     console.log(end);
     setEndTime(end);
@@ -67,7 +68,7 @@ const Scheduler = () => {
     <>
       <div className="p-3">
         <div className="mb-9 border p-2 border-[#5B5393] rounded shadow">
-          <Box sx={{ minWidth: 50}}>
+          <Box sx={{ minWidth: 50 }}>
             <FormControl fullWidth>
               <InputLabel variant="standard" htmlFor="uncontrolled-native">
                 Select member
@@ -98,7 +99,7 @@ const Scheduler = () => {
           events={eventsData}
           style={{ height: '75vh' }}
           onSelectEvent={(event) => onClickEvent(event)}
-          onSelectSlot={handleSelect}
+          onSelectSlot={({ start, end }) => handleSelect(start, end)}
         />
         {isShowNewEvent ? (
           <>
@@ -117,6 +118,23 @@ const Scheduler = () => {
                   </div>
                   {/*body*/}
                   <div className="ml-6">
+                    <div>
+                      Datetime:{'  '}
+                      <span className="font-bold text-colorHome">
+                        {startTime.toLocaleTimeString('en-US', {
+                          hour12: false,
+                          hour: 'numeric',
+                          minute: 'numeric',
+                        })}{' '}
+                        -{' '}
+                        {endTime.toLocaleTimeString('en-GB', {
+                          hour12: false,
+                          hour: 'numeric',
+                          minute: 'numeric',
+                        })}
+                      </span>{' '}
+                      <span className="italic">({startTime.toLocaleDateString()})</span>
+                    </div>
                     All Day:
                     <Checkbox
                       color="secondary"
