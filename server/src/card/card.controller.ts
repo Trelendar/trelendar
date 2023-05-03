@@ -52,4 +52,23 @@ export class CardController {
   remove(@Param('id') id: string) {
     return this.cardService.remove(+id);
   }
+
+  @Patch(':id/assign')
+  @UseGuards(JwtAuthGuard)
+  async assignMember(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Body() { assignId }: { assignId: string },
+  ) {
+    return await this.cardService.assignMember(id, assignId, user);
+  }
+  @Patch(':id/un-assign')
+  @UseGuards(JwtAuthGuard)
+  async unAssignMember(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Body() { assignId }: { assignId: string },
+  ) {
+    return await this.cardService.unAssignMember(id, assignId, user);
+  }
 }

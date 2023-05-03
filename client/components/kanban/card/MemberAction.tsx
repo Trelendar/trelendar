@@ -4,6 +4,25 @@ import { useRouter } from 'next/router';
 import axios from '../../../lib/axios';
 import { useQuery } from '@tanstack/react-query';
 import Avatar from '@mui/material/Avatar';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import ListItemText from '@mui/material/ListItemText';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+
 interface User {
   _id: string;
   name: string;
@@ -16,38 +35,92 @@ const fetchMember = async (id: string) => {
 };
 const Member = ({ user }: { user: User }) => {
   return (
-    <div className="text-[#172b4d] bg-[#ffffff] p-1 text-sm flex items-center min-w-[180px] gap-1 mx-2 cursor-pointer hover:bg-[#091e4224] rounded">
+    <div className="text-[#172b4d] p-1 text-sm flex items-center min-w-[180px] gap-1 mx-2 cursor-pointer rounded">
       <Avatar className="!w-6 !h-6" alt={user.name} src={user.image} />
       <span className="flex">{user.name}</span>
     </div>
   );
 };
 export const MemberAction = () => {
+  const [personName, setPersonName] = React.useState<User[]>([]);
+
   const router = useRouter();
   const { data: users } = useQuery<User[]>(['member', router.query.slug], () =>
     fetchMember(router.query.slug as string)
   );
+  const handleChange = (event: SelectChangeEvent<unknown>) => {
+    const {
+      target: { value },
+    } = event;
+    console.log('🚀 ~ file: MemberAction.tsx:65 ~ handleChange ~ value:', value);
+    if (Array.isArray(value)) {
+      const selected = value
+        .map((_id) => users.find((user) => user._id === _id))
+        .filter(Boolean) as User[];
+      setPersonName(selected);
+    }
+    // // console.log('🚀 ~ file: MemberAction.tsx:60 ~ handleChange ~ value:', (value as string[]));
+    // if (typeof value === 'string') {
+    //   // console.log('🚀 ~ file: MemberAction.tsx:68 ~ handleChange ~ value:', value);
+    //   // const newUser = [...users].filter((item) => ((value as string[])).includes(item._id));
+    // } else {
+    //   const newUser = [...users].filter((item) => ((value as string[])).includes(item._id));
+    //   setPersonName(newUser);
+    // }
+  };
+  const renderValue = (selecteds: string[]) => {
+    return users
+      .filter((user) => selecteds.includes(user._id))
+      .map((user) => user.name)
+      .join(', ');
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen((pre) => !pre);
   return (
+    // <div>
+    //   <span>Add to card</span>
+    //   <div
+    //     className="flex items-center gap-1 bg-[#091e420f] rounded-md cursor-pointer p-1 hover:opacity-80"
+    //     onClick={toggle}
+    //   >
+    //     <PersonIcon />
+    //     <span className="text-base">Members</span>
+    //   </div>
+    //   {isOpen && (
+    //     <div className="relative inset-0 bg-white rounded-md shadow-md p-4 max-h-screen flex flex-col items-center min-w-[180px] z-10">
+    //       <h2 className="text-sm font-normal mb-4">Members</h2>
+    //       {/* {users.map((user) => (
+    //         <Member user={user} />
+    //       ))} */}
+    //       <p className="text-gray-700">Modal content goes here...</p>
+    //     </div>
+    //   )}
+    // </div>
     <div>
-      <span>Add to card</span>
-      <div
-        className="flex items-center gap-1 bg-[#091e420f] rounded-md cursor-pointer p-1 hover:opacity-80"
-        onClick={toggle}
-      >
-        <PersonIcon />
-        <span className="text-base">Members</span>
-      </div>
-      {isOpen && (
-        <div className="relative inset-0 bg-white rounded-md shadow-md p-4 max-h-screen flex flex-col items-center min-w-[180px] z-10">
-          <h2 className="text-sm font-normal mb-4">Members</h2>
-          {users.map((user) => (
-            <Member user={user} />
+      <FormControl sx={{ m: 1, width: 150 }}>
+        <InputLabel id="demo-multiple-checkbox-label" disabled>
+          Member
+        </InputLabel>
+        <Select
+          labelId="demo-multiple-checkbox-label"
+          id="demo-multiple-checkbox"
+          multiple
+          value={personName.map((item) => item._id)}
+          onChange={handleChange}
+          input={<OutlinedInput label="Tag" />}
+          renderValue={renderValue}
+          MenuProps={MenuProps}
+        >
+          {users?.map((user) => (
+            <MenuItem key={user._id} value={user._id}>
+              <Checkbox checked={personName.indexOf(user) > -1} />
+              <Member user={user} />
+              {/* <ListItemText primary={user.name} /> */}
+            </MenuItem>
           ))}
-          <p className="text-gray-700">Modal content goes here...</p>
-        </div>
-      )}
+        </Select>
+      </FormControl>
     </div>
   );
 };

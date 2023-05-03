@@ -25,7 +25,7 @@ export class CardService {
     }).save();
     await this.columnService.addCardToColumn(columnId, card.id);
 
-    return new CustomException('This action adds a new card');
+    return card;
   }
 
   findAll() {
@@ -56,5 +56,38 @@ export class CardService {
 
   remove(id: number) {
     return `This action removes a #${id} card`;
+  }
+
+  async assignMember(id: string, assignId: string, user: User) {
+    const column = await this.columnService.getColumnForCardId(id);
+    if (!column) return;
+    const board = await this.boardService.findByColumn(
+      column._id.toString(),
+      user,
+    );
+    if (!board) return;
+    return this.cardModel.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { members: assignId },
+      },
+      { new: true },
+    );
+  }
+  async unAssignMember(id: string, assignId: string, user: User) {
+    const column = await this.columnService.getColumnForCardId(id);
+    if (!column) return;
+    const board = await this.boardService.findByColumn(
+      column._id.toString(),
+      user,
+    );
+    if (!board) return;
+    return this.cardModel.findByIdAndUpdate(
+      id,
+      {
+        $pull: { members: assignId },
+      },
+      { new: true },
+    );
   }
 }

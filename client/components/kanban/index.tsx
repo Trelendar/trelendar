@@ -8,10 +8,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { GrClose } from 'react-icons/gr';
 import { Container, Draggable, DropResult } from 'react-smooth-dnd';
 import axios from '../../lib/axios';
-import {
-  CardType,
-  ColumnType
-} from '../../share/type/kanban';
+import { CardType, ColumnType } from '../../share/type/kanban';
 import Column from './Column';
 import { applyDrag } from './utils';
 // import { useRouter } from 'next/router';
@@ -223,11 +220,13 @@ const Kanban: React.FC = () => {
         ? LexoRank.middle().toString()
         : LexoRank.parse(columns.slice(-1)[0].order).genNext().toString();
 
-    const res: ColumnType = (await axios.post('/column', {
-      title: newColumnTitle,
-      order,
-      boardId,
-    })).data;
+    const res: ColumnType = (
+      await axios.post('/column', {
+        title: newColumnTitle,
+        order,
+        boardId,
+      })
+    ).data;
     console.log('🚀 ~ file: index.tsx:226 ~ addNewColumn ~ boardId:', boardId);
     setColumns([...columns, res]);
     // await refetch();
@@ -286,12 +285,19 @@ const Kanban: React.FC = () => {
       cards.length === 0
         ? LexoRank.middle().toString()
         : LexoRank.parse(cards.slice(-1)[0].order).genNext().toString();
-    await axios.post('/card', {
+    const res = await axios.post<CardType>('/card', {
       title: title,
       order,
       columnId: column._id,
     });
-    // await refetch();
+    let newColumns = [...columns].map((col) => {
+      if (col._id !== column._id) return col;
+      return {
+        ...col,
+        cards: [...col.cards, res.data],
+      };
+    });
+    setColumns(newColumns);
   };
   if (isLoading) return <h1>loading</h1>;
   return (

@@ -13,7 +13,7 @@ export class ColumnService {
   constructor(
     @InjectModel(Column.name) private columnModel: Model<ColumnDocument>,
     private readonly boardService: BoardService,
-  ) { }
+  ) {}
   async create(createColumnDto: CreateColumnDto, user: User): Promise<Column> {
     const { boardId, title } = createColumnDto;
     await this.boardService.getOne(user, boardId);
@@ -97,6 +97,11 @@ export class ColumnService {
   async removeCardToColumn(columnId: string, cardId: string) {
     await this.columnModel.findByIdAndUpdate(columnId, {
       $pull: { cards: cardId },
+    });
+  }
+  async getColumnForCardId(idCard: string) {
+    return await this.columnModel.findOne({
+      cards: { $in: [idCard] },
     });
   }
 }

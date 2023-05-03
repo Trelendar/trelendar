@@ -22,10 +22,12 @@ const Card: React.FC<Props> = (props) => {
   const { deleteCard, order } = props;
 
   const [card, setCard] = useState<CardType>(props.card);
+  console.log("🚀 ~ file: index.tsx:25 ~ card:", card)
   const [isModal, setIsModal] = useState<boolean>(false);
   const titleUpdateRef = useRef(card.title ?? '');
   const priorityUpdateRef = useRef(card.priority ?? '');
   const descriptionUpdateRef = useRef(card.description ?? '');
+  const handleOnchangeMember=()=>{}
 
   //   const onExpired = () => {
   //     dispatch(logoutLocal());
