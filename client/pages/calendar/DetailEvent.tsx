@@ -91,20 +91,22 @@ const DetailEvent: React.FC = () => {
     desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
     members: ['update to react-tag-input'],
   };
-  //@ts-ignore
   const startEvent = new Date(detailEvent.start);
   const endEvent = new Date(detailEvent.end);
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [timePicker, setTimePicker] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
+  const [startTimePicker, setStartTimePicker] = useState<Dayjs | null>(dayjs(startEvent));
+  const [endTimePicker, setEndTimePicker] = useState<Dayjs | null>(dayjs(endEvent));
   const [desEvent, setDesEvent] = useState<string>(detailEvent.desc ?? 'None');
   const [titleEdit, setTitleEdit] = useState<string>(detailEvent.title);
-  const changeFormat = (stringInput: string) => {};
+  const changeFormat = (stringInput: string) => {}; // using to change fomat of date()
 
   const handleSave = () => {
     setIsEdit(!isEdit);
   };
 
+  console.log('test', startTimePicker.toString());
+  
   return (
     <div className="p-6">
       <button
@@ -124,7 +126,7 @@ const DetailEvent: React.FC = () => {
               'font-semibold py-2 px-6 border-gray-400 rounded shadow-lg mb-2 transition-all ml-[300px] border'
             }
           >
-            <MdSettingsBackupRestore className='inline-block mr-3' size={25}/>
+            <MdSettingsBackupRestore className="inline-block mr-3" size={25} />
             Back to Canlendar
           </button>
         </Link>
@@ -151,12 +153,16 @@ const DetailEvent: React.FC = () => {
                   {!isEdit && (
                     <>
                       <MdEventNote className="text-2xl text-colorHome mr-3" />
-                      <div className="text-[1.4rem] font-medium inline-block">
-                        {detailEvent.title}
-                      </div>
+                      <div className="text-[1.4rem] font-medium inline-block">{titleEdit}</div>
                     </>
                   )}
-                  {isEdit && <TextField value={titleEdit} fullWidth />}
+                  {isEdit && (
+                    <TextField
+                      value={titleEdit}
+                      fullWidth
+                      onChange={(e) => setTitleEdit(e.target.value)}
+                    />
+                  )}
                 </div>
               </TableCell>
             </TableRow>
@@ -176,8 +182,8 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <BiTime className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {startEvent.getHours() + ':' + startEvent.getMinutes()} -{' '}
-                      {endEvent.getHours() + ':' + endEvent.getMinutes()}
+                      {/* {startEvent.getHours() + ':' + startEvent.getMinutes()} -{' '} */}
+                      {startTimePicker.format('LT')} - {endTimePicker.format('LT')}
                     </div>
                   </div>
                 )}
@@ -187,9 +193,10 @@ const DetailEvent: React.FC = () => {
                       <DemoContainer components={['TimeField', 'TimeField']}>
                         <TimeField
                           label="Start time"
-                          value={timePicker}
-                          onChange={(newValue) => setTimePicker(newValue)}
-                          format="HH:mm"
+                          value={startTimePicker}
+                          onChange={(newValue) => setStartTimePicker(newValue)}
+                          // format="HH:mm"
+                          format="hh:mm A"
                           sx={{ marginRight: 10 }}
                         />
                       </DemoContainer>
@@ -199,9 +206,10 @@ const DetailEvent: React.FC = () => {
                       <DemoContainer components={['TimeField', 'TimeField']}>
                         <TimeField
                           label="End time"
-                          value={timePicker}
-                          onChange={(newValue) => setTimePicker(newValue)}
-                          format="HH:mm"
+                          value={endTimePicker}
+                          onChange={(newValue) => setEndTimePicker(newValue)}
+                          // format="HH:mm"
+                          format="hh:mm A"
                         />
                       </DemoContainer>
                     </LocalizationProvider>
@@ -257,11 +265,12 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <BsCalendarDate className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {startEvent.getDate() +
+                      {/* {startEvent.getDate() +
                         '/' +
                         startEvent.getMonth() +
                         '/' +
-                        startEvent.getFullYear()}
+                        startEvent.getFullYear()} */}
+                      {startTimePicker.format('L')}
                     </div>
                   </div>
                 )}
@@ -270,8 +279,9 @@ const DetailEvent: React.FC = () => {
                     <DemoContainer components={['DatePicker']}>
                       <DatePicker
                         label="Select Date"
-                        value={dayjs(detailEvent.start)}
+                        value={startTimePicker}
                         format="DD/MM/YYYY"
+                        onChange={(newValue) => setStartTimePicker(newValue)}
                       />
                     </DemoContainer>
                   </LocalizationProvider>
@@ -335,7 +345,7 @@ const DetailEvent: React.FC = () => {
                     <HiOutlineDocumentText
                       className={'text-2xl text-colorHome mt-3' + (!isEdit ? 'mt-2' : ' ')}
                     />
-                    <div className="text-[1.4rem] inline-block">{detailEvent.desc ?? 'None'}</div>
+                    <div className="text-[1.4rem] inline-block">{desEvent ?? 'None'}</div>
                   </div>
                 )}
                 {isEdit && (
