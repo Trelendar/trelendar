@@ -1,5 +1,3 @@
-import { string } from "yup"
-
 export interface EventType {
   id: string;
   start: Date | string;
@@ -7,5 +5,5 @@ export interface EventType {
   end: Date | string;
   title: string;
   desc?: string;
-  members?: String[]
+  members?: string[]
 }

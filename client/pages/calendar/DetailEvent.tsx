@@ -265,11 +265,6 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <BsCalendarDate className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {/* {startEvent.getDate() +
-                        '/' +
-                        startEvent.getMonth() +
-                        '/' +
-                        startEvent.getFullYear()} */}
                       {startTimePicker.format('L')}
                     </div>
                   </div>

@@ -10,6 +10,7 @@ import { CommentModule } from './comment/comment.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     CardModule,
     CommentModule,
     CloudinaryModule,
+    CalendarModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
