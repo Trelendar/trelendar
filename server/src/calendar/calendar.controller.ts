@@ -1,27 +1,24 @@
-import { CreateEventDto } from './dto/create-event.dto';
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CalendarService } from './calendar.service';
 import { async } from 'rxjs';
+import { CreateEventDto } from './dto/create-event.dto';
+import { Body, Controller, Get, Post, UseGuards, Param } from '@nestjs/common';
+import { CalendarService } from './calendar.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/current.user';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('calendar')
 export class CanlendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Get()
-  getAllEvent() {
-    return [
-      {
-        name: 'Long',
-        age: 18,
-      },
-    ];
+  @UseGuards(JwtAuthGuard)
+  async findAllByUserId(@CurrentUser() user: User) {
+    return await this.calendarService.findAllByUserId(user?._id);
   }
 
-  //   @Get(':id')
-  //   getEventById(@Param('id') id: string) {}
-
   @Post()
-  createEvent(@Body() event: CreateEventDto): CreateEventDto {
-    return this.calendarService.createEvent(event);
+  @UseGuards(JwtAuthGuard)
+  async create(@Body() createEvent: CreateEventDto) {
+    return await this.calendarService.create(createEvent);
   }
 }

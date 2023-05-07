@@ -1,4 +1,10 @@
-import { IsArray, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
 export class CreateEventDto {
   @IsDate()
@@ -13,6 +19,7 @@ export class CreateEventDto {
   @IsNotEmpty()
   title: string;
 
+  @IsBoolean()
   allDay: boolean;
 
   @IsString()
