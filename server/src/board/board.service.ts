@@ -107,7 +107,7 @@ export class BoardService {
     try {
       const board = await this.boardModel
         .findOne({
-          _id: convertToObjectId(id),
+          _id: id,
           members: { $in: [user._id] },
         })
         .populate({
@@ -136,6 +136,30 @@ export class BoardService {
       .findOne({
         _id: convertToObjectId(id),
         members: { $in: [idUser] },
+      })
+      .populate({
+        path: 'columns',
+        options: {
+          sort: { order: 1 },
+        },
+        populate: {
+          path: 'cards',
+          options: {
+            sort: { order: 1 },
+          },
+        },
+      });
+    if (!board) return false;
+    return true;
+  }
+  async checkExitUsersForBoard(
+    userIds: string[],
+    id: string,
+  ): Promise<boolean> {
+    const board = await this.boardModel
+      .findOne({
+        _id: convertToObjectId(id),
+        members: { $in: userIds },
       })
       .populate({
         path: 'columns',

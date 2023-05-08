@@ -8,6 +8,12 @@ export interface CardType {
   priority?: string;
   order: string;
   columnTitle: string;
+  members: {
+    email: string;
+    image: string;
+    name: string;
+    _id: string;
+  }[];
 }
 
 export interface ColumnType {

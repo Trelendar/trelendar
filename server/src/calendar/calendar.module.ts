@@ -2,7 +2,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CanlendarController } from './calendar.controller';
 import { Module } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
-import { EventSchema } from './entities/event.entity';
+import { EventSchema, Event } from './entities/event.entity';
 
 @Module({
   imports: [

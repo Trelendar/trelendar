@@ -10,25 +10,31 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import Button from '@mui/material/Button';
 import Description from './Description';
 import { MemberAction } from './MemberAction';
+import Members from './Members';
+import axios from '../../../lib/axios';
+import { useQuery } from '@tanstack/react-query';
 // import purify from 'dompurify';
 interface Props {
   card: CardType;
   deleteCard: (cardId: string) => void;
   order: number;
 }
-
+const fetchCard = async (id: string) => {
+  const res = await axios(`/card/${id}`);
+  return res.data as CardType;
+};
 const Card: React.FC<Props> = (props) => {
-  console.log('🚀 ~ file: index.tsx:15 ~ card:', props.card);
   const { deleteCard, order } = props;
 
-  const [card, setCard] = useState<CardType>(props.card);
-  console.log("🚀 ~ file: index.tsx:25 ~ card:", card)
+  // const [card, setCard] = useState<CardType>(props.card);
+  const { data: card, isLoading } = useQuery<CardType>(['card', props.card._id], () =>
+    fetchCard(props.card._id)
+  );
   const [isModal, setIsModal] = useState<boolean>(false);
-  const titleUpdateRef = useRef(card.title ?? '');
-  const priorityUpdateRef = useRef(card.priority ?? '');
-  const descriptionUpdateRef = useRef(card.description ?? '');
-  const handleOnchangeMember=()=>{}
 
+  const handleOnchangeMember = () => {};
+
+  if (isLoading) return <h1>loading</h1>;
   //   const onExpired = () => {
   //     dispatch(logoutLocal());
   //     navigate(`../${appRouters.LINK_TO_LOGIN_PAGE}`);
@@ -45,17 +51,17 @@ const Card: React.FC<Props> = (props) => {
     },
   };
 
-  useEffect(() => {
-    if (!isModal) return;
-    // getSingleCard(card.boardId, card.id)
-    //   .then((res) => {
-    //     titleUpdateRef.current = res.data.card?.title ?? '';
-    //     priorityUpdateRef.current = res.data.card?.priority ?? '';
-    //     descriptionUpdateRef.current = res.data.card?.description ?? '';
-    //     setCard(res.data.card ?? card);
-    //   })
-    //   .catch(() => onExpired());
-  }, [isModal]);
+  // useEffect(() => {
+  //   if (!isModal) return;
+  //   // getSingleCard(card.boardId, card.id)
+  //   //   .then((res) => {
+  //   //     titleUpdateRef.current = res.data.card?.title ?? '';
+  //   //     priorityUpdateRef.current = res.data.card?.priority ?? '';
+  //   //     descriptionUpdateRef.current = res.data.card?.description ?? '';
+  //   //     setCard(res.data.card ?? card);
+  //   //   })
+  //   //   .catch(() => onExpired());
+  // }, [isModal]);
 
   const closeModal = () => {
     // const cardRequest: CardRequest = {
@@ -66,12 +72,12 @@ const Card: React.FC<Props> = (props) => {
     //   priority: priorityUpdateRef.current,
     //   description: descriptionUpdateRef.current,
     // };
-    setCard({
-      ...card,
-      title: titleUpdateRef.current,
-      priority: priorityUpdateRef.current,
-      description: descriptionUpdateRef.current,
-    });
+    // setCard({
+    //   ...card,
+    //   title: titleUpdateRef.current,
+    //   priority: priorityUpdateRef.current,
+    //   description: descriptionUpdateRef.current,
+    // });
     // updateCardService(cardRequest).catch(() => onExpired);
 
     setIsModal(false);
@@ -108,57 +114,10 @@ const Card: React.FC<Props> = (props) => {
                 <GrClose />
               </button> */}
             <Title card={card} />
+            <Members card={card} />
             <Description card={card} />
-            {/* <div className="px-6 py-2">
-                <ul className="my-4 space-y-3">
-                  <li className="w-[300px]">
-                    <div className="flex items-center text-base font-bold text-gray-900">
-                      <span className="flex-1 whitespace-nowrap">Priority:</span>
-                      <ContentEditable
-                        className="inline-flex items-center justify-center px-3 py-1 ml-3 text-xs font-medium text-gray-500 bg-gray-200 rounded"
-                        html={priorityUpdateRef.current}
-                        onChange={(e) => {
-                          if (e.target.value === '') return;
-                          priorityUpdateRef.current = e.target.value;
-                        }}
-                      />
-                    </div>
-                  </li>
-                  <li>
-                    <div className="p-3 text-base  text-gray-900  rounded-lg  group">
-                      <div className="flex-1 ml-3 break-words font-bold">Description:</div>
-                      <InputUnstyled type="" />
-                      <ContentEditable
-                        className="flex-2 ml-3 break-words text-sm py-2"
-                        html={descriptionUpdateRef.current}
-                        onChange={(e) => {
-                          if (e.target.value === '') return;
-                          descriptionUpdateRef.current = e.target.value;
-                        }}
-                      />
-                    </div>
-                  </li>
-                  <li>
-                    <div className="items-center p-3 text-base  text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow">
-                      <div className="ml-3 font-bold">Member:</div>
-                      <div className="ml-3"><MemberTag cardId={card.id} /></div>
-                    </div>
-                  </li>
-                  <li className="flex justify-around">
-                    <p className="text-xs italic font-normal text-gray-500 pt-4 tracking-wide">
-                      ( *Click any fields to update )
-                    </p>
-                    <button
-                      className="transition-all bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => confirmDeleteCard(onDeleteCard)}
-                    >
-                      Delete
-                    </button>
-                  </li>
-                </ul>
-              </div> */}
           </div>
-          <MemberAction/>
+          <MemberAction card={card} />
         </div>
       </Modal>
     </>

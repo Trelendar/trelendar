@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card, CardDocument } from './entities/card.entity';
 import { BoardService } from 'src/board/board.service';
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { ColumnService } from 'src/column/column.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { CustomException } from 'src/error';
+import { convertToObjectId } from 'src/util';
 
 @Injectable()
 export class CardService {
@@ -32,7 +33,23 @@ export class CardService {
     return `This action returns all card`;
   }
 
-  findOne(id: number) {
+  async findOne(id: string, user: User) {
+    const column = await this.columnService.getColumnForCardId(id);
+    if (!column) return;
+    const board = await this.boardService.findByColumn(
+      column._id.toString(),
+      user,
+    );
+    if (!board) return;
+    const card = await this.cardModel.findById(id).populate({
+      path: 'members',
+      model: 'User',
+    });
+    console.log(
+      '🚀 ~ file: card.service.ts:45 ~ CardService ~ findOne ~ card:',
+      card,
+    );
+    return card;
     return `This action returns a #${id} card`;
   }
 
@@ -58,7 +75,7 @@ export class CardService {
     return `This action removes a #${id} card`;
   }
 
-  async assignMember(id: string, assignId: string, user: User) {
+  async assignMember(id: string, assignIds: string[], user: User) {
     const column = await this.columnService.getColumnForCardId(id);
     if (!column) return;
     const board = await this.boardService.findByColumn(
@@ -66,28 +83,20 @@ export class CardService {
       user,
     );
     if (!board) return;
-    return this.cardModel.findByIdAndUpdate(
-      id,
-      {
-        $addToSet: { members: assignId },
-      },
-      { new: true },
-    );
-  }
-  async unAssignMember(id: string, assignId: string, user: User) {
-    const column = await this.columnService.getColumnForCardId(id);
-    if (!column) return;
-    const board = await this.boardService.findByColumn(
-      column._id.toString(),
-      user,
-    );
-    if (!board) return;
-    return this.cardModel.findByIdAndUpdate(
-      id,
-      {
-        $pull: { members: assignId },
-      },
-      { new: true },
-    );
+
+    // const assignNotFound = await this.boardService.checkExitUserForBoard(
+    //   assignIds.map((id) => convertToObjectId(id)),
+    //   board.id,
+    // );
+    // if (!assignNotFound) throw new BadRequestException();
+    return this.cardModel
+      .findByIdAndUpdate(
+        id,
+        {
+          members: assignIds.map((id) => convertToObjectId(id)),
+        },
+        { new: true },
+      )
+      .exec();
   }
 }

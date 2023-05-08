@@ -53,7 +53,6 @@ const Login = () => {
     },
     validationSchema,
     onSubmit: async ({ email }: LoginData) => {
-      console.log('🚀 ~ file: sign-in.tsx:55 ~ onSubmit: ~ email:', email);
       const res = await signIn('email', { email, redirect: false });
       console.log(res);
 

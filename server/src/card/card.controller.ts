@@ -34,8 +34,9 @@ export class CardController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cardService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.cardService.findOne(id, user);
   }
 
   @Patch(':id')
@@ -58,17 +59,8 @@ export class CardController {
   async assignMember(
     @Param('id') id: string,
     @CurrentUser() user: User,
-    @Body() { assignId }: { assignId: string },
+    @Body() { assignIds }: { assignIds: string[] },
   ) {
-    return await this.cardService.assignMember(id, assignId, user);
-  }
-  @Patch(':id/un-assign')
-  @UseGuards(JwtAuthGuard)
-  async unAssignMember(
-    @Param('id') id: string,
-    @CurrentUser() user: User,
-    @Body() { assignId }: { assignId: string },
-  ) {
-    return await this.cardService.unAssignMember(id, assignId, user);
+    return await this.cardService.assignMember(id, assignIds, user);
   }
 }

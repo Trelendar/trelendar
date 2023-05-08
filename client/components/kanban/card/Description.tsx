@@ -44,10 +44,7 @@ const Description = ({ card: { description, _id, columnId } }: DescriptionProps)
                 //   textareaRef.current.focus();
                 // }
                 // textareaRef.current.focus();
-                console.log(
-                  '🚀 ~ file: Description.tsx:38 ~ Description ~ textareaRef.current:',
-                  textareaRef.current
-                );
+               
               }}
             >
               Edit

@@ -36,7 +36,6 @@ const NotValidTokenInvite = (
 const Invite = () => {
   const router = useRouter();
   const { data: user } = useSession();
-  console.log('🚀 ~ file: index.tsx:39 ~ Invite ~ user:', user);
   const { token } = router.query;
   const { data, isError, isLoading } = useQuery<InviteInfo>(['invite', token], () =>
     fetchInfoInvite(token as string)

@@ -41,7 +41,7 @@ const generateOrder = (
     pre = columns[indexAdded - 1].order;
     next = columns[indexAdded].order;
   }
-  console.log('🚀 ~ file: index.tsx:46 ~ pre:', pre, next, columns, indexAdded);
+  ~ file: index.tsx:46 ~ pre:', pre, next, columns, indexAdded);
   return LexoRank.parse(pre).between(LexoRank.parse(next)).toString();
 };
 // const generateNextOrder = (columns: ColumnType[] | CardType[]) => {
@@ -135,7 +135,6 @@ const Kanban: React.FC = () => {
   };
 
   const handleCardDrop = (column: ColumnType, dropResult: DropResult) => {
-    console.log('🚀 ~ file: index.tsx:155 ~ handleCardDrop ~ columns:', columns);
     const noDropCard = dropResult.removedIndex === null && dropResult.addedIndex == null;
     if (noDropCard) return;
 
@@ -227,7 +226,6 @@ const Kanban: React.FC = () => {
         boardId,
       })
     ).data;
-    console.log('🚀 ~ file: index.tsx:226 ~ addNewColumn ~ boardId:', boardId);
     setColumns([...columns, res]);
     // await refetch();
 
@@ -246,7 +244,6 @@ const Kanban: React.FC = () => {
 
     setNewColumnTitle('');
   };
-  console.log('🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumn', columns);
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
     console.log(
       '🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumnUpdated:',
