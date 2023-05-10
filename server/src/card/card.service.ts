@@ -45,12 +45,7 @@ export class CardService {
       path: 'members',
       model: 'User',
     });
-    console.log(
-      '🚀 ~ file: card.service.ts:45 ~ CardService ~ findOne ~ card:',
-      card,
-    );
-    return card;
-    return `This action returns a #${id} card`;
+    return { ...card?.toObject(), columnId: column.id };
   }
 
   async update(id: string, updateCardDto: UpdateCardDto, user: User) {

@@ -13,6 +13,7 @@ import { MemberAction } from './MemberAction';
 import Members from './Members';
 import axios from '../../../lib/axios';
 import { useQuery } from '@tanstack/react-query';
+import CardModal from './CardModal';
 // import purify from 'dompurify';
 interface Props {
   card: CardType;
@@ -24,17 +25,15 @@ const fetchCard = async (id: string) => {
   return res.data as CardType;
 };
 const Card: React.FC<Props> = (props) => {
-  const { deleteCard, order } = props;
+  const { deleteCard, order, card } = props;
 
   // const [card, setCard] = useState<CardType>(props.card);
-  const { data: card, isLoading } = useQuery<CardType>(['card', props.card._id], () =>
-    fetchCard(props.card._id)
-  );
+
   const [isModal, setIsModal] = useState<boolean>(false);
 
   const handleOnchangeMember = () => {};
 
-  if (isLoading) return <h1>loading</h1>;
+  // if (isLoading) return <h1>loading</h1>;
   //   const onExpired = () => {
   //     dispatch(logoutLocal());
   //     navigate(`../${appRouters.LINK_TO_LOGIN_PAGE}`);
@@ -95,30 +94,17 @@ const Card: React.FC<Props> = (props) => {
     // };
     // deleteCardService(cardRequest).catch(() => onExpired());
   };
+
   return (
     <>
       <article
         onClick={() => setIsModal(true)}
         className="bg-white shadow shadow-slate-400 mb-2 rounded-md p-2 w-64 break-all cursor-pointer hover:opacity-70"
       >
-        {card.title}
+        {props.card.title}
       </article>
       <Modal isOpen={isModal} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>
-        <div className="w-[900px] h-full grid grid-cols-5 gap-4 px-3">
-          <div className="relative bg-white rounded-md col-span-4 py-4 px-6 flex flex-col gap-8">
-            {/* <button
-                type="button"
-                onClick={closeModal}
-                className="transition-all absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-              >
-                <GrClose />
-              </button> */}
-            <Title card={card} />
-            <Members card={card} />
-            <Description card={card} />
-          </div>
-          <MemberAction card={card} />
-        </div>
+        <CardModal id={card._id} />
       </Modal>
     </>
   );

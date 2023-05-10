@@ -8,7 +8,9 @@ import { CardType } from '../../../share/type/kanban';
 interface DescriptionProps {
   card: CardType;
 }
-const Description = ({ card: { description, _id, columnId } }: DescriptionProps) => {
+const Description = ({ card }: DescriptionProps) => {
+  const { description, _id, columnId } = card;
+  console.log('🚀 ~ file: Description.tsx:12 ~ Description ~ card:', card);
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(description);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -44,7 +46,6 @@ const Description = ({ card: { description, _id, columnId } }: DescriptionProps)
                 //   textareaRef.current.focus();
                 // }
                 // textareaRef.current.focus();
-               
               }}
             >
               Edit
