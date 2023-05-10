@@ -1,4 +1,3 @@
-import { async } from 'rxjs';
 import { CreateEventDto } from './dto/create-event.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,18 +15,18 @@ export class CalendarService {
     return results;
   }
 
-  async create(createCalendarDto: CreateEventDto) {
-    const { start, end, title, desc, allDay, members } = createCalendarDto;
-    const newMembers = members.map(
-      (member) => new mongoose.Types.ObjectId(member),
-    );
+  async create(createCalendarDto: CreateEventDto, userId: ObjectId) {
+    const { start, end, title, desc, allDay } = createCalendarDto;
+    // const newMembers = members.map(
+    //   (member) => new mongoose.Types.ObjectId(member),
+    // );
     const event = await new this.eventModel({
       start,
       end,
       title,
       desc,
       allDay,
-      members: newMembers,
+      members: [userId],
     }).save();
     return event;
   }

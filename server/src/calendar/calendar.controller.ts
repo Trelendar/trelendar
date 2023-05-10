@@ -1,6 +1,5 @@
-import { async } from 'rxjs';
 import { CreateEventDto } from './dto/create-event.dto';
-import { Body, Controller, Get, Post, UseGuards, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/current.user';
@@ -18,7 +17,7 @@ export class CanlendarController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createEvent: CreateEventDto) {
-    return await this.calendarService.create(createEvent);
+  async create(@Body() createEvent: CreateEventDto, @CurrentUser() user: User) {
+    return await this.calendarService.create(createEvent, user._id);
   }
 }

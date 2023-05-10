@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 // import moment from 'moment';
-import events from './mockEvent';
 import { EventType } from '../../share/type/calendar';
 import moment from 'moment-timezone';
 import { useRouter } from 'next/router';
@@ -10,13 +9,14 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
+import axios from '../../lib/axios';
 
 // moment.locale('en-GB');
 moment.tz.setDefault('Asia/Vietnam');
 const localizer = momentLocalizer(moment);
 
 const Scheduler = () => {
-  const [eventsData, setEventsData] = useState<EventType[]>(events);
+  const [eventsData, setEventsData] = useState<EventType[]>([]);
   const [isShowNewEvent, setIsShowNewEvent] = useState<Boolean>(false);
   const [isAllday, setIsAllday] = useState<boolean>(false);
   const [titleNewEvent, setTitleNewEvent] = useState<string>('');
@@ -31,19 +31,27 @@ const Scheduler = () => {
     setTitleNewEvent(newTitle);
   };
 
-  const onSaveChanges = () => {
+  const onSaveChanges = async () => {
     if (!titleNewEvent) return;
     setIsShowNewEvent(true);
     const newEvent: EventType = {
-      id: 'not_yet_update',
+      _id: 'not_yet_update',
       start: startTime,
       end: endTime,
       title: titleNewEvent,
       allDay: isAllday,
+      desc: '',
     };
-    setEventsData([...eventsData, newEvent]);
-    setIsAllday(false);
-    setIsShowNewEvent(false);
+    axios
+      .post('/calendar', {
+        ...newEvent,
+      })
+      .then(() => {
+        setEventsData([...eventsData, newEvent]);
+        setIsAllday(false);
+        setIsShowNewEvent(false);
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleSelect = (start: Date, end: Date) => {
@@ -55,7 +63,7 @@ const Scheduler = () => {
   };
 
   const onClickEvent = (event: EventType) => {
-    router.push(`calendar/${event.id}`);
+    router.push(`calendar/${event._id}`);
   };
 
   useEffect(() => {
@@ -64,6 +72,24 @@ const Scheduler = () => {
       inputTitleRef.current.focus();
     }
   }, [isShowNewEvent]);
+
+  useEffect(() => {
+    axios
+      .get(`/calendar`)
+      .then((res) => {
+        if (res.data.length === 0) return;
+        const convertStiringToDate = res.data.map((item: EventType) => {
+          return {
+            ...item,
+            start: new Date(item.start),
+            end: new Date(item.end),
+          };
+        });
+        setEventsData(convertStiringToDate);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <>
       <div className="p-3">

@@ -41,7 +41,6 @@ const generateOrder = (
     pre = columns[indexAdded - 1].order;
     next = columns[indexAdded].order;
   }
-  ~ file: index.tsx:46 ~ pre:', pre, next, columns, indexAdded);
   return LexoRank.parse(pre).between(LexoRank.parse(next)).toString();
 };
 // const generateNextOrder = (columns: ColumnType[] | CardType[]) => {

@@ -83,7 +83,7 @@ const DetailEvent: React.FC = () => {
   //   }, [tags]);
 
   const detailEvent: EventType = {
-    id: '1',
+    _id: '1',
     start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
     end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
     allDay: false,
