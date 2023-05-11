@@ -27,4 +27,12 @@ export class UserService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
+  async findUsersByList(userIds: string[]) {
+    return this.userModel.find({
+      _id: {
+        $in: [...userIds],
+      },
+    });
+  }
 }

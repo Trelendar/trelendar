@@ -3,8 +3,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Schema, Types } from 'mongoose';
-import { Board, BoardDocument } from './entities/board.entity';
+import mongoose, { Model, Schema, Types, ObjectId } from 'mongoose';
+import { Board, BoardDocument, BoardSchema } from './entities/board.entity';
 import { UserService } from '../user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { convertToObjectId } from 'src/util';
@@ -229,5 +229,26 @@ export class BoardService {
     } catch (error) {
       throw new CustomException('Column not found or not access');
     }
+  }
+
+  async getAllMembersInBoardAccess(userId: ObjectId) {
+    const allBoardCanAccess = await this.boardModel.find({
+      members: { $all: [userId] },
+    });
+    let membersList: Array<any> = [];
+    allBoardCanAccess.forEach((board) => {
+      const convertToString = board.members.map((member: User) =>
+        member._id.toString(),
+      );
+      membersList = membersList.concat(convertToString);
+    });
+
+    const uniqueMembers = membersList.filter((element, index) => {
+      return membersList.indexOf(element) === index;
+    });
+    const hasNoLoginedUserList = uniqueMembers.filter(
+      (_id) => _id !== userId.toString(),
+    );
+    return hasNoLoginedUserList;
   }
 }

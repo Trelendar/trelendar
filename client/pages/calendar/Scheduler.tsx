@@ -10,10 +10,13 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import axios from '../../lib/axios';
+import { IUser } from '../../models/userModel';
 
 // moment.locale('en-GB');
 moment.tz.setDefault('Asia/Vietnam');
 const localizer = momentLocalizer(moment);
+
+const DEFAULT_VALUE_USER_SELECTED = '0';
 
 const Scheduler = () => {
   const [eventsData, setEventsData] = useState<EventType[]>([]);
@@ -23,6 +26,8 @@ const Scheduler = () => {
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [endTime, setEndTime] = useState<Date>(new Date());
   const inputTitleRef = useRef<HTMLInputElement>(null);
+  const [userList, setUserList] = useState<IUser[]>([]);
+  const [userSelected, setUserSelected] = useState<string>(DEFAULT_VALUE_USER_SELECTED);
 
   const router = useRouter();
 
@@ -75,7 +80,17 @@ const Scheduler = () => {
 
   useEffect(() => {
     axios
-      .get(`/calendar`)
+      .get(`/calendar/user`)
+      .then((res) => {
+        setUserList(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    const path = userSelected === DEFAULT_VALUE_USER_SELECTED? '': userSelected;
+    axios
+      .get(`/calendar/${path}`)
       .then((res) => {
         if (res.data.length === 0) return;
         const convertStiringToDate = res.data.map((item: EventType) => {
@@ -88,7 +103,7 @@ const Scheduler = () => {
         setEventsData(convertStiringToDate);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [userSelected]);
 
   return (
     <>
@@ -100,17 +115,17 @@ const Scheduler = () => {
                 Select member
               </InputLabel>
               <NativeSelect
-                defaultValue={0}
+                value={userSelected}
+                onChange={(e) => setUserSelected(e.target.value)}
                 inputProps={{
                   name: 'member',
                   id: 'uncontrolled-native',
                 }}
               >
-                <option value={0}>Chính mình</option>
-                <option value={10}>Nguyen Thanh Long</option>
-                <option value={20}>Nguyen Tran Hoang</option>
-                <option value={30}>Nguyen Van A</option>
-                <option value={40}>Code cứng</option>
+                <option value={DEFAULT_VALUE_USER_SELECTED}>Logged User</option>
+                {userList.map((user) => (
+                  <option value={user._id} key={user._id}>{user.name}</option>
+                ))}
               </NativeSelect>
             </FormControl>
           </Box>
@@ -166,7 +181,7 @@ const Scheduler = () => {
                       color="secondary"
                       size="medium"
                       checked={isAllday}
-                      onChange={() => setIsAllday(true)}
+                      onChange={() => setIsAllday(!isAllday)}
                     />
                   </div>
                   <div className="relative p-6 flex-auto">
