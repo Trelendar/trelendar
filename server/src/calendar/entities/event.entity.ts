@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 
@@ -18,7 +19,7 @@ export class Event {
   desc: string;
   @Prop()
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
-  members: mongoose.Schema.Types.ObjectId[];
+  members: mongoose.Schema.Types.ObjectId[] | User[];
   createdAt: Date;
   updatedAt: Date;
 }

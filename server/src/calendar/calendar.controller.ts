@@ -29,7 +29,13 @@ export class CanlendarController {
 
   @Get(':_id')
   @UseGuards(JwtAuthGuard)
-  async findAlUserId(@Param('_id') _id: string) {
+  async findAllUserId(@Param('_id') _id: string) {
     return await this.calendarService.findAllByUserId(_id);
+  }
+
+  @Get('event/:_id')
+  @UseGuards(JwtAuthGuard)
+  async getEventById(@Param('_id') _id: string) {
+    return await this.calendarService.findEventById(_id);
   }
 }

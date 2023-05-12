@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EventType } from '../../share/type/calendar';
 import { MdEventNote } from 'react-icons/md';
 import { BiTime } from 'react-icons/bi';
@@ -25,36 +25,24 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
 import Checkbox from '@mui/material/Checkbox';
+import axios from '../../lib/axios';
+import { useRouter } from 'next/router';
+import { format } from 'path';
+import User from '../../models/userModel';
 
 const DetailEvent: React.FC = () => {
-  const [tags, setTags] = useState<Tag[]>([
-    {
-      id: '1',
-      text: 'Long',
-    },
-    {
-      id: '2',
-      text: 'Hoang',
-    },
-  ]);
-  const [users, setUsers] = useState<Tag[]>([
-    {
-      id: '1',
-      text: 'Long',
-    },
-    {
-      id: '2',
-      text: 'Hoang',
-    },
-    {
-      id: '3',
-      text: 'Hai',
-    },
-    {
-      id: '4',
-      text: 'Ngoc',
-    },
-  ]);
+
+  const router = useRouter();
+  const { slug: eventId } = router.query;
+
+  const [detailEvent, setDetailEvent] = useState<EventType>({
+    _id: '',
+    start: '',
+    end: '',
+    title: '',
+  });
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [usersSuggest, setUsersSuggest] = useState<Tag[]>([]);
   const addUserInEvent = (tag: Tag) => {
     // const userInCard: UserCard = {
     //   controller: CONTROLLER_ADD_USER_IN_CARD,
@@ -82,23 +70,20 @@ const DetailEvent: React.FC = () => {
   //     });
   //   }, [tags]);
 
-  const detailEvent: EventType = {
-    _id: '1',
-    start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
-    end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
-    allDay: false,
-    title: 'New Event (mock)',
-    desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
-    members: ['update to react-tag-input'],
-  };
-  const startEvent = new Date(detailEvent.start);
-  const endEvent = new Date(detailEvent.end);
-
+  // const detailEvent: EventType = {
+  //   _id: '1',
+  //   start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
+  //   end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
+  //   allDay: false,
+  //   title: 'New Event (mock)',
+  //   desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
+  //   members: ['update to react-tag-input'],
+  // };
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [startTimePicker, setStartTimePicker] = useState<Dayjs | null>(dayjs(startEvent));
-  const [endTimePicker, setEndTimePicker] = useState<Dayjs | null>(dayjs(endEvent));
-  const [desEvent, setDesEvent] = useState<string>(detailEvent.desc ?? 'None');
-  const [titleEdit, setTitleEdit] = useState<string>(detailEvent.title);
+  const [startTimePicker, setStartTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
+  const [endTimePicker, setEndTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
+  const [desEvent, setDesEvent] = useState<string>('None');
+  const [titleEdit, setTitleEdit] = useState<string>('');
   const changeFormat = (stringInput: string) => {}; // using to change fomat of date()
 
   const handleSave = () => {
@@ -106,7 +91,41 @@ const DetailEvent: React.FC = () => {
   };
 
   console.log('test', startTimePicker.toString());
-  
+
+  useEffect(() => {
+    axios
+      .get(`/calendar/event/${eventId}`)
+      .then((res) => {
+        setDetailEvent(res.data);
+        setDesEvent((res.data.desc === '' ? 'None': res.data.desc));
+        setTitleEdit(res.data.title);
+        setStartTimePicker(dayjs(new Date(res.data.start)));
+        setEndTimePicker(dayjs(new Date(res.data.end)));
+        console.log(res.data);
+
+        const tags = res.data.members.map((user) => {
+          return {
+            id: user._id,
+            text: user.name,
+          };
+        });
+        setTags(tags);
+      })
+      .catch((err) => console.log(err));
+
+    axios
+      .get(`/calendar/user`)
+      .then((res) => {
+        const users = res.data.map(user => {
+          return {
+            id: user._id,
+            text: user.name
+          }
+        })
+        setUsersSuggest(users);
+      })
+      .catch((err) => console.log(err));
+  }, []);
   return (
     <div className="p-6">
       <button
@@ -265,7 +284,7 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <BsCalendarDate className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {startTimePicker.format('L')}
+                      {startTimePicker.format('DD/MM/YYYY')}
                     </div>
                   </div>
                 )}
@@ -305,7 +324,7 @@ const DetailEvent: React.FC = () => {
                       <div className="z-[100000]">
                         <ReactTags
                           tags={tags}
-                          suggestions={users}
+                          suggestions={usersSuggest}
                           delimiters={[]}
                           handleDelete={(i) => {
                             deleteUserInEvent(tags[i]);

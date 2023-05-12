@@ -47,4 +47,21 @@ export class CalendarService {
     });
     return results;
   }
+
+  async findEventById(eventId: string) {
+    const event = await this.eventModel
+      .findOne({
+        _id: new Types.ObjectId(eventId),
+      })
+      .exec();
+
+    const memberUsers =
+      event?.members.map((memberId) => memberId.toString()) ?? [];
+
+    const members = await this.userService.findUsersByList(memberUsers);
+    const result = Object(event);
+    result.members = members;
+
+    return result;
+  }
 }
