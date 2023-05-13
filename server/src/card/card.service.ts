@@ -3,7 +3,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card, CardDocument } from './entities/card.entity';
 import { BoardService } from 'src/board/board.service';
-import { Model, Schema } from 'mongoose';
+import { Model, Schema, Types } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { ColumnService } from 'src/column/column.service';
 import { InjectModel } from '@nestjs/mongoose';
@@ -41,10 +41,18 @@ export class CardService {
       user,
     );
     if (!board) return;
-    const card = await this.cardModel.findById(id).populate({
-      path: 'members',
-      model: 'User',
-    });
+    const card = await this.cardModel
+      .findById(id)
+      .populate({
+        path: 'members',
+        model: 'User',
+      })
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+        },
+      });
     return { ...card?.toObject(), columnId: column.id };
   }
 
@@ -93,5 +101,14 @@ export class CardService {
         { new: true },
       )
       .exec();
+  }
+  async addComment(id: string, idComment: string) {
+    await this.cardModel.findByIdAndUpdate(
+      id,
+      {
+        $push: { comments: new Types.ObjectId(idComment) },
+      },
+      { new: true },
+    );
   }
 }

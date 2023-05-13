@@ -177,7 +177,17 @@ export class BoardService {
     return true;
   }
 
-  async update(id: string, updateBoardDto: UpdateBoardDto): Promise<Board> {
+  async update(
+    id: string,
+    updateBoardDto: UpdateBoardDto,
+    user: User,
+  ): Promise<Board> {
+    console.log(
+      '🚀 ~ file: board.service.ts:185 ~ BoardService ~ updateBoardDto:',
+      updateBoardDto,
+    );
+    const isInBoard = await this.checkExitUserForBoard(user._id, id);
+    if (!isInBoard) throw new CustomException('You are not in board');
     const board = await this.boardModel.findByIdAndUpdate(id, updateBoardDto, {
       new: true,
     });

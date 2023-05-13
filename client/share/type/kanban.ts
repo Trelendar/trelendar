@@ -14,6 +14,17 @@ export interface CardType {
     name: string;
     _id: string;
   }[];
+  comments: {
+    _id: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+    author: {
+      name: string;
+      _id: string;
+      image: string;
+    };
+  }[];
 }
 
 export interface ColumnType {
@@ -28,7 +39,10 @@ export interface ColumnType {
 }
 
 export interface BoardType {
+  _id: string;
   id: string;
+  name: string;
+  background: string;
   boardName?: string;
   columnOrder: String[];
   columns: ColumnType[];

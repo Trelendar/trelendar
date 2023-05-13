@@ -25,12 +25,19 @@ export interface Board {
 const Main: React.FC = () => {
   const [showModal, setShowModal] = useState<Boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const { data: listBoard, isLoading } = useQuery<Board[]>({
+  const {
+    data: listBoard,
+    isLoading,
+    refetch,
+  } = useQuery<Board[]>({
     queryKey: ['board'],
     queryFn: async () => {
       return (await axios.get('board')).data;
     },
   });
+  const handleRefetchAllBoard = async () => {
+    await refetch();
+  };
   const { data: user } = useSession();
   const router = useRouter();
 
@@ -126,7 +133,7 @@ const Main: React.FC = () => {
               <BoardTag key={board.id} board={board} />
             ))} */}
             {listBoard.map((board, index) => {
-              return <BoardTag key={board._id} board={board} />;
+              return <BoardTag key={board._id} board={board} handleRefetchAllBoard={handleRefetchAllBoard}/>;
             })}
           </div>
         </div>

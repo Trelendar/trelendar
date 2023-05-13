@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BoardType } from '../../share/type/kanban';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Board } from '.';
+import { Button } from '@mui/material';
+import BoardModal from '../../components/board/BoardModal';
+import Modal from 'react-modal';
 
 interface Props {
   board: Board;
+  handleRefetchAllBoard: () => void;
 }
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+  },
+};
+const BoardTag: React.FC<Props> = ({ board, handleRefetchAllBoard }) => {
+  const [isModal, setIsModal] = useState<boolean>(false);
 
-const BoardTag: React.FC<Props> = ({ board }) => {
   return (
     <div className=" col-span-1 max-w-[300px] bg-white rounded-lg border border-gray-200 shadow-md ">
       <div>
@@ -39,6 +54,22 @@ const BoardTag: React.FC<Props> = ({ board }) => {
             </svg>
           </div>
         </Link>
+        <Button
+          size="small"
+          variant="contained"
+          className="!py-2 !px-3 !rounded-lg !ml-2"
+          onClick={() => setIsModal(true)}
+        >
+          Setting
+        </Button>
+        <Modal
+          isOpen={isModal}
+          onRequestClose={() => setIsModal(false)}
+          style={customStyles}
+          ariaHideApp={false}
+        >
+          <BoardModal id={board._id} handleRefetchAllBoard={handleRefetchAllBoard} />
+        </Modal>
       </div>
     </div>
   );

@@ -70,8 +70,13 @@ export class BoardController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardService.update(id, updateBoardDto);
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.boardService.update(id, updateBoardDto, user);
   }
 
   @Delete(':id/removeMember')
