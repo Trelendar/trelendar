@@ -1,10 +1,11 @@
 import { BoardService } from './../board/board.service';
 import { UserService } from './../user/user.service';
 import { CreateEventDto } from './dto/create-event.dto';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event, EventDocument } from './entities/event.entity';
 import { Model, ObjectId, Types } from 'mongoose';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class CalendarService {
@@ -32,9 +33,10 @@ export class CalendarService {
     return event;
   }
 
-  async getUserCanAccess(userId: ObjectId) {
+  async getUserCanAccess(userId: ObjectId, isGetLoggedUser: boolean) {
     const memberIdList = await this.boardService.getAllMembersInBoardAccess(
       userId,
+      isGetLoggedUser,
     );
 
     return this.userService.findUsersByList(memberIdList);
@@ -54,7 +56,6 @@ export class CalendarService {
         _id: new Types.ObjectId(eventId),
       })
       .exec();
-
     const memberUsers =
       event?.members.map((memberId) => memberId.toString()) ?? [];
 
@@ -63,5 +64,20 @@ export class CalendarService {
     result.members = members;
 
     return result;
+  }
+
+  async update(updateEvent: UpdateEventDto) {
+    const memberIdsToObjects = updateEvent.members.map(
+      (memberId) => new Types.ObjectId(memberId),
+    );
+    const event = await this.eventModel.findOneAndUpdate(
+      { _id: updateEvent._id },
+      { ...updateEvent, members: memberIdsToObjects },
+      { new: true },
+    );
+    if (!event) {
+      throw new HttpException('Event not found', 403);
+    }
+    return event;
   }
 }

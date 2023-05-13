@@ -40,7 +40,7 @@ const Scheduler = () => {
     if (!titleNewEvent) return;
     setIsShowNewEvent(true);
     const newEvent: EventType = {
-      _id: 'not_yet_update',
+      _id: 'update_later',
       start: startTime,
       end: endTime,
       title: titleNewEvent,
@@ -51,7 +51,8 @@ const Scheduler = () => {
       .post('/calendar', {
         ...newEvent,
       })
-      .then(() => {
+      .then((res) => {
+        newEvent._id = res.data._id;
         setEventsData([...eventsData, newEvent]);
         setIsAllday(false);
         setIsShowNewEvent(false);
