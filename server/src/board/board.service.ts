@@ -231,7 +231,7 @@ export class BoardService {
     }
   }
 
-  async getAllMembersInBoardAccess(userId: ObjectId) {
+  async getAllMembersInBoardAccess(userId: ObjectId, isGetLoggedUser: boolean) {
     const allBoardCanAccess = await this.boardModel.find({
       members: { $all: [userId] },
     });
@@ -246,9 +246,9 @@ export class BoardService {
     const uniqueMembers = membersList.filter((element, index) => {
       return membersList.indexOf(element) === index;
     });
-    const hasNoLoginedUserList = uniqueMembers.filter(
-      (_id) => _id !== userId.toString(),
-    );
+    const hasNoLoginedUserList = !isGetLoggedUser
+      ? uniqueMembers.filter((_id) => _id !== userId.toString())
+      : uniqueMembers;
     return hasNoLoginedUserList;
   }
 }

@@ -20,18 +20,16 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Tag, UserCard } from '../../share/type/kanban';
+import { Tag } from '../../share/type/kanban';
 import { WithContext as ReactTags } from 'react-tag-input';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
 import Checkbox from '@mui/material/Checkbox';
 import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
-import { format } from 'path';
-import User from '../../models/userModel';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const DetailEvent: React.FC = () => {
-
   const router = useRouter();
   const { slug: eventId } = router.query;
 
@@ -44,50 +42,49 @@ const DetailEvent: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [usersSuggest, setUsersSuggest] = useState<Tag[]>([]);
   const addUserInEvent = (tag: Tag) => {
-    // const userInCard: UserCard = {
-    //   controller: CONTROLLER_ADD_USER_IN_CARD,
-    //   userId: Number(tag.id),
-    //   cardId: cardId,
-    // };
-    // addUserInCardService(userInCard);
     setTags([...tags, tag]);
   };
 
-  const deleteUserInEvent = (tag: Tag) => {
-    // const userInCard: UserCard = {
-    //   controller: CONTROLLER_DEL_USER_IN_CARD,
-    //   userId: Number(tag.id),
-    //   cardId: cardId,
-    // };
-    // deleteUserInCardService(userInCard);
-  };
+  const deleteUserInEvent = (tag: Tag) => {};
 
-  //   const boardId = useMySelector((state) => state.board.id);
-  //   useEffect(() => {
-  //     userInBoardService(boardId).then((res) => {
-  //       setUsers(res.data.users ?? []);
-  //       userInCardService(cardId).then((res) => setTags(res.data.users ?? []));
-  //     });
-  //   }, [tags]);
-
-  // const detailEvent: EventType = {
-  //   _id: '1',
-  //   start: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(),
-  //   end: new Date(new Date().setHours(new Date().getHours() + 1)).toISOString(),
-  //   allDay: false,
-  //   title: 'New Event (mock)',
-  //   desc: 'This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem This is new Event lorem',
-  //   members: ['update to react-tag-input'],
-  // };
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [startTimePicker, setStartTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
   const [endTimePicker, setEndTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
   const [desEvent, setDesEvent] = useState<string>('None');
   const [titleEdit, setTitleEdit] = useState<string>('');
+  const [isAllDay, setIsAllDay] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const changeFormat = (stringInput: string) => {}; // using to change fomat of date()
 
   const handleSave = () => {
-    setIsEdit(!isEdit);
+    setIsLoading(true);
+
+    const memers = tags.map((tag) => tag.id);
+    const updateEvent: EventType = {
+      _id: detailEvent._id,
+      desc: desEvent,
+      title: titleEdit,
+      start: startTimePicker.toISOString(),
+      end: endTimePicker.toISOString(),
+      allDay: isAllDay,
+      members: memers,
+    };
+    console.log('LlLlllllll', updateEvent);
+
+    axios
+      .patch(`calendar/event/`, { ...updateEvent })
+      .then((res) => {
+        setIsLoading(false);
+        setIsEdit(!isEdit);
+      })
+      .catch((err) => console.log(err));
+  };
+  const handleEdit = () => {
+    if (!isEdit) {
+      setIsEdit(!isEdit);
+      return;
+    }
+    handleSave();
   };
 
   console.log('test', startTimePicker.toString());
@@ -97,10 +94,11 @@ const DetailEvent: React.FC = () => {
       .get(`/calendar/event/${eventId}`)
       .then((res) => {
         setDetailEvent(res.data);
-        setDesEvent((res.data.desc === '' ? 'None': res.data.desc));
+        setDesEvent(res.data.desc === '' ? 'None' : res.data.desc);
         setTitleEdit(res.data.title);
         setStartTimePicker(dayjs(new Date(res.data.start)));
         setEndTimePicker(dayjs(new Date(res.data.end)));
+        setIsAllDay(res.data.allDay);
         console.log(res.data);
 
         const tags = res.data.members.map((user) => {
@@ -109,34 +107,41 @@ const DetailEvent: React.FC = () => {
             text: user.name,
           };
         });
+        console.log(tags);
+
         setTags(tags);
       })
       .catch((err) => console.log(err));
 
     axios
-      .get(`/calendar/user`)
+      .get(`/calendar/usersuggest`)
       .then((res) => {
-        const users = res.data.map(user => {
+        const users = res.data.map((user) => {
           return {
             id: user._id,
-            text: user.name
-          }
-        })
+            text: user.name,
+          };
+        });
+        console.log('test1', users);
         setUsersSuggest(users);
       })
       .catch((err) => console.log(err));
   }, []);
   return (
     <div className="p-6">
-      <button
-        className={
-          'bg-white text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-10 transition-all  ' +
-          (isEdit ? 'bg-green-400 hover:bg-green-500' : 'bg-[#4B358D] hover:bg-[#6752A3]')
-        }
-        onClick={() => handleSave()}
-      >
-        {isEdit ? 'Save' : 'Edit'}
-      </button>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <button
+          className={
+            'bg-white text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-10 transition-all  ' +
+            (isEdit ? 'bg-green-400 hover:bg-green-500' : 'bg-[#4B358D] hover:bg-[#6752A3]')
+          }
+          onClick={() => handleEdit()}
+        >
+          {isEdit ? 'Save' : 'Edit'}
+        </button>
+      )}
 
       {!isEdit && (
         <Link href="/calendar">
@@ -201,7 +206,6 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <BiTime className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {/* {startEvent.getHours() + ':' + startEvent.getMinutes()} -{' '} */}
                       {startTimePicker.format('LT')} - {endTimePicker.format('LT')}
                     </div>
                   </div>
@@ -262,8 +266,8 @@ const DetailEvent: React.FC = () => {
                     <Checkbox
                       color="secondary"
                       size="medium"
-                      // checked={isAllday}
-                      // onChange={() => setIsAllday(true)}
+                      checked={isAllDay}
+                      onChange={() => setIsAllDay(true)}
                     />
                   </div>
                 )}
@@ -285,20 +289,38 @@ const DetailEvent: React.FC = () => {
                     <BsCalendarDate className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
                       {startTimePicker.format('DD/MM/YYYY')}
+                      {startTimePicker === endTimePicker
+                        ? ' - ' + endTimePicker.format('DD/MM/YYYY')
+                        : null}
                     </div>
                   </div>
                 )}
                 {isEdit && (
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker']}>
-                      <DatePicker
-                        label="Select Date"
-                        value={startTimePicker}
-                        format="DD/MM/YYYY"
-                        onChange={(newValue) => setStartTimePicker(newValue)}
-                      />
-                    </DemoContainer>
-                  </LocalizationProvider>
+                  <div className="flex">
+                    <div className="mr-10">
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker']}>
+                          <DatePicker
+                            label="Select Date Start"
+                            value={startTimePicker}
+                            format="DD/MM/YYYY"
+                            onChange={(newValue) => setStartTimePicker(newValue)}
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
+                    </div>
+
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={['DatePicker']}>
+                        <DatePicker
+                          label="Select Date End"
+                          value={endTimePicker}
+                          format="DD/MM/YYYY"
+                          onChange={(newValue) => setEndTimePicker(newValue)}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                  </div>
                 )}
               </TableCell>
             </TableRow>

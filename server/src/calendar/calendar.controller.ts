@@ -1,9 +1,18 @@
 import { CreateEventDto } from './dto/create-event.dto';
-import { Body, Controller, Get, Post, UseGuards, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/current.user';
 import { User } from 'src/user/entities/user.entity';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Controller('calendar')
 export class CanlendarController {
@@ -24,7 +33,13 @@ export class CanlendarController {
   @Get('/user')
   @UseGuards(JwtAuthGuard)
   async getUser(@CurrentUser() user: User) {
-    return await this.calendarService.getUserCanAccess(user._id);
+    return await this.calendarService.getUserCanAccess(user._id, false);
+  }
+
+  @Get('/usersuggest')
+  @UseGuards(JwtAuthGuard)
+  async getUserSuggest(@CurrentUser() user: User) {
+    return await this.calendarService.getUserCanAccess(user._id, true);
   }
 
   @Get(':_id')
@@ -37,5 +52,11 @@ export class CanlendarController {
   @UseGuards(JwtAuthGuard)
   async getEventById(@Param('_id') _id: string) {
     return await this.calendarService.findEventById(_id);
+  }
+
+  @Patch('event/')
+  @UseGuards(JwtAuthGuard)
+  async updateEvent(@Body() updateEvent: UpdateEventDto) {
+    return await this.calendarService.update(updateEvent);
   }
 }
