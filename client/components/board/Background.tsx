@@ -40,7 +40,7 @@ const Background = ({
       <div>
         <form onSubmit={handleFormSubmit}>
           <input type="file" onChange={handleFileUpload} />
-          <Button color="primary" type="submit" sx={'text-transform: capitalize !important;'}>
+          <Button color="primary" type="submit" sx={{ textTransform: 'capitalize !important;' }}>
             Change background
           </Button>
         </form>

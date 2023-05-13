@@ -31,6 +31,7 @@ import { Board } from '../index';
 import Modal from 'react-modal';
 import CopyLink from '../../../components/copylink';
 import { BoardType } from '../../../share/type/kanban';
+import Swal from 'sweetalert2';
 const drawerWidth = 240;
 const customStyles = {
   content: {
@@ -121,6 +122,7 @@ const Board: React.FC = () => {
     data: board,
     isLoading,
     error,
+    isError,
   } = useQuery<Board>(['board detail', router.query.slug], () =>
     fetchBoard(router.query.slug as string)
   );
@@ -146,9 +148,10 @@ const Board: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(board);
-
-    board && toast.error('??');
+    if (error) {
+      router.push('/workspace');
+      Swal.fire('You are not in board', '', 'error');
+    }
   }, [error]);
   if (isLoading) return <span>Loading</span>;
   const handleAddMember = async () => {

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
 import InfoIcon from '@mui/icons-material/Info';
 import Button from '@mui/material/Button';
 import axios from '../../../lib/axios';
 import { CardType } from '../../../share/type/kanban';
+// import TextareaAutosize from '@mui/base/TextareaAutosize';
 interface DescriptionProps {
   card: CardType;
 }
@@ -54,11 +54,10 @@ const Description = ({ card }: DescriptionProps) => {
         </div>
         {isEdit ? (
           <>
-            <TextareaAutosize
+            <textarea
               ref={textareaRef}
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              aria-label="empty textarea"
               placeholder="Enter the description for this card."
               className="w-full min-h-[200px] h-[200px] p-3"
             />

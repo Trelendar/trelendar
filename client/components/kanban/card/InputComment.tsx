@@ -1,14 +1,14 @@
 import { Avatar } from '@mui/material';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from '../../../lib/axios';
 
 interface InputCommentProps {
   cardId: string;
+  handleRefetchCard: () => void;
 }
-const InputComment = ({ cardId }: InputCommentProps) => {
+const InputComment = ({ cardId, handleRefetchCard }: InputCommentProps) => {
   console.log('🚀 ~ file: InputComment.tsx:12 ~ InputComment ~ cardId:', cardId);
   const [body, setBody] = useState('');
 
@@ -26,6 +26,7 @@ const InputComment = ({ cardId }: InputCommentProps) => {
     // const { success, message } = res.data.addComment;
     if (res) {
       setBody('');
+      await handleRefetchCard();
       return;
     }
     // swal(message, '', 'warning');

@@ -33,9 +33,10 @@ export class CommentController {
     return this.commentService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async delete(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.commentService.delete(id, user);
   }
 
   @Patch(':id')

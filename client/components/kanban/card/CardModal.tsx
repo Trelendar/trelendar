@@ -17,21 +17,22 @@ const CardModal = ({ id }: { id: string }) => {
     isLoading,
     refetch,
   } = useQuery<CardType>(['card', id], () => fetchCard(id), {});
-  console.log('🚀 ~ file: CardModal.tsx:19 ~ CardModal ~ card:', card);
   const handleRefetchCard = async () => {
     refetch();
   };
   if (isLoading) return <h1>loading</h1>;
   return (
-    <div className="w-[900px] h-full grid grid-cols-3 gap-4 px-3">
-      <div className="relative bg-white rounded-md col-span-2 py-4 px-6 flex flex-col gap-8">
-        <Title card={card} />
-        <Members card={card} />
-        <Description card={card} />
-        <Comment card={card} />
+    <>
+      <div className="w-[900px] h-full grid grid-cols-3 gap-4 px-3">
+        <div className="relative bg-white rounded-md col-span-2 py-4 px-6 flex flex-col gap-8">
+          <Title card={card} />
+          <Members card={card} />
+          <Description card={card} />
+        </div>
+        <MemberAction card={card} handleRefetchCard={handleRefetchCard} />
       </div>
-      <MemberAction card={card} handleRefetchCard={handleRefetchCard} />
-    </div>
+      <Comment card={card} handleRefetchCard={handleRefetchCard} />
+    </>
   );
 };
 

@@ -6,7 +6,6 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
 import { BsFillTrashFill } from 'react-icons/bs';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import moment from 'moment';
@@ -46,18 +45,12 @@ const DisplayDateComment = ({ date }: { date: Date }) => {
 // import DisplayDate, { DisplayDateComment } from '../utils/DisplayDate';
 import InputComment from './InputComment';
 import { CardType } from '../../../share/type/kanban';
+import { useSession } from 'next-auth/react';
+import axios from '../../../lib/axios';
 
 interface CommentProps {
-  comments: {
-    _id: string;
-    createdAt: Date;
-    author: {
-      username: string;
-      image: string;
-    };
-    body: string;
-  }[];
   card: CardType;
+  handleRefetchCard: () => void;
 }
 interface CommentAdded {
   commentAdded: {
@@ -86,10 +79,11 @@ interface Comment {
   };
   content: string;
 }
-const Comment = ({ card }: CommentProps) => {
-  const { comments } = card;
-  if (!comments) return null;
-  const [listComments, setListComments] = useState<Comment[]>(comments);
+const Comment = ({ card, handleRefetchCard }: CommentProps) => {
+  const { data: user } = useSession();
+
+  const { comments: listComments } = card;
+  if (!listComments) return null;
 
   const handleDelete = async (id: string) => {
     swal({
@@ -100,6 +94,8 @@ const Comment = ({ card }: CommentProps) => {
       dangerMode: true,
     }).then(async (willDelete) => {
       if (willDelete) {
+        await axios.delete(`/comment/${id}`);
+        await handleRefetchCard();
         // await deleteComment({ variables: { idCmt: id, slug } });
       }
     });
@@ -127,10 +123,10 @@ const Comment = ({ card }: CommentProps) => {
     <div className="my-3 px-4 w-full">
       {/* <h3 className="text-2xl text-center font-semibold mb-3">{listComments.length} Reponses</h3> */}
 
-      <InputComment cardId={card._id} />
-      <div className="mt-3">
+      <InputComment cardId={card._id} handleRefetchCard={handleRefetchCard} />
+      <div className="mt-3 h-24">
         {listComments.length > 0 && (
-          <Paper style={{ padding: '40px 20px' }}>
+          <Paper style={{ padding: '40px 20px'}} >
             {listComments?.map((comment) => (
               <div key={comment._id}>
                 <Grid container wrap="nowrap" spacing={2}>
@@ -153,13 +149,13 @@ const Comment = ({ card }: CommentProps) => {
                     <DisplayDateComment date={comment.createdAt} />
                   </Grid>
                   <Grid justifyContent="center" alignItems="center">
-                    {/* {user.username === comment.author.username && (
+                    {user.userId === comment.author._id && (
                       <div onClick={() => handleDelete(comment._id)}>
                         <p className="cursor-pointer text-red-500">
                           <BsFillTrashFill />
                         </p>
                       </div>
-                    )} */}
+                    )}
                   </Grid>
                 </Grid>
                 <Divider variant="fullWidth" style={{ margin: '30px 0' }} />

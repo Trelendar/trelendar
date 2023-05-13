@@ -49,7 +49,14 @@ const Card: React.FC<Props> = (props) => {
       backgroundColor: 'white',
     },
   };
-
+  const MODAL_STYLES = {
+    position: 'absolute',
+    backgroundColor: '#FFF',
+    padding: '15px',
+    zIndex: '1000',
+    width: '35%',
+    borderRadius: '.5em',
+  };
   // useEffect(() => {
   //   if (!isModal) return;
   //   // getSingleCard(card.boardId, card.id)

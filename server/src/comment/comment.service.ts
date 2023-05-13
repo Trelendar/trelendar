@@ -6,6 +6,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Model } from 'mongoose';
 import { CardService } from 'src/card/card.service';
 import { InjectModel } from '@nestjs/mongoose';
+import { CustomException } from 'src/error';
 
 @Injectable()
 export class CommentService {
@@ -21,6 +22,14 @@ export class CommentService {
     await comment.save();
     await this.cardService.addComment(createCommentDto.cardId, comment.id);
     return 'This action adds a new comment';
+  }
+  async delete(id: string, user: User) {
+    const commentDeleted = await this.commentModel.findOneAndDelete({
+      _id: id,
+      author: user._id,
+    });
+    if (!commentDeleted) throw new CustomException('something went wrong');
+    return commentDeleted;
   }
 
   findAll() {

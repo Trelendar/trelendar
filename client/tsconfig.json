@@ -21,7 +21,8 @@
     "**/*.tsx",
     "pages/index.tsx",
     "pages/api/auth/[...nextauth].js",
-    "pages/workspace/[slug]/index.jsx"
+    "pages/workspace/[slug]/index.jsx",
+    "components/kanban/card/MemberAction.jsx"
   ],
   "exclude": ["node_modules"]
 }
