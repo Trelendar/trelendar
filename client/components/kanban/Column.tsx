@@ -195,7 +195,7 @@ const Column: React.FC<Props> = (props) => {
           <input
             type="text"
             className="bg-gray-50 border mb-4 border-gray-300 text-gray-900 text-sm rounded-md  block w-full p-3"
-            placeholder="Enter the tilte of this card"
+            placeholder="Enter the title of this card"
             required
             autoFocus
             onChange={(e) => setNewCardTitle(e.target.value)}

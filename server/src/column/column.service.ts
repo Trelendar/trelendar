@@ -25,15 +25,39 @@ export class ColumnService {
       createColumnDto.boardId,
       column._id,
     );
-    return column;
+    return {
+      _id: column._id,
+      title: column.title,
+      order: column.order,
+      createdAt: column.createdAt,
+      updatedAt: column.updatedAt,
+      cards: column.cards.map((card) => {
+        return {
+          _id: card._id,
+          title: card.title,
+          order: card.order,
+          description: card.description,
+          priority: card.priority,
+          members: card.members,
+          start: card.start,
+          end: card.end,
+          attachment: card.attachment,
+          comments: card.comments,
+          updatedAt: card.updatedAt,
+          createdAt: card.createdAt,
+          columnId: column._id,
+          columnTitle: column.title,
+        };
+      }),
+    };
   }
 
   findAll() {
     return `This action returns all column`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} column`;
+  async findOne(id: string) {
+    return await this.columnModel.findById(id);
   }
 
   async update(id: string, updateColumnDto: UpdateColumnDto, user: User) {

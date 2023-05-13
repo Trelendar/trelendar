@@ -150,6 +150,7 @@ const Kanban: React.FC = () => {
     };
     if (dropResult.removedIndex === null) {
       let oldColumn = newColumns.find((c) => c._id === payload.columnId);
+      console.log("🚀 ~ file: index.tsx:153 ~ handleCardDrop ~ oldColumn:", oldColumn,payload.columnId)
       oldColumn.cards = oldColumn.cards.filter((card) => card._id !== payload._id);
     }
 
@@ -226,7 +227,7 @@ const Kanban: React.FC = () => {
       })
     ).data;
     setColumns([...columns, res]);
-    // await refetch();
+    res && await refetch();
 
     // let columnsAfterAdd = [...columns];
 
@@ -244,24 +245,12 @@ const Kanban: React.FC = () => {
     setNewColumnTitle('');
   };
   const updateColumn = (coloumnUpdated: ColumnType, isDeleteColumn: boolean) => {
-    console.log(
-      '🚀 ~ file: index.tsx:221 ~ updateColumn ~ coloumnUpdated:',
-      LexoRank.min(),
-      LexoRank.min().genPrev().toString()
-    );
     let newColumns = [...columns];
     const indexOfColumnUpdate = newColumns.findIndex(
       (columnId) => columnId._id === coloumnUpdated._id
     );
     if (isDeleteColumn) {
       newColumns.splice(indexOfColumnUpdate, 1);
-      // const ColumnRequest: ColumnRequest = {
-      //     controller: CONTROLLER_DELETE_COLUMN,
-      //     boardId: coloumnUpdated.boardId,
-      //     columnId: coloumnUpdated.id,
-      //     order: indexOfColumnUpdate,
-      //   };
-      //   deleteColumnService(ColumnRequest).catch(() => onExpired());
     } else {
       newColumns.splice(indexOfColumnUpdate, 1, coloumnUpdated);
     }

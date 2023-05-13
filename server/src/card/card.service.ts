@@ -20,13 +20,29 @@ export class CardService {
   async create(createCardDto: CreateCardDto, user: User) {
     const { columnId, title, order } = createCardDto;
     await this.boardService.findByColumn(columnId, user);
+    const column = await this.columnService.findOne(columnId);
+    if (!column) throw new CustomException('Column not found');
     const card = await new this.cardModel({
       title,
       order,
     }).save();
     await this.columnService.addCardToColumn(columnId, card.id);
-
-    return card;
+    return {
+      _id: card._id,
+      title: card.title,
+      order: card.order,
+      description: card.description,
+      priority: card.priority,
+      members: card.members,
+      start: card.start,
+      end: card.end,
+      attachment: card.attachment,
+      comments: card.comments,
+      updatedAt: card.updatedAt,
+      createdAt: card.createdAt,
+      columnId: column._id,
+      columnTitle: column.title,
+    };
   }
 
   findAll() {
