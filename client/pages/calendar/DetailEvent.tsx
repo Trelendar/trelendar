@@ -267,7 +267,7 @@ const DetailEvent: React.FC = () => {
                       color="secondary"
                       size="medium"
                       checked={isAllDay}
-                      onChange={() => setIsAllDay(true)}
+                      onChange={() => setIsAllDay(!isAllDay)}
                     />
                   </div>
                 )}
@@ -289,7 +289,7 @@ const DetailEvent: React.FC = () => {
                     <BsCalendarDate className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
                       {startTimePicker.format('DD/MM/YYYY')}
-                      {startTimePicker === endTimePicker
+                      {startTimePicker.isBefore(endTimePicker)
                         ? ' - ' + endTimePicker.format('DD/MM/YYYY')
                         : null}
                     </div>

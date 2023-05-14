@@ -4,7 +4,7 @@ import Header from '../../components/header';
 import dynamic from 'next/dynamic';
 import { getSession } from 'next-auth/react';
 
-const Scheduler = dynamic(() => import('./Scheduler'), {
+const Scheduler = dynamic(() => import('../../components/calendar/Scheduler'), {
   ssr: false,
 });
 
