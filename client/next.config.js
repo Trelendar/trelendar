@@ -1,4 +1,8 @@
-module.exports = {
+/**
+ * @type {import('next').NextConfig}
+ */
+
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -10,3 +14,5 @@ module.exports = {
     FE_URL: process.env.FE_URL,
   },
 };
+
+module.exports = nextConfig;
