@@ -48,8 +48,8 @@ const DetailEvent: React.FC = () => {
   const deleteUserInEvent = (tag: Tag) => {};
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [startTimePicker, setStartTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
-  const [endTimePicker, setEndTimePicker] = useState<Dayjs | null>(dayjs(new Date()));
+  const [startTimePicker, setStartTimePicker] = useState<Dayjs>(dayjs(new Date()));
+  const [endTimePicker, setEndTimePicker] = useState<Dayjs>(dayjs(new Date()));
   const [desEvent, setDesEvent] = useState<string>('None');
   const [titleEdit, setTitleEdit] = useState<string>('');
   const [isAllDay, setIsAllDay] = useState<boolean>(false);
@@ -217,7 +217,7 @@ const DetailEvent: React.FC = () => {
                         <TimeField
                           label="Start time"
                           value={startTimePicker}
-                          onChange={(newValue) => setStartTimePicker(newValue)}
+                          onChange={(newValue) => setStartTimePicker(newValue ?? dayjs(new Date()))}
                           // format="HH:mm"
                           format="hh:mm A"
                           sx={{ marginRight: 10 }}
@@ -230,7 +230,7 @@ const DetailEvent: React.FC = () => {
                         <TimeField
                           label="End time"
                           value={endTimePicker}
-                          onChange={(newValue) => setEndTimePicker(newValue)}
+                          onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
                           // format="HH:mm"
                           format="hh:mm A"
                         />
@@ -255,7 +255,7 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <MdAllInclusive className="text-2xl text-colorHome mt-1 mr-3" />
                     <div className="text-[1.4rem] inline-block">
-                      {detailEvent.allDay ? 'All Day' : 'Regular'}
+                      {detailEvent.allDay ? 'Rest' : 'Regular'}
                     </div>
                   </div>
                 )}
@@ -304,7 +304,9 @@ const DetailEvent: React.FC = () => {
                             label="Select Date Start"
                             value={startTimePicker}
                             format="DD/MM/YYYY"
-                            onChange={(newValue) => setStartTimePicker(newValue)}
+                            onChange={(newValue) =>
+                              setStartTimePicker(newValue ?? dayjs(new Date()))
+                            }
                           />
                         </DemoContainer>
                       </LocalizationProvider>
@@ -316,7 +318,7 @@ const DetailEvent: React.FC = () => {
                           label="Select Date End"
                           value={endTimePicker}
                           format="DD/MM/YYYY"
-                          onChange={(newValue) => setEndTimePicker(newValue)}
+                          onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
                         />
                       </DemoContainer>
                     </LocalizationProvider>

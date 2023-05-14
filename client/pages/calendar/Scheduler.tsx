@@ -11,6 +11,9 @@ import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import axios from '../../lib/axios';
 import { IUser } from '../../models/userModel';
+import RepeatEvent from './RepeatEvent';
+import { WithContext as ReactTags } from 'react-tag-input';
+import { Tag } from '../../share/type/kanban';
 
 // moment.locale('en-GB');
 moment.tz.setDefault('Asia/Vietnam');
@@ -28,8 +31,20 @@ const Scheduler = () => {
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const [userList, setUserList] = useState<IUser[]>([]);
   const [userSelected, setUserSelected] = useState<string>(DEFAULT_VALUE_USER_SELECTED);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const deleteUserInEvent = (tag: Tag) => {};
+  const addUserInEvent = (tag: Tag) => {
+    setTags([...tags, tag]);
+  };
 
   const router = useRouter();
+
+  const usersSuggestForRepeat = userList?.map((user) => {
+    return {
+      id: user._id,
+      text: user.name,
+    };
+  });
 
   const onInputTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = evt.target.value;
@@ -39,11 +54,12 @@ const Scheduler = () => {
   const onSaveChanges = async () => {
     if (!titleNewEvent) return;
     setIsShowNewEvent(true);
+    const prefixTitle = isAllday ? '[Rest] ' : '';
     const newEvent: EventType = {
       _id: 'update_later',
       start: startTime,
       end: endTime,
-      title: titleNewEvent,
+      title: prefixTitle + titleNewEvent,
       allDay: isAllday,
       desc: '',
     };
@@ -89,7 +105,7 @@ const Scheduler = () => {
   }, []);
 
   useEffect(() => {
-    const path = userSelected === DEFAULT_VALUE_USER_SELECTED? '': userSelected;
+    const path = userSelected === DEFAULT_VALUE_USER_SELECTED ? '' : userSelected;
     axios
       .get(`/calendar/${path}`)
       .then((res) => {
@@ -109,27 +125,34 @@ const Scheduler = () => {
   return (
     <>
       <div className="p-3">
-        <div className="mb-9 border p-2 border-[#5B5393] rounded shadow">
-          <Box sx={{ minWidth: 50 }}>
-            <FormControl fullWidth>
-              <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                Select member
-              </InputLabel>
-              <NativeSelect
-                value={userSelected}
-                onChange={(e) => setUserSelected(e.target.value)}
-                inputProps={{
-                  name: 'member',
-                  id: 'uncontrolled-native',
-                }}
-              >
-                <option value={DEFAULT_VALUE_USER_SELECTED}>Logged User</option>
-                {userList.map((user) => (
-                  <option value={user._id} key={user._id}>{user.name}</option>
-                ))}
-              </NativeSelect>
-            </FormControl>
-          </Box>
+        <div className="flex">
+          <div className="mb-9 border p-2 border-[#5B5393] rounded shadow flex-1 mr-6">
+            <Box sx={{ minWidth: 50 }}>
+              <FormControl fullWidth>
+                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                  Select member
+                </InputLabel>
+                <NativeSelect
+                  value={userSelected}
+                  onChange={(e) => setUserSelected(e.target.value)}
+                  inputProps={{
+                    name: 'member',
+                    id: 'uncontrolled-native',
+                  }}
+                >
+                  <option value={DEFAULT_VALUE_USER_SELECTED}>Logged User</option>
+                  {userList.map((user) => (
+                    <option value={user._id} key={user._id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </FormControl>
+            </Box>
+          </div>
+          <div className="flex-initial">
+            <RepeatEvent usersSuggest={usersSuggestForRepeat} />
+          </div>
         </div>
 
         <Calendar
@@ -177,7 +200,7 @@ const Scheduler = () => {
                       </span>{' '}
                       <span className="italic">({startTime.toLocaleDateString()})</span>
                     </div>
-                    All Day:
+                    Rest:
                     <Checkbox
                       color="secondary"
                       size="medium"
@@ -187,7 +210,7 @@ const Scheduler = () => {
                   </div>
                   <div className="relative p-6 flex-auto">
                     <span className="my-4 text-slate-500 text-lg leading-relaxed">
-                      <div className="mb-6">
+                      <div className="mb-1">
                         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                           Event title
                         </label>
@@ -200,6 +223,26 @@ const Scheduler = () => {
                         />
                       </div>
                     </span>
+                  </div>
+
+                  <div className="ml-6 mb-4">
+                    <div className="z-[100000]">
+                      <ReactTags
+                        tags={tags}
+                        suggestions={usersSuggestForRepeat}
+                        delimiters={[]}
+                        handleDelete={(i) => {
+                          deleteUserInEvent(tags[i]);
+                          setTags(tags.filter((tag, index) => index !== i));
+                        }}
+                        handleAddition={(tag) => addUserInEvent(tag)}
+                        inputFieldPosition="inline"
+                        autocomplete
+                        placeholder="Search to add new member..."
+                        allowDragDrop={false}
+                        // readOnly={!isEdit}
+                      />
+                    </div>
                   </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
