@@ -3,7 +3,7 @@ import Header from '../../components/header';
 import dynamic from 'next/dynamic';
 import { getSession } from 'next-auth/react';
 
-const DetailEvent = dynamic(() => import('./DetailEvent'), {
+const DetailEvent = dynamic(() => import('../../components/calendar/DetailEvent'), {
   ssr: false,
 });
 

@@ -107,8 +107,6 @@ const DetailEvent: React.FC = () => {
             text: user.name,
           };
         });
-        console.log(tags);
-
         setTags(tags);
       })
       .catch((err) => console.log(err));

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-// import moment from 'moment';
 import { EventType } from '../../share/type/calendar';
 import moment from 'moment-timezone';
 import { useRouter } from 'next/router';
