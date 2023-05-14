@@ -15,7 +15,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import dayjs, { Dayjs } from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
@@ -211,7 +210,6 @@ const DetailEvent: React.FC = () => {
                 {isEdit && (
                   <div className="flex">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['TimeField', 'TimeField']}>
                         <TimeField
                           label="Start time"
                           value={startTimePicker}
@@ -220,11 +218,9 @@ const DetailEvent: React.FC = () => {
                           format="hh:mm A"
                           sx={{ marginRight: 10 }}
                         />
-                      </DemoContainer>
                     </LocalizationProvider>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['TimeField', 'TimeField']}>
                         <TimeField
                           label="End time"
                           value={endTimePicker}
@@ -232,7 +228,6 @@ const DetailEvent: React.FC = () => {
                           // format="HH:mm"
                           format="hh:mm A"
                         />
-                      </DemoContainer>
                     </LocalizationProvider>
                   </div>
                 )}

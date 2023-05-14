@@ -8,7 +8,6 @@ import FormLabel from '@mui/material/FormLabel';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { Tag } from '../../share/type/kanban';
 
@@ -58,7 +57,6 @@ const RepeatEvent: FC<Props> = (props) => {
                 {/*body*/}
                 <div className="ml-10 flex mt-4">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['TimeField', 'TimeField']}>
                       <TimeField
                         label="Start time"
                         value={startTimePickker}
@@ -67,11 +65,9 @@ const RepeatEvent: FC<Props> = (props) => {
                         format="hh:mm A"
                         sx={{ marginRight: 10 }}
                       />
-                    </DemoContainer>
                   </LocalizationProvider>
 
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['TimeField', 'TimeField']}>
                       <TimeField
                         label="End time"
                         value={endTimePickker}
@@ -79,7 +75,6 @@ const RepeatEvent: FC<Props> = (props) => {
                         // format="HH:mm"
                         format="hh:mm A"
                       />
-                    </DemoContainer>
                   </LocalizationProvider>
                 </div>
 
