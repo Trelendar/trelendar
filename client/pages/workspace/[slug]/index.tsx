@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MailIcon from '@mui/icons-material/Mail';
+import AddIcon from '@mui/icons-material/Add';
 import MenuIcon from '@mui/icons-material/Menu';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -213,7 +214,7 @@ const Board: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <MailIcon />
+                  <AddIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Add member'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>

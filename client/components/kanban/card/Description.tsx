@@ -70,7 +70,10 @@ const Description = ({ card }: DescriptionProps) => {
               >
                 Save
               </Button>
-              <Button variant="text" size="small" className="!capitalize" onClick={toggleEdit}>
+              <Button variant="text" size="small" className="!capitalize" onClick={()=>{
+                toggleEdit()
+                setValue(description)
+              }}>
                 Cancel
               </Button>
             </div>

@@ -46,7 +46,6 @@ export class BoardController {
   @Post('join')
   @UseGuards(JwtAuthGuard)
   async joinBoard(
-    @Param('id') id: string,
     @Query() { token }: { token: string },
     @CurrentUser() user: User,
   ) {

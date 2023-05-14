@@ -128,6 +128,31 @@ export class BoardService {
       throw new CustomException('Board not found or not access');
     }
   }
+  async getOne1(userId: string, id: string) {
+    try {
+      const board = await this.boardModel
+        .findOne({
+          _id: id,
+          members: { $in: [userId] },
+        })
+        .populate({
+          path: 'columns',
+          options: {
+            sort: { order: 1 },
+          },
+          populate: {
+            path: 'cards',
+            options: {
+              sort: { order: 1 },
+            },
+          },
+        });
+      if (!board) throw new CustomException('Board not found');
+      return board;
+    } catch (error) {
+      throw new CustomException('Board not found or not access');
+    }
+  }
   async checkExitUserForBoard(
     idUser: mongoose.Schema.Types.ObjectId,
     id: string,

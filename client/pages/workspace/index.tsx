@@ -8,7 +8,6 @@ import Header from '../../components/header';
 import axios from '../../lib/axios';
 import { BoardType, ColumnType } from '../../share/type/kanban';
 import BoardTag from './BoardTag';
-import { boardsMock } from './mockBoards';
 import { Lexorank } from '../../lib/lexorank';
 
 const lexorank = new Lexorank();

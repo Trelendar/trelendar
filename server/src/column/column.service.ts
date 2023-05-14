@@ -113,6 +113,38 @@ export class ColumnService {
       };
     });
   }
+  async getColumnForBoardId1(boardId: string, userId: string) {
+    const board = await this.boardService.getOne1(userId, boardId);
+    // return board.columns;
+    // return board.columns;
+    return board.columns.map((column) => {
+      return {
+        _id: column._id,
+        title: column.title,
+        order: column.order,
+        createdAt: column.createdAt,
+        updatedAt: column.updatedAt,
+        cards: column.cards.map((card) => {
+          return {
+            _id: card._id,
+            title: card.title,
+            order: card.order,
+            description: card.description,
+            priority: card.priority,
+            members: card.members,
+            start: card.start,
+            end: card.end,
+            attachment: card.attachment,
+            comments: card.comments,
+            updatedAt: card.updatedAt,
+            createdAt: card.createdAt,
+            columnId: column._id,
+            columnTitle: column.title,
+          };
+        }),
+      };
+    });
+  }
   async addCardToColumn(columnId: string, cardId: string) {
     await this.columnModel.findByIdAndUpdate(columnId, {
       $addToSet: { cards: cardId },
