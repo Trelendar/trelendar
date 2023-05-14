@@ -292,7 +292,6 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <div className="mr-10">
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
                           <DatePicker
                             label="Select Date Start"
                             value={startTimePicker}
@@ -301,19 +300,16 @@ const DetailEvent: React.FC = () => {
                               setStartTimePicker(newValue ?? dayjs(new Date()))
                             }
                           />
-                        </DemoContainer>
                       </LocalizationProvider>
                     </div>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['DatePicker']}>
                         <DatePicker
                           label="Select Date End"
                           value={endTimePicker}
                           format="DD/MM/YYYY"
                           onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
                         />
-                      </DemoContainer>
                     </LocalizationProvider>
                   </div>
                 )}
