@@ -7,8 +7,8 @@ import { BsPlusLg } from 'react-icons/bs';
 import Header from '../../components/header';
 import axios from '../../lib/axios';
 import { BoardType, ColumnType } from '../../share/type/kanban';
-import BoardTag from './BoardTag';
 import { Lexorank } from '../../lib/lexorank';
+import BoardTag from '../../components/kanban/BoardTag';
 
 const lexorank = new Lexorank();
 export interface Board {

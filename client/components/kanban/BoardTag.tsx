@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import { BoardType } from '../../share/type/kanban';
+import { BoardType, ColumnType } from '../../share/type/kanban';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Board } from '.';
 import { Button } from '@mui/material';
 import BoardModal from '../../components/board/BoardModal';
 import Modal from 'react-modal';
 
+interface Board {
+  background: string;
+  columns: ColumnType[];
+  createdAt: Date;
+  createdBy: string;
+  members: string[];
+  name: string;
+  updatedAt: Date;
+  _id: string;
+}
 interface Props {
   board: Board;
   handleRefetchAllBoard: () => void;
