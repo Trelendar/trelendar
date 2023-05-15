@@ -12,12 +12,12 @@ interface InviteInfo {
 }
 const fetchInfoInvite = async (token: string): Promise<InviteInfo> => {
   if (!token) return;
-  const response = await axios(`http://localhost:3001/board/invite?token=${token}`);
+  const response = await axios(`board/invite?token=${token}`);
   return response.data;
 };
 const joinBoard = async (token: string): Promise<any> => {
   if (!token) return;
-  const response = await axios.post(`http://localhost:3001/board/join?token=${token}`);
+  const response = await axios.post(`board/join?token=${token}`);
   return response.data;
 };
 const NotValidTokenInvite = (
