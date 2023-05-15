@@ -10,9 +10,6 @@ const nextConfig = {
       },
     ],
   },
-  env: {
-    FE_URL: process.env.FE_URL,
-  },
 };
 
 module.exports = nextConfig;

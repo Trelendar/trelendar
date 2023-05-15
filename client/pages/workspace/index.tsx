@@ -10,7 +10,6 @@ import { BoardType, ColumnType } from '../../share/type/kanban';
 import { Lexorank } from '../../lib/lexorank';
 import BoardTag from '../../components/kanban/BoardTag';
 
-const lexorank = new Lexorank();
 export interface Board {
   background: string;
   columns: ColumnType[];
@@ -28,11 +27,8 @@ const Main: React.FC = () => {
     data: listBoard,
     isLoading,
     refetch,
-  } = useQuery<Board[]>({
-    queryKey: ['board'],
-    queryFn: async () => {
-      return (await axios.get('board')).data;
-    },
+  } = useQuery<Board[]>(['board'], async () => {
+    return (await axios.get('board')).data;
   });
   const handleRefetchAllBoard = async () => {
     await refetch();
@@ -132,7 +128,13 @@ const Main: React.FC = () => {
               <BoardTag key={board.id} board={board} />
             ))} */}
             {listBoard.map((board, index) => {
-              return <BoardTag key={board._id} board={board} handleRefetchAllBoard={handleRefetchAllBoard}/>;
+              return (
+                <BoardTag
+                  key={board._id}
+                  board={board}
+                  handleRefetchAllBoard={handleRefetchAllBoard}
+                />
+              );
             })}
           </div>
         </div>

@@ -52,7 +52,7 @@ const Invite = () => {
   const { inviteBy, member, name } = data;
   const handleJoin = async () => {
     if (!user) {
-      const from = `${process.env.FE_URL}/invite?token=${token}`;
+      const from = `${process.env.NEXTAUTH_URL}/invite?token=${token}`;
       const encodeFrom = encodeURIComponent(from);
       router.push(`authentication/sign-in?from=${encodeFrom}`);
       Swal.fire('', 'You need to login to join this workspace', 'info');
