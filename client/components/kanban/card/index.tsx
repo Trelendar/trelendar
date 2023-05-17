@@ -111,7 +111,7 @@ const Card: React.FC<Props> = (props) => {
         {props.card.title}
       </article>
       <Modal isOpen={isModal} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>
-        <CardModal id={card._id} />
+        <CardModal id={card._id} closeModal={closeModal} deleteCard={deleteCard} />
       </Modal>
     </>
   );

@@ -8,12 +8,14 @@ import { Board, BoardDocument, BoardSchema } from './entities/board.entity';
 import { UserService } from '../user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { convertToObjectId } from 'src/util';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class BoardService {
   constructor(
     @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
     private readonly userService: UserService,
+    private readonly mailService: MailService,
   ) {}
 
   // hard code user-created and not check validate data in members
@@ -237,10 +239,6 @@ export class BoardService {
   }
   async addMemberToBoard(id: string, userId: mongoose.Schema.Types.ObjectId) {
     const isExistedUser = await this.checkExitUserForBoard(userId, id);
-    console.log(
-      '🚀 ~ file: board.service.ts:164 ~ BoardService ~ addMemberToBoard ~ existedUser:',
-      isExistedUser,
-    );
     if (isExistedUser) return;
     const board = await this.boardModel.findById(id);
     if (!board) throw new HttpException('Not found', 403);
@@ -285,5 +283,17 @@ export class BoardService {
       ? uniqueMembers.filter((_id) => _id !== userId.toString())
       : uniqueMembers;
     return hasNoLoginedUserList;
+  }
+  async sendMailInvite(mail: string, link: string) {
+    try {
+      await this.mailService.sendEmail(
+        mail,
+        'Invitation to join board',
+        '',
+        link,
+      );
+    } catch (error) {
+      throw new Error('Method not implemented.');
+    }
   }
 }

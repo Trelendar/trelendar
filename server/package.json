@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
@@ -28,6 +29,7 @@
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
+    "@sendgrid/mail": "^7.7.0",
     "buffer-to-stream": "^1.0.0",
     "class-validator": "^0.14.0",
     "cloudinary": "^1.36.2",
@@ -35,6 +37,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "mongoose": "^6.9.0",
+    "nodemailer": "^6.9.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
@@ -50,6 +53,7 @@
     "@types/jest": "29.2.4",
     "@types/multer": "^1.4.7",
     "@types/node": "18.11.18",
+    "@types/nodemailer": "^6.4.7",
     "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

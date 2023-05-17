@@ -36,6 +36,7 @@ import Swal from 'sweetalert2';
 const drawerWidth = 240;
 const customStyles = {
   content: {
+    minWidth:500,
     top: '50%',
     left: '50%',
     right: 'auto',
@@ -221,7 +222,7 @@ const Board: React.FC = () => {
             </ListItem>
             <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} style={customStyles}>
               {/* Content of the modal goes here */}
-              <CopyLink link={link} />
+              <CopyLink link={link} handleCloseModal={handleCloseModal}/>
             </Modal>
             {['Inbox', 'Add member', 'Send email', 'Drafts'].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: 'block' }}>

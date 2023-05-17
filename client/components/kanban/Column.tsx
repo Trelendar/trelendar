@@ -73,7 +73,8 @@ const Column: React.FC<Props> = (props) => {
 
   const deleteCard = (cardId: string) => {
     let newColumn = { ...column };
-    const indexOfCardDelete = newColumn.cards.findIndex((card) => card.id === cardId);
+    const indexOfCardDelete = newColumn.cards.findIndex((card) => card._id === cardId);
+    console.log("🚀 ~ file: Column.tsx:77 ~ deleteCard ~ indexOfCardDelete:", indexOfCardDelete)
     newColumn.cards.splice(indexOfCardDelete, 1);
 
     updateColumn(newColumn, false);

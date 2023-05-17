@@ -50,8 +50,9 @@ export class CardController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cardService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.cardService.remove(id, user);
   }
 
   @Patch(':id/assign')

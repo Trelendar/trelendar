@@ -99,6 +99,16 @@ export class BoardController {
     });
     return `${process.env.URL_FE}/invite?token=${token}`;
   }
+  @Post(':id/send-mail-invite')
+  @UseGuards(JwtAuthGuard)
+  async sendMaile(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Body() { mail, link }: { mail: string; link: string },
+  ) {
+    return await this.boardService.sendMailInvite(mail, link);
+  }
+
   @Get(':id/members')
   @UseGuards(JwtAuthGuard)
   async getMemberForBoard(@Param('id') id: string, @CurrentUser() user: User) {

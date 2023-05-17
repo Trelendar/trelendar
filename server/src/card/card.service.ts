@@ -90,7 +90,24 @@ export class CardService {
     return `This action updates a #${id} card`;
   }
 
-  remove(id: number) {
+  async remove(id: string, user: User) {
+    const column = await this.columnService.getColumnForCardId(id);
+    if (!column) throw new CustomException('Culumn not found');
+    console.log(
+      '🚀 ~ file: card.service.ts:107 ~ CardService ~ remove ~ column.id:',
+      column.id,
+    );
+    const board = await this.boardService.findByColumn(
+      column._id.toString(),
+      user,
+    );
+    const isInBoard = await this.boardService.checkExitUserForBoard(
+      user._id,
+      board.id,
+    );
+    if (!isInBoard) throw new CustomException('User is not in board');
+    await this.cardModel.findByIdAndDelete(id);
+    await this.columnService.removeCardToColumn(column.id, id);
     return `This action removes a #${id} card`;
   }
 
