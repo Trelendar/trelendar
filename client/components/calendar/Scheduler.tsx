@@ -54,6 +54,7 @@ const Scheduler = () => {
     if (!titleNewEvent) return;
     setIsShowNewEvent(true);
     const prefixTitle = isAllday ? '[Rest] ' : '';
+    const members = tags.map((tags) => tags.id);
     const newEvent: EventType = {
       _id: 'update_later',
       start: startTime,
@@ -61,6 +62,7 @@ const Scheduler = () => {
       title: prefixTitle + titleNewEvent,
       allDay: isAllday,
       desc: '',
+      members,
     };
     axios
       .post('/calendar', {

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongoose';
 import { CreateEventDto } from './dto/create-event.dto';
 import {
   Body,
@@ -7,12 +8,14 @@ import {
   UseGuards,
   Param,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/current.user';
 import { User } from 'src/user/entities/user.entity';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { DeleteEventDto } from './dto/delete-event.dto';
 
 @Controller('calendar')
 export class CanlendarController {
@@ -58,5 +61,11 @@ export class CanlendarController {
   @UseGuards(JwtAuthGuard)
   async updateEvent(@Body() updateEvent: UpdateEventDto) {
     return await this.calendarService.update(updateEvent);
+  }
+
+  @Delete('event/')
+  @UseGuards(JwtAuthGuard)
+  async removeEvent(@Body() eventId: DeleteEventDto) {
+    return await this.calendarService.remove(eventId);
   }
 }
