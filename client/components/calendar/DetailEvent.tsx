@@ -27,6 +27,7 @@ import Checkbox from '@mui/material/Checkbox';
 import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
 import CircularProgress from '@mui/material/CircularProgress';
+import Swal from 'sweetalert2';
 
 const DetailEvent: React.FC = () => {
   const router = useRouter();
@@ -68,7 +69,6 @@ const DetailEvent: React.FC = () => {
       allDay: isAllDay,
       members: memers,
     };
-    console.log('LlLlllllll', updateEvent);
 
     axios
       .patch(`calendar/event/`, { ...updateEvent })
@@ -86,7 +86,12 @@ const DetailEvent: React.FC = () => {
     handleSave();
   };
 
-  console.log('test', startTimePicker.toString());
+  const handleDelete = () => {
+    const bodyReq = {
+      eventId,
+    };
+    axios.delete('calendar/event', { data: bodyReq });
+  };
 
   useEffect(() => {
     axios
@@ -98,7 +103,6 @@ const DetailEvent: React.FC = () => {
         setStartTimePicker(dayjs(new Date(res.data.start)));
         setEndTimePicker(dayjs(new Date(res.data.end)));
         setIsAllDay(res.data.allDay);
-        console.log(res.data);
 
         const tags = res.data.members.map((user) => {
           return {
@@ -108,7 +112,11 @@ const DetailEvent: React.FC = () => {
         });
         setTags(tags);
       })
-      .catch((err) => console.log(err));
+      .catch(async (err) => {
+        await Swal.fire('Not Found!', 'Can not find this event', 'error');
+        router.push('../calendar')
+        console.log(err, 'here');
+      });
 
     axios
       .get(`/calendar/usersuggest`)
@@ -119,7 +127,6 @@ const DetailEvent: React.FC = () => {
             text: user.name,
           };
         });
-        console.log('test1', users);
         setUsersSuggest(users);
       })
       .catch((err) => console.log(err));
@@ -210,24 +217,24 @@ const DetailEvent: React.FC = () => {
                 {isEdit && (
                   <div className="flex">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimeField
-                          label="Start time"
-                          value={startTimePicker}
-                          onChange={(newValue) => setStartTimePicker(newValue ?? dayjs(new Date()))}
-                          // format="HH:mm"
-                          format="hh:mm A"
-                          sx={{ marginRight: 10 }}
-                        />
+                      <TimeField
+                        label="Start time"
+                        value={startTimePicker}
+                        onChange={(newValue) => setStartTimePicker(newValue ?? dayjs(new Date()))}
+                        // format="HH:mm"
+                        format="hh:mm A"
+                        sx={{ marginRight: 10 }}
+                      />
                     </LocalizationProvider>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimeField
-                          label="End time"
-                          value={endTimePicker}
-                          onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
-                          // format="HH:mm"
-                          format="hh:mm A"
-                        />
+                      <TimeField
+                        label="End time"
+                        value={endTimePicker}
+                        onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
+                        // format="HH:mm"
+                        format="hh:mm A"
+                      />
                     </LocalizationProvider>
                   </div>
                 )}
@@ -292,24 +299,22 @@ const DetailEvent: React.FC = () => {
                   <div className="flex">
                     <div className="mr-10">
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            label="Select Date Start"
-                            value={startTimePicker}
-                            format="DD/MM/YYYY"
-                            onChange={(newValue) =>
-                              setStartTimePicker(newValue ?? dayjs(new Date()))
-                            }
-                          />
+                        <DatePicker
+                          label="Select Date Start"
+                          value={startTimePicker}
+                          format="DD/MM/YYYY"
+                          onChange={(newValue) => setStartTimePicker(newValue ?? dayjs(new Date()))}
+                        />
                       </LocalizationProvider>
                     </div>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          label="Select Date End"
-                          value={endTimePicker}
-                          format="DD/MM/YYYY"
-                          onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
-                        />
+                      <DatePicker
+                        label="Select Date End"
+                        value={endTimePicker}
+                        format="DD/MM/YYYY"
+                        onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
+                      />
                     </LocalizationProvider>
                   </div>
                 )}
@@ -394,6 +399,23 @@ const DetailEvent: React.FC = () => {
         className={
           'mt-8 text-white font-semibold py-2 px-6 border-0 border-gray-400 rounded shadow-lg mb-2 transition-all bg-red-500 hover:bg-red-600 '
         }
+        onClick={() => {
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              handleDelete();
+              await Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+              router.push('../calendar');
+            }
+          });
+        }}
       >
         Delete
       </button>

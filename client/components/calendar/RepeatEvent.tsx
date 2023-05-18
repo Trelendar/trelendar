@@ -10,6 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { Tag } from '../../share/type/kanban';
+import Tooltip from '@mui/material/Tooltip';
 
 export interface Props {
   usersSuggest: Tag[];
@@ -57,32 +58,34 @@ const RepeatEvent: FC<Props> = (props) => {
                 {/*body*/}
                 <div className="ml-10 flex mt-4">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimeField
-                        label="Start time"
-                        value={startTimePickker}
-                        onChange={(newValue) => setStartTimePickker(newValue ?? new Date())}
-                        // format="HH:mm"
-                        format="hh:mm A"
-                        sx={{ marginRight: 10 }}
-                      />
+                    <TimeField
+                      label="Start time"
+                      value={startTimePickker}
+                      onChange={(newValue) => setStartTimePickker(newValue ?? new Date())}
+                      // format="HH:mm"
+                      format="hh:mm A"
+                      sx={{ marginRight: 10 }}
+                    />
                   </LocalizationProvider>
 
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimeField
-                        label="End time"
-                        value={endTimePickker}
-                        onChange={(newValue) => setEndTimePickker(newValue ?? new Date())}
-                        // format="HH:mm"
-                        format="hh:mm A"
-                      />
+                    <TimeField
+                      label="End time"
+                      value={endTimePickker}
+                      onChange={(newValue) => setEndTimePickker(newValue ?? new Date())}
+                      // format="HH:mm"
+                      format="hh:mm A"
+                    />
                   </LocalizationProvider>
                 </div>
 
                 <div className="ml-10 mt-5">
                   <FormControl>
-                    <FormLabel id="demo-radio-buttons-group-label" color="secondary">
-                      Option
-                    </FormLabel>
+                    <Tooltip title="Delete">
+                      <FormLabel id="demo-radio-buttons-group-label" color="secondary">
+                        Option
+                      </FormLabel>
+                    </Tooltip>
                     <RadioGroup
                       aria-labelledby="demo-radio-buttons-group-label"
                       defaultValue="EveryDay"

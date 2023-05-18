@@ -26,5 +26,6 @@ export class CreateEventDto {
   desc: string;
 
   @IsArray()
+  @IsNotEmpty()
   members: string[];
 }

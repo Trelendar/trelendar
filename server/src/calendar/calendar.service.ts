@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Event, EventDocument } from './entities/event.entity';
 import { Model, ObjectId, Types } from 'mongoose';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { DeleteEventDto } from './dto/delete-event.dto';
 
 @Injectable()
 export class CalendarService {
@@ -21,14 +22,14 @@ export class CalendarService {
   }
 
   async create(createCalendarDto: CreateEventDto, userId: ObjectId) {
-    const { start, end, title, desc, allDay } = createCalendarDto;
+    const { start, end, title, desc, allDay, members } = createCalendarDto;
     const event = await new this.eventModel({
       start,
       end,
       title,
       desc,
       allDay,
-      members: [userId],
+      members: [userId, ...members],
     }).save();
     return event;
   }
@@ -56,6 +57,9 @@ export class CalendarService {
         _id: new Types.ObjectId(eventId),
       })
       .exec();
+    if (!event) {
+      throw new HttpException('Event not found', 403);
+    }
     const memberUsers =
       event?.members.map((memberId) => memberId.toString()) ?? [];
 
@@ -79,5 +83,15 @@ export class CalendarService {
       throw new HttpException('Event not found', 403);
     }
     return event;
+  }
+
+  async remove(deleteEventDto: DeleteEventDto) {
+    const result = await this.eventModel.findOneAndDelete({
+      _id: new Types.ObjectId(deleteEventDto.eventId),
+    });
+    if (!result) {
+      throw new HttpException('Event not found', 403);
+    }
+    return `This action removes a #${deleteEventDto.eventId} board`;
   }
 }

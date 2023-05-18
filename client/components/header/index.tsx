@@ -20,7 +20,7 @@ const Header: React.FC = () => {
 
   return (
     <nav className="grid grid-cols-7 gap-4 bg-colorHome py-2 max-h-17 h-[10vh]">
-      <Link href="" className="col-span-1 ">
+      <Link href="/calendar" className="col-span-1 ">
         <div className="flex items-center text-white transition hover:scale-100 cursor-pointer">
           <BsFillKanbanFill className="mr-3" size={30} />
           <span className="font-semibold text-xl tracking-tight">Trelendar</span>
