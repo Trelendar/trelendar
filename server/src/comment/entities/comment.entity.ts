@@ -9,5 +9,7 @@ export class Comment {
   author: User;
   @Prop()
   content: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 export const CommentSchema = SchemaFactory.createForClass(Comment);

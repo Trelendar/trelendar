@@ -209,10 +209,6 @@ export class BoardService {
     updateBoardDto: UpdateBoardDto,
     user: User,
   ): Promise<Board> {
-    console.log(
-      '🚀 ~ file: board.service.ts:185 ~ BoardService ~ updateBoardDto:',
-      updateBoardDto,
-    );
     const isInBoard = await this.checkExitUserForBoard(user._id, id);
     if (!isInBoard) throw new CustomException('You are not in board');
     const board = await this.boardModel.findByIdAndUpdate(id, updateBoardDto, {

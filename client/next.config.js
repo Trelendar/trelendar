@@ -3,6 +3,10 @@
  */
 
 const nextConfig = {
+  reactStrictMode: true,
+  env: {
+    URL_SOCKET: process.env.URL_SOCKET,
+  },
   images: {
     remotePatterns: [
       {

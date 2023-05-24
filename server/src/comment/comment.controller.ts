@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
@@ -32,11 +33,23 @@ export class CommentController {
   findAll() {
     return this.commentService.findAll();
   }
+  @Get(':cardId')
+  @UseGuards(JwtAuthGuard)
+  async findAllByCardId(
+    @Param('cardId') cardId: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.commentService.findAllByCardId(cardId, user);
+  }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async delete(@Param('id') id: string, @CurrentUser() user: User) {
-    return await this.commentService.delete(id, user);
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Query('cardId') cardId: string,
+  ) {
+    return await this.commentService.delete(id, cardId, user);
   }
 
   @Patch(':id')

@@ -4,6 +4,7 @@ import { CommentController } from './comment.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Comment, CommentSchema } from './entities/comment.entity';
 import { CardModule } from 'src/card/card.module';
+import { CommentsGateway } from './comment.gateway';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { CardModule } from 'src/card/card.module';
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
   ],
   controllers: [CommentController],
-  providers: [CommentService],
+  providers: [CommentService, CommentsGateway],
 })
 export class CommentModule {}

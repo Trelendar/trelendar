@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Title from './Title';
 import Members from './Members';
 import Description from './Description';
@@ -31,7 +31,6 @@ const CardModal = ({
     refetch();
   };
   const handleDeleteCard = async () => {
-    console.log('🚀 ~ file: CardModal.tsx:28 ~ handleDeleteCard ~ card:', card.members.length);
     if (card.members.length) {
       Swal.fire('Please remove all member to delete card', '', 'info');
       return;
