@@ -10,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Comment } from './entities/comment.entity';
 
-@WebSocketGateway(Number(process.env.PORT) || 81, {
+@WebSocketGateway(80, {
   allowEIO3: true,
   transports: ['websocket'],
 })
