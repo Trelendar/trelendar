@@ -65,6 +65,7 @@
     "@types/node": "^18.7.14",
     "@types/react": "^18.0.18",
     "@types/react-beautiful-dnd": "^13.1.4",
+    "@types/socket.io-client": "^3.0.0",
     "autoprefixer": "^10.4.8",
     "eslint": "8.23.0",
     "eslint-config-next": "12.2.5",

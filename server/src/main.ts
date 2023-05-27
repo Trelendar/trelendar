@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomExceptionFilter } from './error/custom';
-import * as io from 'socket.io';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({

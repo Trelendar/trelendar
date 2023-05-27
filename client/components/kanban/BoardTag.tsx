@@ -36,7 +36,7 @@ const BoardTag: React.FC<Props> = ({ board, handleRefetchAllBoard }) => {
   return (
     <div className=" col-span-1 max-w-[300px] bg-white rounded-lg border border-gray-200 shadow-md ">
       <div>
-        <Image
+        <image
           className="rounded-t-lg"
           src={board.background}
           loader={() => board.background}

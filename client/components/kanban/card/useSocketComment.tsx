@@ -19,6 +19,7 @@ export const useRealTimeComments = (cardId: string) => {
       '🚀 ~ file: useSocketComment.tsx:18 ~ useEffect ~ process.env.URL_SOCKET:',
       process.env.URL_SOCKET
     );
+
     setSocket(newSocket);
 
     return () => {
