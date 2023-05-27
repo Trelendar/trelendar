@@ -10,7 +10,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Comment } from './entities/comment.entity';
 
-@WebSocketGateway(8080, { allowEIO3: true, transports: ['websocket'] })
+@WebSocketGateway(Number(process.env.PORT) || 81, {
+  allowEIO3: true,
+  transports: ['websocket'],
+})
 export class CommentsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -23,6 +26,7 @@ export class CommentsGateway
   }
 
   afterInit(server: Server) {
+    this.logger.log(server);
     this.logger.log('Init');
   }
 
