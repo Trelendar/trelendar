@@ -15,6 +15,9 @@ const Home: React.FC = () => {
   }, [data]);
   return (
     <>
+      <Head>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+      </Head>
       <div>
         <link
           rel="stylesheet"

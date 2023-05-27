@@ -15,10 +15,18 @@ export const useRealTimeComments = (cardId: string) => {
   // Create a WebSocket connection on mount
   useEffect(() => {
     const newSocket = io(process.env.URL_SOCKET, { transports: ['websocket'] });
-    console.log("🚀 ~ file: useSocketComment.tsx:18 ~ useEffect ~ process.env.URL_SOCKET:", process.env.URL_SOCKET)
+    console.log(
+      '🚀 ~ file: useSocketComment.tsx:18 ~ useEffect ~ process.env.URL_SOCKET:',
+      process.env.URL_SOCKET
+    );
     setSocket(newSocket);
 
-    return () => newSocket.close();
+    return () => {
+      if (newSocket.readyState === 1) {
+        // <-- This is important
+        newSocket.close();
+      }
+    };
   }, [cardId]);
 
   // Subscribe to WebSocket channel and update useQuery cache on new comment
