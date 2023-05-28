@@ -13,6 +13,9 @@ import { Comment } from './entities/comment.entity';
 @WebSocketGateway(80, {
   allowEIO3: true,
   transports: ['websocket'],
+  cors: {
+    origin: '*',
+  },
 })
 export class CommentsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
