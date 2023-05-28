@@ -7,20 +7,17 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Namespace, Server, Socket } from 'socket.io';
 import { Comment } from './entities/comment.entity';
 
-@WebSocketGateway(80, {
+@WebSocketGateway(443, {
   allowEIO3: true,
   transports: ['websocket'],
-  cors: {
-    origin: '*',
-  },
 })
 export class CommentsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() server: Namespace;
   private logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('joinRoom')
