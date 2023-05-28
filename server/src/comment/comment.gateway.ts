@@ -10,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Comment } from './entities/comment.entity';
 
-@WebSocketGateway(80, {
+@WebSocketGateway(3002, {
   allowEIO3: true,
   transports: ['websocket'],
   cors: {
@@ -29,7 +29,10 @@ export class CommentsGateway
   }
 
   afterInit(server: Server) {
-    this.logger.log(server);
+    console.log(
+      '🚀 ~ file: comment.gateway.ts:32 ~ afterInit ~ server:',
+      server,
+    );
     this.logger.log('Init');
   }
 
