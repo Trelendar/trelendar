@@ -15,11 +15,10 @@ export const useRealTimeComments = (cardId: string) => {
   // Create a WebSocket connection on mount
   useEffect(() => {
     const newSocket = io(process.env.URL_SOCKET, { transports: ['websocket'] });
-    console.log(
-      '🚀 ~ file: useSocketComment.tsx:18 ~ useEffect ~ process.env.URL_SOCKET:',
-      process.env.URL_SOCKET
-    );
 
+    newSocket.on('connect_error', (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
     setSocket(newSocket);
 
     return () => {
