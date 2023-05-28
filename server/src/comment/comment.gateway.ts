@@ -10,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Comment } from './entities/comment.entity';
 
-@WebSocketGateway(3002, {
+@WebSocketGateway(8000, {
   allowEIO3: true,
   transports: ['websocket'],
   cors: {
