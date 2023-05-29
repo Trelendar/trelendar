@@ -11,22 +11,51 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { Tag } from '../../share/type/kanban';
 import Tooltip from '@mui/material/Tooltip';
+import { EventType } from '../../share/type/calendar';
+import axios from '../../lib/axios';
+import dayjs, { Dayjs } from 'dayjs';
 
 export interface Props {
   usersSuggest: Tag[];
+  isLoadDone: () => void;
 }
 
 const RepeatEvent: FC<Props> = (props) => {
-  const { usersSuggest } = props;
+  const { usersSuggest, isLoadDone } = props;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [startTimePickker, setStartTimePickker] = useState<Date>(new Date());
-  const [endTimePickker, setEndTimePickker] = useState<Date>(new Date());
+  const [startTimePickker, setStartTimePickker] = useState<Dayjs>(dayjs(new Date()));
+  const [endTimePickker, setEndTimePickker] = useState<Dayjs>(dayjs(new Date()));
+  const [titleNewEvent, setTitleNewEvent] = useState<string>('');
   const [tags, setTags] = useState<Tag[]>([]);
+  const [type, setType] = useState<string>('1');
 
   const deleteUserInEvent = (tag: Tag) => {};
   const addUserInEvent = (tag: Tag) => {
     setTags([...tags, tag]);
+  };
+
+  const onSaveChanges = async () => {
+    if (!titleNewEvent) return;
+    const members = tags.map((tags) => tags.id);
+    const newEvent: EventType = {
+      _id: 'update_later',
+      start: startTimePickker.toISOString(),
+      end: endTimePickker.toISOString(),
+      title: titleNewEvent,
+      members,
+    };
+    axios
+      .post('/calendar/repeat', {
+        ...newEvent,
+        type,
+      })
+      .then((res) => {
+        newEvent._id = res.data._id;
+        close();
+        isLoadDone();
+      })
+      .catch((err) => console.log(err));
   };
 
   const open = () => setIsOpen(true);
@@ -61,8 +90,7 @@ const RepeatEvent: FC<Props> = (props) => {
                     <TimeField
                       label="Start time"
                       value={startTimePickker}
-                      onChange={(newValue) => setStartTimePickker(newValue ?? new Date())}
-                      // format="HH:mm"
+                      onChange={(newValue) => setStartTimePickker(newValue ?? dayjs(new Date()))}
                       format="hh:mm A"
                       sx={{ marginRight: 10 }}
                     />
@@ -72,8 +100,7 @@ const RepeatEvent: FC<Props> = (props) => {
                     <TimeField
                       label="End time"
                       value={endTimePickker}
-                      onChange={(newValue) => setEndTimePickker(newValue ?? new Date())}
-                      // format="HH:mm"
+                      onChange={(newValue) => setEndTimePickker(newValue ?? dayjs(new Date()))}
                       format="hh:mm A"
                     />
                   </LocalizationProvider>
@@ -88,37 +115,38 @@ const RepeatEvent: FC<Props> = (props) => {
                     </Tooltip>
                     <RadioGroup
                       aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="EveryDay"
+                      defaultValue="1"
                       name="radio-buttons-group"
+                      onChange={(e) => setType(e.target.value ?? '1')}
                     >
                       <FormControlLabel
-                        value="EveryDay"
+                        value="0"
                         control={<Radio color="secondary" />}
                         label="EveryDay"
                       />
                       <div className="flex-auto">
                         <FormControlLabel
-                          value="Monday"
+                          value="1"
                           control={<Radio color="secondary" />}
                           label="Monday"
                         />
                         <FormControlLabel
-                          value="Tuesday"
+                          value="2"
                           control={<Radio color="secondary" />}
                           label="Tuesday"
                         />
                         <FormControlLabel
-                          value="Wednesday"
+                          value="3"
                           control={<Radio color="secondary" />}
                           label="Wednesday"
                         />
                         <FormControlLabel
-                          value="Thursday"
+                          value="4"
                           control={<Radio color="secondary" />}
                           label="Thursday"
                         />
                         <FormControlLabel
-                          value="Friday"
+                          value="5"
                           control={<Radio color="secondary" />}
                           label="Friday"
                         />
@@ -134,11 +162,9 @@ const RepeatEvent: FC<Props> = (props) => {
                         Event title
                       </label>
                       <input
-                        // ref={inputTitleRef}
                         type="text"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        // onChange={(evt) => onInputTitle(evt)}
-                        // onKeyDown={(e) => e.key === 'Escape' && setIsShowNewEvent(false)}
+                        onChange={(evt) => setTitleNewEvent(evt.target.value)}
                       />
                     </div>
                   </span>
@@ -158,11 +184,9 @@ const RepeatEvent: FC<Props> = (props) => {
                       autocomplete
                       placeholder="Search to add new member..."
                       allowDragDrop={false}
-                      // readOnly={!isEdit}
                     />
                   </div>
                 </div>
-                {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -174,7 +198,7 @@ const RepeatEvent: FC<Props> = (props) => {
                   <button
                     className="text-[#BCB4D8] font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    // onClick={onSaveChanges}
+                    onClick={onSaveChanges}
                   >
                     Add
                   </button>

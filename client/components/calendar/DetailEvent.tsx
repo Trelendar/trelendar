@@ -54,7 +54,6 @@ const DetailEvent: React.FC = () => {
   const [titleEdit, setTitleEdit] = useState<string>('');
   const [isAllDay, setIsAllDay] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const changeFormat = (stringInput: string) => {}; // using to change fomat of date()
 
   const handleSave = () => {
     setIsLoading(true);
@@ -114,7 +113,7 @@ const DetailEvent: React.FC = () => {
       })
       .catch(async (err) => {
         await Swal.fire('Not Found!', 'Can not find this event', 'error');
-        router.push('../calendar')
+        router.push('../calendar');
         console.log(err, 'here');
       });
 
@@ -232,7 +231,6 @@ const DetailEvent: React.FC = () => {
                         label="End time"
                         value={endTimePicker}
                         onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
-                        // format="HH:mm"
                         format="hh:mm A"
                       />
                     </LocalizationProvider>

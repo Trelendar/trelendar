@@ -1,3 +1,4 @@
+import { CreateRepeatDto } from './dto/create-repeat.dto';
 import { BoardService } from './../board/board.service';
 import { UserService } from './../user/user.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -93,5 +94,52 @@ export class CalendarService {
       throw new HttpException('Event not found', 403);
     }
     return `This action removes a #${deleteEventDto.eventId} board`;
+  }
+
+  async createRepeat(createRepeat: CreateRepeatDto, userId: ObjectId) {
+    const { type, start, end, title, members } = createRepeat;
+    const startTime = new Date(start);
+    const endTime = new Date(end);
+
+    const today = new Date(start);
+    const date = new Date(today.getFullYear(), today.getMonth(), 1);
+    date.setTime(startTime.getTime());
+
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek !== Number(type)) {
+      date.setDate(Number(type));
+    }
+    const days = [];
+    while (
+      date.getMonth() === today.getMonth() ||
+      date.getMonth() === today.getMonth() + 1
+    ) {
+      const overDayInNextMonth =
+        date.getMonth() === today.getMonth() + 1 &&
+        date.getDate() > today.getDate();
+
+      if (date >= today && !overDayInNextMonth) {
+        endTime.setDate(date.getDate());
+        endTime.setMonth(date.getMonth());
+        days.push({
+          start: new Date(date.getTime()),
+          end: new Date(endTime),
+        });
+      }
+      date.setDate(date.getDate() + 7);
+    }
+    const repeatEvents = days.map((day) => {
+      return {
+        title: title,
+        start: day.start,
+        end: day.end,
+        members: [userId, ...members],
+        desc: '',
+        allDay: false,
+      };
+    });
+
+    const result = await this.eventModel.insertMany(repeatEvents);
+    return result;
   }
 }
