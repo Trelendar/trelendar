@@ -35,6 +35,7 @@ const Scheduler = () => {
   const addUserInEvent = (tag: Tag) => {
     setTags([...tags, tag]);
   };
+  const [isLoadRepeat, setIsLoadRepeat] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -89,6 +90,8 @@ const Scheduler = () => {
     router.push(`calendar/${event._id}`);
   };
 
+  const loadRepeatDone = () => setIsLoadRepeat(true);
+
   useEffect(() => {
     const isInputAdded = inputTitleRef && inputTitleRef.current;
     if (isInputAdded) {
@@ -121,7 +124,7 @@ const Scheduler = () => {
         setEventsData(convertStiringToDate);
       })
       .catch((err) => console.log(err));
-  }, [userSelected]);
+  }, [userSelected, isLoadRepeat]);
 
   return (
     <>
@@ -152,7 +155,7 @@ const Scheduler = () => {
             </Box>
           </div>
           <div className="flex-initial">
-            <RepeatEvent usersSuggest={usersSuggestForRepeat} />
+            <RepeatEvent usersSuggest={usersSuggestForRepeat} isLoadDone={loadRepeatDone} />
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+import { CreateRepeatDto } from './dto/create-repeat.dto';
 import { ObjectId } from 'mongoose';
 import { CreateEventDto } from './dto/create-event.dto';
 import {
@@ -67,5 +68,14 @@ export class CanlendarController {
   @UseGuards(JwtAuthGuard)
   async removeEvent(@Body() eventId: DeleteEventDto) {
     return await this.calendarService.remove(eventId);
+  }
+
+  @Post('/repeat')
+  @UseGuards(JwtAuthGuard)
+  async createRepeat(
+    @Body() event: CreateRepeatDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.calendarService.createRepeat(event, user._id);
   }
 }
