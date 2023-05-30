@@ -68,7 +68,8 @@ export class CardService {
         populate: {
           path: 'author',
         },
-      });
+      })
+      .sort({ 'comments.create_at': 'asc' });
     return { ...card?.toObject(), columnId: column.id };
   }
 
