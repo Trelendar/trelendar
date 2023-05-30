@@ -24,10 +24,13 @@ export class CalendarService {
 
   async create(createCalendarDto: CreateEventDto, userId: ObjectId) {
     const { start, end, title, desc, allDay, members } = createCalendarDto;
+
+    const titleWithPrefix = allDay ? '[Rest] ' + title : title;
+
     const event = await new this.eventModel({
       start,
       end,
-      title,
+      title: titleWithPrefix,
       desc,
       allDay,
       members: [userId, ...members],
@@ -75,9 +78,13 @@ export class CalendarService {
     const memberIdsToObjects = updateEvent.members.map(
       (memberId) => new Types.ObjectId(memberId),
     );
+    const titleWithPreFix =
+      !updateEvent.title.includes('[Rest]') && updateEvent.allDay
+        ? '[Rest] ' + updateEvent.title
+        : updateEvent.title;
     const event = await this.eventModel.findOneAndUpdate(
       { _id: updateEvent._id },
-      { ...updateEvent, members: memberIdsToObjects },
+      { ...updateEvent, members: memberIdsToObjects, title: titleWithPreFix },
       { new: true },
     );
     if (!event) {

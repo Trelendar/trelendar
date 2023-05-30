@@ -68,6 +68,7 @@ const Scheduler = () => {
     axios
       .post('/calendar', {
         ...newEvent,
+        title: titleNewEvent,
       })
       .then((res) => {
         newEvent._id = res.data._id;

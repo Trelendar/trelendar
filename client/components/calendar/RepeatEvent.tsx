@@ -14,6 +14,8 @@ import Tooltip from '@mui/material/Tooltip';
 import { EventType } from '../../share/type/calendar';
 import axios from '../../lib/axios';
 import dayjs, { Dayjs } from 'dayjs';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 export interface Props {
   usersSuggest: Tag[];
@@ -26,7 +28,7 @@ const RepeatEvent: FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [startTimePickker, setStartTimePickker] = useState<Dayjs>(dayjs(new Date()));
   const [endTimePickker, setEndTimePickker] = useState<Dayjs>(dayjs(new Date()));
-  const [titleNewEvent, setTitleNewEvent] = useState<string>('');
+  const [titleNewEvent, setTitleNewEvent] = useState<string>('Title');
   const [tags, setTags] = useState<Tag[]>([]);
   const [type, setType] = useState<string>('1');
 
@@ -36,7 +38,7 @@ const RepeatEvent: FC<Props> = (props) => {
   };
 
   const onSaveChanges = async () => {
-    if (!titleNewEvent) return;
+    if (!titleNewEvent || endTimePickker < startTimePickker) return;
     const members = tags.map((tags) => tags.id);
     const newEvent: EventType = {
       _id: 'update_later',
@@ -105,6 +107,13 @@ const RepeatEvent: FC<Props> = (props) => {
                     />
                   </LocalizationProvider>
                 </div>
+                {endTimePickker < startTimePickker && (
+                  <div className="mx-10 my-2">
+                    <Stack sx={{ width: '100%' }} spacing={2}>
+                      <Alert severity="error">End time must be more than Start time !!!</Alert>
+                    </Stack>
+                  </div>
+                )}
 
                 <div className="ml-10 mt-5">
                   <FormControl>
@@ -157,18 +166,26 @@ const RepeatEvent: FC<Props> = (props) => {
 
                 <div className="relative px-10 pt-4 flex-auto">
                   <span className="my-4 text-slate-500 text-lg leading-relaxed">
-                    <div className="mb-6">
+                    <div className="mb-2">
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Event title
                       </label>
                       <input
                         type="text"
+                        value={titleNewEvent}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         onChange={(evt) => setTitleNewEvent(evt.target.value)}
                       />
                     </div>
                   </span>
                 </div>
+                {titleNewEvent.length === 0 && (
+                  <div className="mx-10">
+                    <Stack sx={{ width: '100%' }} spacing={2}>
+                      <Alert severity="error">Title must be not empty !!!</Alert>
+                    </Stack>
+                  </div>
+                )}
                 <div className="ml-10 mb-4">
                   <div className="z-[100000]">
                     <ReactTags

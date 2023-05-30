@@ -28,6 +28,8 @@ import axios from '../../lib/axios';
 import { useRouter } from 'next/router';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 const DetailEvent: React.FC = () => {
   const router = useRouter();
@@ -56,6 +58,7 @@ const DetailEvent: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSave = () => {
+    if (titleEdit.length === 0 || endTimePicker < startTimePicker) return;
     setIsLoading(true);
 
     const memers = tags.map((tag) => tag.id);
@@ -129,7 +132,7 @@ const DetailEvent: React.FC = () => {
         setUsersSuggest(users);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [isEdit]);
   return (
     <div className="p-6">
       {isLoading ? (
@@ -191,6 +194,13 @@ const DetailEvent: React.FC = () => {
                     />
                   )}
                 </div>
+                {titleEdit.length === 0 && isEdit && (
+                  <div className="mt-2">
+                    <Stack sx={{ width: '100%' }} spacing={2}>
+                      <Alert severity="error">Title must not be empty !!!</Alert>
+                    </Stack>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -294,27 +304,42 @@ const DetailEvent: React.FC = () => {
                   </div>
                 )}
                 {isEdit && (
-                  <div className="flex">
-                    <div className="mr-10">
+                  <>
+                    <div className="flex">
+                      <div className="mr-10">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Select Date Start"
+                            value={startTimePicker}
+                            format="DD/MM/YYYY"
+                            onChange={(newValue) =>
+                              setStartTimePicker(newValue ?? dayjs(new Date()))
+                            }
+                          />
+                        </LocalizationProvider>
+                      </div>
+
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                          label="Select Date Start"
-                          value={startTimePicker}
+                          label="Select Date End"
+                          value={endTimePicker}
                           format="DD/MM/YYYY"
-                          onChange={(newValue) => setStartTimePicker(newValue ?? dayjs(new Date()))}
+                          onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
                         />
                       </LocalizationProvider>
                     </div>
-
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="Select Date End"
-                        value={endTimePicker}
-                        format="DD/MM/YYYY"
-                        onChange={(newValue) => setEndTimePicker(newValue ?? dayjs(new Date()))}
-                      />
-                    </LocalizationProvider>
-                  </div>
+                    <div>
+                      {endTimePicker < startTimePicker && (
+                        <div className="mt-2">
+                          <Stack sx={{ width: '100%' }} spacing={2}>
+                            <Alert severity="error">
+                              End time must be more than Start time !!!
+                            </Alert>
+                          </Stack>
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </TableCell>
             </TableRow>
