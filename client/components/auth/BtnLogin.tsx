@@ -18,7 +18,7 @@ const BtnLogin = ({ provider, icon }: Props) => {
         const from = router.query.from;
         const decodedFrom = decodeURIComponent(from as string);
         if (from) await signIn(provider, { callbackUrl: decodedFrom });
-        else await signIn(provider, { redirect: true });
+        else await signIn(provider);
       }}
     >
       {icon}

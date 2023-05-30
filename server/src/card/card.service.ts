@@ -70,7 +70,14 @@ export class CardService {
         },
       })
       .sort({ 'comments.create_at': 'asc' });
-    return { ...card?.toObject(), columnId: column.id };
+    if (!card) throw new CustomException('?');
+    return {
+      ...card?.toObject(),
+      columnId: column.id,
+      comments: card.comments.sort((a, b) =>
+        a.createdAt.getTime() > b.createdAt.getTime() ? -1 : 1,
+      ),
+    };
   }
 
   async update(id: string, updateCardDto: UpdateCardDto, user: User) {
