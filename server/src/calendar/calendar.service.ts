@@ -84,7 +84,12 @@ export class CalendarService {
         : updateEvent.title;
     const event = await this.eventModel.findOneAndUpdate(
       { _id: updateEvent._id },
-      { ...updateEvent, members: memberIdsToObjects, title: titleWithPreFix },
+      {
+        ...updateEvent,
+        members: memberIdsToObjects,
+        title: titleWithPreFix,
+        allDay: updateEvent.allDay,
+      },
       { new: true },
     );
     if (!event) {
@@ -107,6 +112,16 @@ export class CalendarService {
     const { type, start, end, title, members } = createRepeat;
     const startTime = new Date(start);
     const endTime = new Date(end);
+
+    if (type == '0') {
+      return await this.everydayRepeat(
+        startTime,
+        endTime,
+        title,
+        members,
+        userId,
+      );
+    }
 
     const today = new Date(start);
     const date = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -135,6 +150,42 @@ export class CalendarService {
       }
       date.setDate(date.getDate() + 7);
     }
+    const repeatEvents = days.map((day) => {
+      return {
+        title: title,
+        start: day.start,
+        end: day.end,
+        members: [userId, ...members],
+        desc: '',
+        allDay: false,
+      };
+    });
+
+    const result = await this.eventModel.insertMany(repeatEvents);
+    return result;
+  }
+
+  async everydayRepeat(
+    startTime: Date,
+    endTime: Date,
+    title: string,
+    members: string[],
+    userId: ObjectId,
+  ) {
+    const days = [];
+    const date = startTime;
+    const DEFAULT = 30;
+    const end = endTime;
+    for (let i = 0; i < DEFAULT; i++) {
+      end.setDate(date.getDate());
+      end.setMonth(date.getMonth());
+      days.push({
+        start: new Date(date.getTime()),
+        end: new Date(end),
+      });
+      date.setDate(date.getDate() + 1);
+    }
+
     const repeatEvents = days.map((day) => {
       return {
         title: title,
