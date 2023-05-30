@@ -117,14 +117,14 @@ const RepeatEvent: FC<Props> = (props) => {
 
                 <div className="ml-10 mt-5">
                   <FormControl>
-                    <Tooltip title="Delete">
+                    <Tooltip title="Effect within One month">
                       <FormLabel id="demo-radio-buttons-group-label" color="secondary">
                         Option
                       </FormLabel>
                     </Tooltip>
                     <RadioGroup
                       aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="1"
+                      defaultValue={type}
                       name="radio-buttons-group"
                       onChange={(e) => setType(e.target.value ?? '1')}
                     >
