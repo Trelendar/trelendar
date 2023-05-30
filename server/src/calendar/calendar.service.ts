@@ -24,7 +24,7 @@ export class CalendarService {
 
   async create(createCalendarDto: CreateEventDto, userId: ObjectId) {
     const { start, end, title, desc, allDay, members } = createCalendarDto;
-
+    const memberList = members.map((member) => new Types.ObjectId(member));
     const titleWithPrefix = allDay ? '[Rest] ' + title : title;
 
     const event = await new this.eventModel({
@@ -33,7 +33,7 @@ export class CalendarService {
       title: titleWithPrefix,
       desc,
       allDay,
-      members: [userId, ...members],
+      members: [userId, ...memberList],
     }).save();
     return event;
   }
@@ -112,6 +112,7 @@ export class CalendarService {
     const { type, start, end, title, members } = createRepeat;
     const startTime = new Date(start);
     const endTime = new Date(end);
+    const memberList = members.map((member) => new Types.ObjectId(member));
 
     if (type == '0') {
       return await this.everydayRepeat(
@@ -155,7 +156,7 @@ export class CalendarService {
         title: title,
         start: day.start,
         end: day.end,
-        members: [userId, ...members],
+        members: [userId, ...memberList],
         desc: '',
         allDay: false,
       };
@@ -176,6 +177,7 @@ export class CalendarService {
     const date = startTime;
     const DEFAULT = 30;
     const end = endTime;
+    const memberList = members.map((member) => new Types.ObjectId(member));
     for (let i = 0; i < DEFAULT; i++) {
       end.setDate(date.getDate());
       end.setMonth(date.getMonth());
@@ -191,7 +193,7 @@ export class CalendarService {
         title: title,
         start: day.start,
         end: day.end,
-        members: [userId, ...members],
+        members: [userId, ...memberList], 
         desc: '',
         allDay: false,
       };
