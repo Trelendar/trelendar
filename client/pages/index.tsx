@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const router = useRouter();
   useEffect(() => {
     if (data) router.push('workspace');
-  }, [data]);
+  }, []);
   return (
     <>
       <div>
