@@ -114,7 +114,7 @@ const Scheduler = () => {
     axios
       .get(`/calendar/${path}`)
       .then((res) => {
-        if (res.data.length === 0) return;
+        // if (res.data.length === 0) return;
         const convertStiringToDate = res.data.map((item: EventType) => {
           return {
             ...item,
