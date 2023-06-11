@@ -52,7 +52,7 @@ const Invite = () => {
   const { inviteBy, member, name } = data;
   const handleJoin = async () => {
     if (!user) {
-      const from = `${process.env.NEXTAUTH_URL}/invite?token=${token}`;
+      const from = `https://trelendar.up.railway.app/invite?token=${token}`;
       const encodeFrom = encodeURIComponent(from);
       console.log("🚀 ~ file: index.tsx:57 ~ handleJoin ~ process.env.NEXTAUTH_URL:", process.env.NEXTAUTH_URL)
       router.push(`authentication/sign-in?from=${encodeFrom}`);
