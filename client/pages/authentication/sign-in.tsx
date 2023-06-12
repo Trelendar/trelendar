@@ -126,25 +126,22 @@ const Login = () => {
     </Layout>
   );
 };
-
-export const getServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions);
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  console.log('session', session);
 
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/workspace',
         permanent: false,
       },
     };
   }
+
   return {
-    props: {
-      providers: await getProviders(),
-      session: await getSession(context),
-      csrfToken: await getCsrfToken(context),
-    },
+    props: { session },
   };
-};
+}
 
 export default Login;
